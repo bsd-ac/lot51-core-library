@@ -9,11 +9,10 @@ requires-python = "==3.7.1"
 classifiers = [
   "Programming Language :: Python"
 ]
-# no dep groups in 3.7
 dependencies = [
-    "mypy",
-    "pytest",
-    "ruff",
+    "mypy==1.4.1",    # test
+    "pytest==7.4.4",  # test
+    "ruff==0.12.11",  # test
 ]
 
 [project.urls]
@@ -23,6 +22,10 @@ License = "https://github.com/bsd-ac/s4filter/blob/main/LICENSE"
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.mypy]
+follow_imports = "silent"
+ignore_missing_imports = true
 
 [tool.setuptools.packages.find]
 where = ["src"]

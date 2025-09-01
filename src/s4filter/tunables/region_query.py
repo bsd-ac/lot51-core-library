@@ -1,6 +1,11 @@
 import services
 from sims4.resources import Types
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, TunableReference, TunableList
+from sims4.tuning.tunable import (
+    HasTunableSingletonFactory,
+    AutoFactoryInit,
+    TunableReference,
+    TunableList,
+)
 
 
 class BaseRegionQuery(HasTunableSingletonFactory, AutoFactoryInit):
@@ -10,7 +15,11 @@ class BaseRegionQuery(HasTunableSingletonFactory, AutoFactoryInit):
 
 class SpecificRegionQuery(BaseRegionQuery):
     FACTORY_TUNABLES = {
-        'regions': TunableList(tunable=TunableReference(manager=services.get_instance_manager(Types.REGION))),
+        "regions": TunableList(
+            tunable=TunableReference(
+                manager=services.get_instance_manager(Types.REGION)
+            )
+        ),
     }
 
     def get_regions_gen(self):
@@ -19,8 +28,13 @@ class SpecificRegionQuery(BaseRegionQuery):
 
 class AllRegionsQuery(BaseRegionQuery):
     FACTORY_TUNABLES = {
-        'ignore_list': TunableList(tunable=TunableReference(manager=services.get_instance_manager(Types.REGION))),
+        "ignore_list": TunableList(
+            tunable=TunableReference(
+                manager=services.get_instance_manager(Types.REGION)
+            )
+        ),
     }
+
     def get_regions_gen(self):
         for region in services.get_instance_manager(Types.REGION).get_ordered_types():
             if region not in self.ignore_list:

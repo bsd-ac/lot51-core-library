@@ -21,7 +21,7 @@ def get_mod_root(file, depth=2):
     :return: str
     """
     root = os.path.abspath(os.path.realpath(file))
-    if '.ts4script' in root.lower():
+    if ".ts4script" in root.lower():
         depth += 1
 
     for depth in range(depth):
@@ -38,7 +38,10 @@ def get_game_dir():
     root = get_mod_root(__file__, depth=3)
     attempt = 0
 
-    while not re.search('(?:The|De|Die|Los|Les) Sims 4[/|\\\]Mods$', root) and attempt < 10:
+    while (
+        not re.search("(?:The|De|Die|Los|Les) Sims 4[/|\\\]Mods$", root)
+        and attempt < 10
+    ):
         attempt += 1
         root = os.path.dirname(root)
     return os.path.dirname(root)

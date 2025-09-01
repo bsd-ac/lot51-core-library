@@ -1,5 +1,9 @@
 import services
-from event_testing.resolver import SingleObjectResolver, GlobalResolver, SingleSimResolver
+from event_testing.resolver import (
+    SingleObjectResolver,
+    GlobalResolver,
+    SingleSimResolver,
+)
 from event_testing.tests import TunableTestSet
 from interactions.utils.loot import LootActionVariant
 from interactions.utils.success_chance import SuccessChance
@@ -11,32 +15,55 @@ from lot51_core.utils.math import chance_succeeded
 from sims.sim_info import SimInfo
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
-from sims4.tuning.tunable import Tunable, TunableList, TunableTuple, OptionalTunable, TunableReference
+from sims4.tuning.tunable import (
+    Tunable,
+    TunableList,
+    TunableTuple,
+    OptionalTunable,
+    TunableReference,
+)
 
 
-class TunableSchedulerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=services.get_instance_manager(Types.SNIPPET)):
+class TunableSchedulerSnippet(
+    metaclass=HashedTunedInstanceMetaclass,
+    manager=services.get_instance_manager(Types.SNIPPET),
+):
     _snippet_instances = set()
 
     INSTANCE_TUNABLES = {
-        'mod_manifest': TunableReference(manager=services.get_instance_manager(Types.SNIPPET)),
-        'actions': TunableList(
+        "mod_manifest": TunableReference(
+            manager=services.get_instance_manager(Types.SNIPPET)
+        ),
+        "actions": TunableList(
             tunable=TunableTuple(
                 loot_actions=TunableList(tunable=LootActionVariant()),
-                object_source=ObjectSearchMethodVariant(description="Objects to apply loot actions to"),
-                chance=SuccessChance.TunableFactory(description="Chance this specific action occurs on alarm"),
-                tests=TunableTestSet(description="Tests to run before running this row of loot_actions"),
+                object_source=ObjectSearchMethodVariant(
+                    description="Objects to apply loot actions to"
+                ),
+                chance=SuccessChance.TunableFactory(
+                    description="Chance this specific action occurs on alarm"
+                ),
+                tests=TunableTestSet(
+                    description="Tests to run before running this row of loot_actions"
+                ),
             ),
         ),
-        'global_chance': SuccessChance.TunableFactory(description="Global chance to run actions on alarm, will reschedule otherwise if repeating is enabled."),
-        'repeating': OptionalTunable(
+        "global_chance": SuccessChance.TunableFactory(
+            description="Global chance to run actions on alarm, will reschedule otherwise if repeating is enabled."
+        ),
+        "repeating": OptionalTunable(
             description="Enable to repeat the alarm by the schedule_type interval tuned below.",
             tunable=TunableTuple(
                 cancel_on_test_failure=Tunable(tunable_type=bool, default=False),
-            )
+            ),
         ),
-        'schedule_type': TunableAlarmVariant(description="Type of scheduling"),
-        'tests': TunableTestSet(description="Tests to run before the actions are executed each trigger."),
-        'zone_tests': TunableTestSet(description="Tests to run before scheduling on each zone load."),
+        "schedule_type": TunableAlarmVariant(description="Type of scheduling"),
+        "tests": TunableTestSet(
+            description="Tests to run before the actions are executed each trigger."
+        ),
+        "zone_tests": TunableTestSet(
+            description="Tests to run before scheduling on each zone load."
+        ),
     }
 
     @classmethod
@@ -49,7 +76,9 @@ class TunableSchedulerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=se
 
     @classmethod
     def all_snippets_gen(cls):
-        yield from services.get_instance_manager(Types.SNIPPET).get_ordered_types(only_subclasses_of=(TunableSchedulerSnippet,))
+        yield from services.get_instance_manager(Types.SNIPPET).get_ordered_types(
+            only_subclasses_of=(TunableSchedulerSnippet,)
+        )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -57,7 +86,9 @@ class TunableSchedulerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=se
         logger.debug("[init] {}".format(self))
 
     def __str__(self):
-        return "<TunableScheduler {} scheduled: {}>".format(type(self).__name__, self.scheduled)
+        return "<TunableScheduler {} scheduled: {}>".format(
+            type(self).__name__, self.scheduled
+        )
 
     @property
     def scheduled(self):
@@ -65,7 +96,9 @@ class TunableSchedulerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=se
 
     def start(self):
         if not self.run_zone_tests():
-            logger.debug("[{}] Global tests have failed, not starting in this zone.".format(self))
+            logger.debug(
+                "[{}] Global tests have failed, not starting in this zone.".format(self)
+            )
             return
         time_span = self.schedule_type.start()
         logger.debug("[{}] Started scheduler: {}".format(self, time_span))
@@ -124,11 +157,17 @@ class TunableSchedulerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=se
                 logger.debug("[{}] run_tests failed".format(self))
 
             if self.repeating is not None:
-                if (test_result or (not test_result and not self.repeating.cancel_on_test_failure)):
+                if test_result or (
+                    not test_result and not self.repeating.cancel_on_test_failure
+                ):
                     logger.debug("[{}] Rescheduling on callback".format(self))
                     self.reschedule()
                 else:
-                    logger.debug("[{}] Rescheduling not permitted due to test failure".format(self))
+                    logger.debug(
+                        "[{}] Rescheduling not permitted due to test failure".format(
+                            self
+                        )
+                    )
         except:
             logger.exception("[{}] Failed running callback".format(self))
 

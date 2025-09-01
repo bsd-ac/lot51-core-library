@@ -14,27 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up anaconda
+        uses: s-weigand/setup-conda@v1
         with:
-          python-version-file: 'pyproject.toml'
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          enable-cache: true
+          python-version: '3.7.1'
 
       - name: Install dependencies
         run: |
-          uv sync --frozen --all-groups
+          pip install -r requirements.txt
 
       - name: Compile all python files
         run: |
-          uv run python -m compileall src
+          python -m compileall src
 
       - name: Create mod
         run: |
-          uv run tools/build.py --root src/s4filter --name s4filter
+          python tools/build.py --root src/s4filter --name s4filter
 
       - name: Artifact the mod
         uses: actions/upload-artifact@v4

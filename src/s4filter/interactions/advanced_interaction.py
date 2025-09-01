@@ -1,4 +1,4 @@
-from interactions import ParticipantTypeSingleSim, ParticipantType
+from interactions import ParticipantTypeSingleSim
 from interactions.base.basic import TunableBasicContentSet
 from interactions.base.super_interaction import SuperInteraction
 from interactions.constraint_variants import TunableConstraintVariant
@@ -8,29 +8,30 @@ from sims4.tuning.tunable import TunableList, TunableTuple, TunableEnumEntry, Tu
 
 
 class AdvancedSuperInteraction(SuperInteraction):
-
     INSTANCE_TUNABLES = {
-        '_constraints': TunableList(
+        "_constraints": TunableList(
             tunable=TunableTuple(
                 constrained_participant=TunableEnumEntry(
                     tunable_type=ParticipantTypeSingleSim,
-                    default=ParticipantTypeSingleSim.Actor
+                    default=ParticipantTypeSingleSim.Actor,
                 ),
                 constraints=TunableList(
                     tunable=TunableTuple(
                         value=TunableConstraintVariant(
-                            door_target=TunableDoorConstraint(description="An alternative to the front_door constraint that allows you to target a specific door.")
+                            door_target=TunableDoorConstraint(
+                                description="An alternative to the front_door constraint that allows you to target a specific door."
+                            )
                         )
                     )
-                )
+                ),
             )
         ),
-        '_xevt_callback_id': Tunable(tunable_type=int, default=100),
-        'basic_content': TunableBasicContentSet(
-            description='The main animation and periodic stat changes for the interaction. (Same as SuperInteract but uses one_shot as the default instead)',
+        "_xevt_callback_id": Tunable(tunable_type=int, default=100),
+        "basic_content": TunableBasicContentSet(
+            description="The main animation and periodic stat changes for the interaction. (Same as SuperInteract but uses one_shot as the default instead)",
             one_shot=True,
             flexible_length=True,
-            default='one_shot',
+            default="one_shot",
         ),
     }
 
@@ -46,5 +47,7 @@ class AdvancedSuperInteraction(SuperInteraction):
         def handle_callback():
             self._xevt_callback(self)
 
-        change_element = CallbackXevtElement(self, sequence, self._xevt_callback_id, callback=handle_callback)
+        change_element = CallbackXevtElement(
+            self, sequence, self._xevt_callback_id, callback=handle_callback
+        )
         return change_element

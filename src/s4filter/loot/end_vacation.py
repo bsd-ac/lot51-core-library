@@ -7,7 +7,11 @@ from sims4.tuning.tunable import TunableEnumEntry
 
 class EndVacationLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'participant': TunableEnumEntry(tunable_type=ParticipantType, default=ParticipantType.Actor, invalid_enums=(ParticipantType.Invalid,)),
+        "participant": TunableEnumEntry(
+            tunable_type=ParticipantType,
+            default=ParticipantType.Actor,
+            invalid_enums=(ParticipantType.Invalid,),
+        ),
     }
 
     def __init__(self, participant=None, **kwargs):

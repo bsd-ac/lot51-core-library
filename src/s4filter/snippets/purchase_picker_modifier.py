@@ -6,15 +6,18 @@ from sims4.tuning.instances import HashedTunedInstanceMetaclass
 from sims4.tuning.tunable import TunableReference, TunableList
 
 
-class PurchasePickerModifier(metaclass=HashedTunedInstanceMetaclass, manager=services.get_instance_manager(Types.SNIPPET)):
+class PurchasePickerModifier(
+    metaclass=HashedTunedInstanceMetaclass,
+    manager=services.get_instance_manager(Types.SNIPPET),
+):
     INSTANCE_TUNABLES = {
-        'purchase_picker': TunableReference(
+        "purchase_picker": TunableReference(
             description="The PurchasePickerSnippet to modify.",
             manager=services.get_instance_manager(Types.SNIPPET),
         ),
-        'additional_purchase_items': TunableList(
+        "additional_purchase_items": TunableList(
             tunable=TunablePurchaseItem.TunableFactory(),
-        )
+        ),
     }
 
     @classmethod

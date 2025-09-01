@@ -11,20 +11,27 @@ def is_system32():
 
 
 def is_windows():
-    return sys.platform in ('win32', 'cygwin',)
+    return sys.platform in (
+        "win32",
+        "cygwin",
+    )
 
 
 def is_mac():
-    return sys.platform == 'darwin'
+    return sys.platform == "darwin"
 
 
 def is_linux():
-    return sys.platform in ('linux', 'linux2',)
+    return sys.platform in (
+        "linux",
+        "linux2",
+    )
 
 
 def open_url_in_browser(url, **query):
     try:
         import webbrowser
+
         if query is not None:
             params = urlencode(query)
             full_url = "{}?{}".format(url, params)

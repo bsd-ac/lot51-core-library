@@ -1,5 +1,7 @@
-from interactions.interaction_cancel_compatibility import InteractionCancelReason, InteractionCancelCompatibility
-from lot51_core import logger
+from interactions.interaction_cancel_compatibility import (
+    InteractionCancelReason,
+    InteractionCancelCompatibility,
+)
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import merge_affordance_filter, inject_dict
 from services import get_instance_manager
@@ -17,17 +19,34 @@ class InteractionCancelCompatibilityInjection(BaseTunableInjection):
     """
 
     FACTORY_TUNABLES = {
-        'reason': TunableEnumEntry(InteractionCancelReason, default=InteractionCancelReason.FIRE),
-        'include_affordances': TunableList(
-            tunable=TunableReference(manager=get_instance_manager(Types.INTERACTION), pack_safe=True),
-        )
+        "reason": TunableEnumEntry(
+            InteractionCancelReason, default=InteractionCancelReason.FIRE
+        ),
+        "include_affordances": TunableList(
+            tunable=TunableReference(
+                manager=get_instance_manager(Types.INTERACTION), pack_safe=True
+            ),
+        ),
     }
 
-    __slots__ = ('reason', 'include_affordances',)
+    __slots__ = (
+        "reason",
+        "include_affordances",
+    )
 
     def inject(self):
         if self.include_affordances is not None:
-            filter = InteractionCancelCompatibility.INTERACTION_CANCEL_COMPATIBILITY.get(self.reason, None)
+            filter = (
+                InteractionCancelCompatibility.INTERACTION_CANCEL_COMPATIBILITY.get(
+                    self.reason, None
+                )
+            )
             if filter is not None:
-                new_filter = merge_affordance_filter(filter, include_affordances=self.include_affordances)
-                inject_dict(InteractionCancelCompatibility, 'INTERACTION_CANCEL_COMPATIBILITY', new_items={self.reason:new_filter})
+                new_filter = merge_affordance_filter(
+                    filter, include_affordances=self.include_affordances
+                )
+                inject_dict(
+                    InteractionCancelCompatibility,
+                    "INTERACTION_CANCEL_COMPATIBILITY",
+                    new_items={self.reason: new_filter},
+                )

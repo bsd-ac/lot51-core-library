@@ -6,7 +6,6 @@ from lot51_core.utils.context import Context
 
 
 class GlobalService(Service):
-
     def save(self, *args, **kwargs):
         context = Context.get_current_context()
         event_service.process_event(CoreEvent.GAME_SAVE, context=context, **kwargs)
@@ -53,7 +52,9 @@ class GlobalService(Service):
 
     def on_all_households_and_sim_infos_loaded(self, *args, **kwargs):
         context = Context.get_current_context()
-        event_service.process_event(CoreEvent.HOUSEHOLDS_AND_SIMS_LOADED, context=context)
+        event_service.process_event(
+            CoreEvent.HOUSEHOLDS_AND_SIMS_LOADED, context=context
+        )
 
     def on_build_buy_enter(self, *args, **kwargs):
         context = Context.get_current_context()

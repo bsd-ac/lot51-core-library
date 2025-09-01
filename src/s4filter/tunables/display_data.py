@@ -1,14 +1,21 @@
-from interactions.utils.tunable_icon import TunableIcon, TunableIconFactory
+from interactions.utils.tunable_icon import TunableIconFactory
 from sims4.localization import TunableLocalizedStringFactory
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, OptionalTunable
+from sims4.tuning.tunable import (
+    HasTunableSingletonFactory,
+    AutoFactoryInit,
+    OptionalTunable,
+)
 
 
 class TunableDisplayData(HasTunableSingletonFactory, AutoFactoryInit):
-
     FACTORY_TUNABLES = {
-        'instance_display_name': OptionalTunable(tunable=TunableLocalizedStringFactory()),
-        'instance_display_description': OptionalTunable(tunable=TunableLocalizedStringFactory()),
-        'instance_display_icon': OptionalTunable(tunable=TunableIconFactory()),
+        "instance_display_name": OptionalTunable(
+            tunable=TunableLocalizedStringFactory()
+        ),
+        "instance_display_description": OptionalTunable(
+            tunable=TunableLocalizedStringFactory()
+        ),
+        "instance_display_icon": OptionalTunable(tunable=TunableIconFactory()),
     }
 
     def get_name(self, *tokens):

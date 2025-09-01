@@ -1,7 +1,13 @@
 from event_testing.tests import TunableTestSet, TunableTestVariant, TunableGlobalTestSet
 from lot51_core import logger
 from lot51_core.utils.injection import clone_test_set
-from sims4.tuning.tunable import TunableVariant, HasTunableSingletonFactory, AutoFactoryInit, TunableList, Tunable, OptionalTunable
+from sims4.tuning.tunable import (
+    TunableVariant,
+    HasTunableSingletonFactory,
+    AutoFactoryInit,
+    TunableList,
+    Tunable,
+)
 
 
 # class TunableTestReplaceOneInjection(HasTunableSingletonFactory, AutoFactoryInit):
@@ -27,53 +33,63 @@ from sims4.tuning.tunable import TunableVariant, HasTunableSingletonFactory, Aut
 
 class TestReplaceMixin:
     def inject(self, target, key):
-        logger.debug("replacing {} with {}".format(getattr(target, key, None), self.tests))
+        logger.debug(
+            "replacing {} with {}".format(getattr(target, key, None), self.tests)
+        )
         setattr(target, key, self.tests)
 
 
-class TunableTestReplaceInjection(TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit):
+class TunableTestReplaceInjection(
+    TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit
+):
     FACTORY_TUNABLES = {
-        'tests': TunableTestSet(),
+        "tests": TunableTestSet(),
     }
 
 
-class TunableTestReplaceGlobalsInjection(TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit):
+class TunableTestReplaceGlobalsInjection(
+    TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit
+):
     FACTORY_TUNABLES = {
-        'tests': TunableGlobalTestSet(),
+        "tests": TunableGlobalTestSet(),
     }
 
 
 class TunableTestMergeInjection(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
-        'add_if_empty_list': Tunable(
+        "add_if_empty_list": Tunable(
             description="When merging AND tests, if the list is empty one will be created.",
             tunable_type=bool,
-            default=False
+            default=False,
         ),
-        'prepend_and': Tunable(
+        "prepend_and": Tunable(
             description="If True, the AND tests will be prepended instead of appending.",
             tunable_type=bool,
-            default=False
+            default=False,
         ),
-        'AND': TunableList(
+        "AND": TunableList(
             tunable=TunableTestVariant(),
-            description="Additional tests added to each original OR list. Warning: this does not affect the lists defined in this injector's `OR`"
+            description="Additional tests added to each original OR list. Warning: this does not affect the lists defined in this injector's `OR`",
         ),
-        'OR': TunableTestSet(
+        "OR": TunableTestSet(
             description="Additional AND lists added to the compound test list. Note: This does not apply to injections to test_globals."
         ),
     }
 
     def inject(self, target, key):
         original_list = getattr(target, key, None)
-        new_list = clone_test_set(original_list,
-                                  additional_and=self.AND,
-                                  additional_or=self.OR,
-                                  prepend_and=self.prepend_and,
-                                  add_if_empty_list=self.add_if_empty_list)
+        new_list = clone_test_set(
+            original_list,
+            additional_and=self.AND,
+            additional_or=self.OR,
+            prepend_and=self.prepend_and,
+            add_if_empty_list=self.add_if_empty_list,
+        )
         setattr(target, key, new_list)
-        logger.debug("tuned_values {}".format(getattr(target, '_tuned_values', None)))
-        logger.debug("original {}: final {}".format(original_list, getattr(target, key, None)))
+        logger.debug("tuned_values {}".format(getattr(target, "_tuned_values", None)))
+        logger.debug(
+            "original {}: final {}".format(original_list, getattr(target, key, None))
+        )
 
 
 class TestInjectionVariant(TunableVariant):
@@ -86,7 +102,7 @@ class TestInjectionVariant(TunableVariant):
         super().__init__(
             add_tests=TunableTestMergeInjection.TunableFactory(),
             replace_tests=replace_factory.TunableFactory(),
-            locked_args={'disabled': None},
-            default='disabled',
-            **kwargs
+            locked_args={"disabled": None},
+            default="disabled",
+            **kwargs,
         )

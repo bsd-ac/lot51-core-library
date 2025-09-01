@@ -8,19 +8,26 @@ from ui.ui_dialog_generic import UiDialogTextInputOk, UiDialogOkCancel
 from ui.ui_text_input import UiTextInput
 from sims4.collections import AttributeDict
 
+
 class TextInputLength(HasTunableSingletonFactory, AutoFactoryInit):
-    __qualname__ = 'Text Input Length'
+    __qualname__ = "Text Input Length"
 
     def build_msg(self, dialog, msg, *additional_tokens):
         msg.max_length = 255
         msg.min_length = 0
-        msg.input_too_short_tooltip = LocalizationHelperTuning.get_raw_text('Text is too short')
+        msg.input_too_short_tooltip = LocalizationHelperTuning.get_raw_text(
+            "Text is too short"
+        )
 
 
 def create_input(title="", input_text="", restricted_characters=None, max_length=255):
     localized_title = lambda **_: LocalizationHelperTuning.get_raw_text(title)
-    localized_text_placeholder = lambda **_: LocalizationHelperTuning.get_raw_text(input_text)
-    text_input = UiTextInput(sort_order=0, restricted_characters=restricted_characters, height=0)
+    localized_text_placeholder = lambda **_: LocalizationHelperTuning.get_raw_text(
+        input_text
+    )
+    text_input = UiTextInput(
+        sort_order=0, restricted_characters=restricted_characters, height=0
+    )
     text_input.default_text = localized_text_placeholder
     text_input.title = localized_title
     text_input.initial_value = localized_text_placeholder
@@ -30,7 +37,9 @@ def create_input(title="", input_text="", restricted_characters=None, max_length
     return text_input
 
 
-def create_translated_input(title=None, input_text=None, restricted_characters=None, max_length=255):
+def create_translated_input(
+    title=None, input_text=None, restricted_characters=None, max_length=255
+):
     if title is None:
         title = _create_localized_string(0x0)
     if input_text is None:
@@ -38,7 +47,9 @@ def create_translated_input(title=None, input_text=None, restricted_characters=N
 
     localized_title = lambda **_: title
     localized_text_placeholder = lambda **_: input_text
-    text_input = UiTextInput(sort_order=0, restricted_characters=restricted_characters, height=0)
+    text_input = UiTextInput(
+        sort_order=0, restricted_characters=restricted_characters, height=0
+    )
     text_input.default_text = localized_text_placeholder
     text_input.title = localized_title
     text_input.initial_value = localized_text_placeholder
@@ -53,13 +64,23 @@ class DialogHelper:
     UiDialogNotificationVisualType = UiDialogNotification.UiDialogNotificationVisualType
     UiDialogNotificationUrgency = UiDialogNotification.UiDialogNotificationUrgency
     UiDialogUiRequest = UiDialogResponse.UiDialogUiRequest
-    UiDialogNotificationExpandBehavior = UiDialogNotification.UiDialogNotificationExpandBehavior
+    UiDialogNotificationExpandBehavior = (
+        UiDialogNotification.UiDialogNotificationExpandBehavior
+    )
 
     class CharacterRestriction:
         NUMBERS = lambda *_: _create_localized_string(0x8FE40C44)
 
     @staticmethod
-    def create_notification(title="", text="", primary_icon=None, urgency=UiDialogNotification.UiDialogNotificationUrgency.DEFAULT, visual_type=UiDialogNotification.UiDialogNotificationVisualType.INFORMATION, expand_behavior=UiDialogNotification.UiDialogNotificationExpandBehavior.USER_SETTING, ui_responses=()):
+    def create_notification(
+        title="",
+        text="",
+        primary_icon=None,
+        urgency=UiDialogNotification.UiDialogNotificationUrgency.DEFAULT,
+        visual_type=UiDialogNotification.UiDialogNotificationVisualType.INFORMATION,
+        expand_behavior=UiDialogNotification.UiDialogNotificationExpandBehavior.USER_SETTING,
+        ui_responses=(),
+    ):
         return UiDialogNotification.TunableFactory().default(
             None,
             title=lambda *args, **kwargs: title,
@@ -90,28 +111,35 @@ class DialogHelper:
             text=localized_text,
             title=localized_title,
             text_ok=lambda **_: LocalizationHelperTuning.get_raw_text(button_text),
-            is_special_dialog=False
+            is_special_dialog=False,
         )
         if callback:
             dialog.add_listener(callback)
         return dialog
 
     @staticmethod
-    def create_text_dialog(title="", description="", input_title=None, input_text=None, button_text="Okay", callback=None):
+    def create_text_dialog(
+        title="",
+        description="",
+        input_title=None,
+        input_text=None,
+        button_text="Okay",
+        callback=None,
+    ):
         client = services.client_manager().get_first_client()
         localized_title = lambda **_: LocalizationHelperTuning.get_raw_text(title)
         localized_text = lambda **_: LocalizationHelperTuning.get_raw_text(description)
 
         primary_input = create_translated_input(input_title, input_text)
 
-        inputs = AttributeDict({'primary': primary_input})
+        inputs = AttributeDict({"primary": primary_input})
         dialog = UiDialogTextInputOk.TunableFactory().default(
             client.active_sim,
             text=localized_text,
             title=localized_title,
             text_inputs=inputs,
             text_ok=lambda **_: LocalizationHelperTuning.get_raw_text(button_text),
-            is_special_dialog=False
+            is_special_dialog=False,
         )
 
         if callback:
@@ -121,14 +149,26 @@ class DialogHelper:
 
     @staticmethod
     def create_command(command_name, *args):
-        command = namedtuple('Command', ('command', 'arguments'))
+        command = namedtuple("Command", ("command", "arguments"))
         return command(command_name, args)
 
     @staticmethod
     def create_arg(arg_type, arg_value):
-        arg = namedtuple('CommandArgument', ('arg_type', 'arg_value'))
+        arg = namedtuple("CommandArgument", ("arg_type", "arg_value"))
         return arg(arg_type, arg_value)
 
     @staticmethod
-    def build_ui_response(response_id=ButtonType.DIALOG_RESPONSE_NO_RESPONSE, text=None, subtext=None, ui_request=UiDialogUiRequest.NO_REQUEST, response_command=None):
-        return UiDialogResponse(dialog_response_id=response_id, text=text, subtext=subtext, ui_request=ui_request, response_command=response_command)
+    def build_ui_response(
+        response_id=ButtonType.DIALOG_RESPONSE_NO_RESPONSE,
+        text=None,
+        subtext=None,
+        ui_request=UiDialogUiRequest.NO_REQUEST,
+        response_command=None,
+    ):
+        return UiDialogResponse(
+            dialog_response_id=response_id,
+            text=text,
+            subtext=subtext,
+            ui_request=ui_request,
+            response_command=response_command,
+        )

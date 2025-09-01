@@ -3,13 +3,15 @@ from lot51_core import logger
 
 
 class InjectionTracker:
-
     def __init__(self):
         self._cache = defaultdict(set)
 
     def can_inject(self, owner_tuning, tunable_key):
         if owner_tuning is not None and tunable_key is not None:
-            if owner_tuning not in self._cache or tunable_key not in self._cache[owner_tuning]:
+            if (
+                owner_tuning not in self._cache
+                or tunable_key not in self._cache[owner_tuning]
+            ):
                 return True
         return False
 
@@ -29,7 +31,11 @@ class InjectionTracker:
                 self._cache[owner_tuning].add(tunable_key)
                 return True
             else:
-                logger.warn("Key {} on Tuning {} has already been previously overwritten. Skipping injection: {}".format(tunable_key, owner_tuning, safe))
+                logger.warn(
+                    "Key {} on Tuning {} has already been previously overwritten. Skipping injection: {}".format(
+                        tunable_key, owner_tuning, safe
+                    )
+                )
                 if not safe:
                     return True
         return False

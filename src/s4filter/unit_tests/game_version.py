@@ -39,20 +39,31 @@ class TestGameVersion(unittest.TestCase):
         self.assertFalse(self.game_version.is_legacy())
 
     def test_to_tuple(self):
-        self.assertTupleEqual(self.game_version.to_tuple(), (1, 105, 345, 1220,))
+        self.assertTupleEqual(
+            self.game_version.to_tuple(),
+            (
+                1,
+                105,
+                345,
+                1220,
+            ),
+        )
 
     def test_to_str(self):
         self.assertEqual(self.game_version.to_str(), "1.105.345.1220")
 
     def test_to_dict(self):
-        self.assertDictEqual(self.game_version.to_dict(),
-                             {'major': 1,
-                              'minor': 105,
-                              'patch': 345,
-                              'platform': 1220,
-                              'os': 12,
-                              'unused': 20
-                             })
+        self.assertDictEqual(
+            self.game_version.to_dict(),
+            {
+                "major": 1,
+                "minor": 105,
+                "patch": 345,
+                "platform": 1220,
+                "os": 12,
+                "unused": 20,
+            },
+        )
 
 
 class TestShortGameVersion(unittest.TestCase):
@@ -92,17 +103,28 @@ class TestShortGameVersion(unittest.TestCase):
         self.assertFalse(self.game_version.is_legacy())
 
     def test_to_tuple(self):
-        self.assertTupleEqual(self.game_version.to_tuple(), (1, 105, 345, 1220,))
+        self.assertTupleEqual(
+            self.game_version.to_tuple(),
+            (
+                1,
+                105,
+                345,
+                1220,
+            ),
+        )
 
     def test_to_str(self):
         self.assertEqual(self.game_version.to_str(), "1.105.345.1220")
 
     def test_to_dict(self):
-        self.assertDictEqual(self.game_version.to_dict(),
-                             {'major': 1,
-                              'minor': 105,
-                              'patch': 345,
-                              'platform': 1220,
-                              'os': 12,
-                              'unused': 20
-                             })
+        self.assertDictEqual(
+            self.game_version.to_dict(),
+            {
+                "major": 1,
+                "minor": 105,
+                "patch": 345,
+                "platform": 1220,
+                "os": 12,
+                "unused": 20,
+            },
+        )

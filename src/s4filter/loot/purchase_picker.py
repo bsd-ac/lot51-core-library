@@ -7,7 +7,9 @@ from sims4.tuning.tunable import TunableReference
 
 class OpenPurchasePickerLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'purchase_picker': TunableReference(manager=services.get_instance_manager(Types.SNIPPET)),
+        "purchase_picker": TunableReference(
+            manager=services.get_instance_manager(Types.SNIPPET)
+        ),
     }
 
     def __init__(self, purchase_picker=None, **kwargs):
@@ -19,4 +21,6 @@ class OpenPurchasePickerLoot(BaseLootOperation):
             picker = self._purchase_picker(resolver)
             picker.show_picker_dialog()
         except:
-            logger.exception("Failed to open purchase picker: {}".format(self._purchase_picker))
+            logger.exception(
+                "Failed to open purchase picker: {}".format(self._purchase_picker)
+            )

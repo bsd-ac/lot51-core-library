@@ -6,22 +6,33 @@ from interactions.priority import Priority
 from lot51_core.tunables.coordinates import TunableCoordinates
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
-from sims4.tuning.tunable import TunableList, HasTunableSingletonFactory, AutoFactoryInit, TunableReference, \
-    OptionalTunable, TunableVariant, TunableEnumEntry
+from sims4.tuning.tunable import (
+    TunableList,
+    HasTunableSingletonFactory,
+    AutoFactoryInit,
+    TunableReference,
+    OptionalTunable,
+    TunableVariant,
+    TunableEnumEntry,
+)
 
 
 class SituationAction(HasTunableSingletonFactory, AutoFactoryInit):
-
     FACTORY_TUNABLES = {
-        'jobs': TunableList(
+        "jobs": TunableList(
             description="Situation Jobs in this Situation that should be valid for this action.",
-            tunable=TunableReference(manager=services.get_instance_manager(Types.SITUATION_JOB)),
+            tunable=TunableReference(
+                manager=services.get_instance_manager(Types.SITUATION_JOB)
+            ),
             needs_tuning=True,
         ),
-        'tests': TunableTestSet(),
+        "tests": TunableTestSet(),
     }
 
-    __slots__ = ('jobs', 'tests',)
+    __slots__ = (
+        "jobs",
+        "tests",
+    )
 
     def get_resolver(self, sim):
         return SingleSimResolver(sim)
@@ -38,18 +49,22 @@ class SituationAction(HasTunableSingletonFactory, AutoFactoryInit):
 
 class MoveSimSpawnAction(SituationAction):
     FACTORY_TUNABLES = {
-        'street': TunableReference(
+        "street": TunableReference(
             description="The Street these coordinates are valid on",
-            manager=services.get_instance_manager(Types.STREET)
+            manager=services.get_instance_manager(Types.STREET),
         ),
-        'coordinates': TunableCoordinates.TunableFactory(),
-        'facing_coordinates': OptionalTunable(
+        "coordinates": TunableCoordinates.TunableFactory(),
+        "facing_coordinates": OptionalTunable(
             description="If enabled, the Sim will face this position, otherwise a random orientation will be chosen.",
             tunable=TunableCoordinates.TunableFactory(),
-        )
+        ),
     }
 
-    __slots__ = ('coordinates', 'facing_coordinates', 'street',)
+    __slots__ = (
+        "coordinates",
+        "facing_coordinates",
+        "street",
+    )
 
     def is_valid(self, sim, job):
         current_street = services.current_street()
@@ -62,27 +77,30 @@ class MoveSimSpawnAction(SituationAction):
 
 
 class PushRoleInteractionAction(SituationAction):
-
     FACTORY_TUNABLES = {
-        'priority': TunableEnumEntry(tunable_type=Priority, default=Priority.Low)
+        "priority": TunableEnumEntry(tunable_type=Priority, default=Priority.Low)
     }
 
-    __slots__ = ('priority',)
+    __slots__ = ("priority",)
 
     def apply_to_sim(self, situation, sim, job):
-        interaction = situation._choose_role_interaction(sim, run_priority=self.priority)
+        interaction = situation._choose_role_interaction(
+            sim, run_priority=self.priority
+        )
         if interaction is not None:
             execute_result = AffordanceObjectPair.execute_interaction(interaction)
 
 
 class ApplyLootAction(SituationAction):
     FACTORY_TUNABLES = {
-        'loot_list': TunableList(
-            tunable=TunableReference(manager=services.get_instance_manager(Types.ACTION))
+        "loot_list": TunableList(
+            tunable=TunableReference(
+                manager=services.get_instance_manager(Types.ACTION)
+            )
         )
     }
 
-    __slots__ = ('loot_list',)
+    __slots__ = ("loot_list",)
 
     def apply_to_sim(self, situation, sim, job):
         resolver = self.get_resolver(sim)
@@ -92,10 +110,12 @@ class ApplyLootAction(SituationAction):
 
 class ApplyReferenceActions(SituationAction):
     FACTORY_TUNABLES = {
-        'reference': TunableReference(manager=services.get_instance_manager(Types.SNIPPET))
+        "reference": TunableReference(
+            manager=services.get_instance_manager(Types.SNIPPET)
+        )
     }
 
-    __slots__ = ('reference',)
+    __slots__ = ("reference",)
 
     def apply_to_sim(self, situation, sim, job):
         for spawn_action in self.reference:
@@ -104,7 +124,6 @@ class ApplyReferenceActions(SituationAction):
 
 
 class SituationActionVariant(TunableVariant):
-
     def __init__(self, *args, **kwargs):
         super().__init__(
             *args,
@@ -112,20 +131,23 @@ class SituationActionVariant(TunableVariant):
             move_sim=MoveSimSpawnAction.TunableFactory(),
             push_role_interaction=PushRoleInteractionAction.TunableFactory(),
             reference=ApplyReferenceActions.TunableFactory(),
-            **kwargs
-            )
+            **kwargs,
+        )
 
 
-class SituationSpawnActionsSnippet(metaclass=HashedTunedInstanceMetaclass, manager=services.get_instance_manager(Types.SNIPPET)):
+class SituationSpawnActionsSnippet(
+    metaclass=HashedTunedInstanceMetaclass,
+    manager=services.get_instance_manager(Types.SNIPPET),
+):
     _snippet_instances = set()
 
     INSTANCE_TUNABLES = {
-        'spawn_actions': TunableList(
+        "spawn_actions": TunableList(
             tunable=SituationActionVariant(),
         ),
     }
 
-    __slots__ = ('spawn_actions',)
+    __slots__ = ("spawn_actions",)
 
     def __iter__(self):
         yield from self.spawn_actions

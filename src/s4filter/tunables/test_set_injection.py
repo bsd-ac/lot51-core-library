@@ -7,12 +7,17 @@ from sims4.tuning.tunable import TunableReference
 
 class TunableTestSetInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
-        'test_set': TunableReference(manager=services.get_instance_manager(Types.SNIPPET)),
-        'modify_test': TestInjectionVariant(),
+        "test_set": TunableReference(
+            manager=services.get_instance_manager(Types.SNIPPET)
+        ),
+        "modify_test": TestInjectionVariant(),
     }
 
-    __slots__ = ('test_set', 'modify_test',)
+    __slots__ = (
+        "test_set",
+        "modify_test",
+    )
 
     def inject(self):
         if self.test_set is not None:
-            self.modify_test.inject(self.test_set, 'test')
+            self.modify_test.inject(self.test_set, "test")

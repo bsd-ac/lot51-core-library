@@ -6,29 +6,42 @@ from lot51_core.utils.injection import inject_to
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
-from sims4.tuning.tunable import TunableReference, TunableList, TunableTuple, OptionalTunable
+from sims4.tuning.tunable import (
+    TunableReference,
+    TunableList,
+    TunableTuple,
+    OptionalTunable,
+)
 
 
-class TestedPieMenuForwarding(metaclass=HashedTunedInstanceMetaclass, manager=get_instance_manager(Types.SNIPPET)):
+class TestedPieMenuForwarding(
+    metaclass=HashedTunedInstanceMetaclass, manager=get_instance_manager(Types.SNIPPET)
+):
     INSTANCE_TUNABLES = {
-        'forward_data': TunableList(
+        "forward_data": TunableList(
             tunable=TunableTuple(
                 affordances=TunableList(
-                    tunable=TunableReference(manager=get_instance_manager(Types.INTERACTION), pack_safe=True)
+                    tunable=TunableReference(
+                        manager=get_instance_manager(Types.INTERACTION), pack_safe=True
+                    )
                 ),
                 pie_menu_category=OptionalTunable(
-                    tunable=TunableReference(manager=get_instance_manager(Types.PIE_MENU_CATEGORY))
+                    tunable=TunableReference(
+                        manager=get_instance_manager(Types.PIE_MENU_CATEGORY)
+                    )
                 ),
                 object_query=ObjectSearchMethodVariant(),
             )
         )
     }
 
-    __slots__ = ('forward_data',)
+    __slots__ = ("forward_data",)
 
     @classmethod
     def all_snippets_gen(cls):
-        yield from get_instance_manager(Types.SNIPPET).get_ordered_types(only_subclasses_of=TestedPieMenuForwarding)
+        yield from get_instance_manager(Types.SNIPPET).get_ordered_types(
+            only_subclasses_of=TestedPieMenuForwarding
+        )
 
     @classmethod
     def add_additional_aops(cls, add_potential_aops, target, context):
@@ -42,10 +55,13 @@ class TestedPieMenuForwarding(metaclass=HashedTunedInstanceMetaclass, manager=ge
                         add_potential_aops(potential_aops, obj)
 
 
-@inject_to(ChoiceMenu, 'add_potential_aops')
-def _add_potential_aops(original, self, target, context, potential_aops, *args, **kwargs):
+@inject_to(ChoiceMenu, "add_potential_aops")
+def _add_potential_aops(
+    original, self, target, context, potential_aops, *args, **kwargs
+):
     original(self, target, context, potential_aops, *args, **kwargs)
     try:
+
         def add_aops(aops, trgt):
             original(self, trgt, context, aops, *args, **kwargs)
 

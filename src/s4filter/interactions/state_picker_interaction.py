@@ -5,21 +5,25 @@ from interactions.utils.tunable_icon import TunableIconVariant
 from services import get_instance_manager
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.resources import Types
-from sims4.tuning.tunable import OptionalTunable, TunableMapping, TunableReference, TunableTuple
+from sims4.tuning.tunable import (
+    OptionalTunable,
+    TunableMapping,
+    TunableReference,
+    TunableTuple,
+)
 
 
 class AdvancedStatePickerSuperInteraction(StatePickerSuperInteraction):
-
     INSTANCE_TUNABLES = {
-        '_active_icon': OptionalTunable(tunable=TunableIconVariant()),
-        '_inactive_icon': OptionalTunable(tunable=TunableIconVariant()),
-        'state_value_tests': TunableMapping(
+        "_active_icon": OptionalTunable(tunable=TunableIconVariant()),
+        "_inactive_icon": OptionalTunable(tunable=TunableIconVariant()),
+        "state_value_tests": TunableMapping(
             key_type=TunableReference(manager=get_instance_manager(Types.OBJECT_STATE)),
             value_type=TunableTuple(
                 tests=TunableTestSet(),
                 tooltip=OptionalTunable(tunable=TunableLocalizedStringFactory()),
-            )
-        )
+            ),
+        ),
     }
 
     @classmethod

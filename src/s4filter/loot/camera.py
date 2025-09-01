@@ -6,8 +6,8 @@ from sims4.tuning.tunable import Tunable
 
 class CameraFocusLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'follow': Tunable(tunable_type=bool, default=False),
-        'object_source': ObjectSearchMethodVariant(),
+        "follow": Tunable(tunable_type=bool, default=False),
+        "object_source": ObjectSearchMethodVariant(),
     }
 
     def __init__(self, follow=False, object_source=None, **kwargs):

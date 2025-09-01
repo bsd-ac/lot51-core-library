@@ -7,22 +7,26 @@ from sims4.tuning.tunable import TunableList, TunableReference, TunableTuple
 
 
 class TunableUniversityInjection(BaseTunableInjection):
-
     FACTORY_TUNABLES = {
-        'university': TunableReference(
+        "university": TunableReference(
             description="The university to inject to",
-            manager=get_instance_manager(Types.UNIVERSITY)
+            manager=get_instance_manager(Types.UNIVERSITY),
         ),
-        'prestige_degrees': TunableList(
+        "prestige_degrees": TunableList(
             description="Additional prestige degrees. This does not update the SimData.",
             tunable=TunableTuple(
-                elective=TunableReference(manager=get_instance_manager(Types.UNIVERSITY_MAJOR))
+                elective=TunableReference(
+                    manager=get_instance_manager(Types.UNIVERSITY_MAJOR)
+                )
             ),
             unique_entries=True,
         ),
     }
 
-    __slots__ = ('university', 'prestige_degrees',)
+    __slots__ = (
+        "university",
+        "prestige_degrees",
+    )
 
     @property
     def required_packs(self):
@@ -30,4 +34,4 @@ class TunableUniversityInjection(BaseTunableInjection):
 
     def inject(self):
         if self.university is not None:
-            inject_list(self.university, 'prestige_degrees', self.prestige_degrees)
+            inject_list(self.university, "prestige_degrees", self.prestige_degrees)

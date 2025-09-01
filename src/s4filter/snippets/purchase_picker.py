@@ -6,17 +6,24 @@ import uuid
 from crafting.crafting_interactions import create_craftable
 from date_and_time import create_time_span, TimeSpan
 from distributor.shared_messages import IconInfoData
-from event_testing.resolver import SingleObjectResolver, SingleActorAndObjectResolver
+from event_testing.resolver import SingleActorAndObjectResolver
 from interactions.payment.payment_info import PaymentInfo
 from interactions.payment.payment_source import get_tunable_payment_source_variant
-from interactions.picker.object_marketplace_picker_interaction import ObjectMarketplacePickerInteraction
+from interactions.picker.object_marketplace_picker_interaction import (
+    ObjectMarketplacePickerInteraction,
+)
 from interactions.utils.tunable_icon import TunableIcon
 from lot51_core import logger
 from interactions import ParticipantTypeSingle
 from lot51_core.services.events import event_handler, CoreEvent
 from lot51_core.snippets.purchase_picker_modifier import PurchasePickerModifier
-from lot51_core.tunables.delivery_method import FglDeliveryMethod, MultipleInventoriesDeliveryMethod, \
-    InventoryDeliveryMethod, MailboxDeliveryMethod, HouseholdInventoryDeliveryMethod
+from lot51_core.tunables.delivery_method import (
+    FglDeliveryMethod,
+    MultipleInventoriesDeliveryMethod,
+    InventoryDeliveryMethod,
+    MailboxDeliveryMethod,
+    HouseholdInventoryDeliveryMethod,
+)
 from lot51_core.tunables.payment_destination import TunablePaymentDestinationVariant
 from lot51_core.tunables.purchase_item import TunablePurchaseItem
 from lot51_core.utils.collections import AttributeDict
@@ -24,11 +31,24 @@ from lot51_core.utils.math import chance_succeeded
 from objects.components.name_component import NameComponent
 from objects.components.types import NAME_COMPONENT
 from objects.system import create_object
-from sims4.localization import TunableLocalizedStringFactory, _create_localized_string, LocalizationHelperTuning
+from sims4.localization import (
+    TunableLocalizedStringFactory,
+    _create_localized_string,
+    LocalizationHelperTuning,
+)
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, TunableVariant, TunableList, \
-    TunableReference, Tunable, OptionalTunable, TunableSimMinute, TunableEnumEntry
+from sims4.tuning.tunable import (
+    HasTunableSingletonFactory,
+    AutoFactoryInit,
+    TunableVariant,
+    TunableList,
+    TunableReference,
+    Tunable,
+    OptionalTunable,
+    TunableSimMinute,
+    TunableEnumEntry,
+)
 from tunable_multiplier import TunableMultiplier
 from ui.ui_dialog_notification import UiDialogNotification
 from ui.ui_dialog_picker import PurchasePickerRow, UiPurchasePicker
@@ -132,66 +152,100 @@ class StockManager:
 
 class TunableStockManagement(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
-        'sold_out_icon': OptionalTunable(tunable=TunableIcon()),
-        'sold_out_description': OptionalTunable(tunable=TunableLocalizedStringFactory()),
-        'refresh_period': TunableSimMinute(default=StockManager.DEFAULT_REFRESH_PERIOD),
-        'show_refresh_time': Tunable(tunable_type=bool, default=True)
+        "sold_out_icon": OptionalTunable(tunable=TunableIcon()),
+        "sold_out_description": OptionalTunable(
+            tunable=TunableLocalizedStringFactory()
+        ),
+        "refresh_period": TunableSimMinute(default=StockManager.DEFAULT_REFRESH_PERIOD),
+        "show_refresh_time": Tunable(tunable_type=bool, default=True),
     }
 
 
-class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=services.get_instance_manager(Types.SNIPPET)):
-
+class PurchasePickerSnippet(
+    metaclass=HashedTunedInstanceMetaclass,
+    manager=services.get_instance_manager(Types.SNIPPET),
+):
     INSTANCE_TUNABLES = {
-        'owner_participant': TunableEnumEntry(
+        "owner_participant": TunableEnumEntry(
             description="The Sim to perform/own purchases. Usually should be Actor.",
             tunable_type=ParticipantTypeSingle,
-            default=ParticipantTypeSingle.Actor
+            default=ParticipantTypeSingle.Actor,
         ),
-        'delivery_method': TunableVariant(
+        "delivery_method": TunableVariant(
             description="Where to spawn objects on successful purchase.",
             household_inventory=HouseholdInventoryDeliveryMethod.TunableFactory(),
             inventory=InventoryDeliveryMethod.TunableFactory(),
             mailbox=MailboxDeliveryMethod.TunableFactory(),
             multiple_inventories=MultipleInventoriesDeliveryMethod.TunableFactory(),
             participant_fgl=FglDeliveryMethod.TunableFactory(),
-            default='participant_fgl'
+            default="participant_fgl",
         ),
-        'loot_on_success': TunableList(
+        "loot_on_success": TunableList(
             description="Loot applied to the Actor if at least one item was purchased successfully",
             tunable=TunableReference(
                 manager=services.get_instance_manager(Types.ACTION),
                 pack_safe=True,
-            )
+            ),
         ),
-        'loot_on_failure': TunableList(
+        "loot_on_failure": TunableList(
             description="Loot applied to the Actor if at least one item failed to purchase",
             tunable=TunableReference(
                 manager=services.get_instance_manager(Types.ACTION),
                 pack_safe=True,
-            )
+            ),
         ),
-        'payment_source': get_tunable_payment_source_variant(description="All purchases will be debited from this source"),
-        'payment_destination': TunablePaymentDestinationVariant(description="If enabled, the total debited amount will be credited to this destination."),
-        'picker_dialog': UiPurchasePicker.TunableFactory(),
-        'price_multiplier': TunableMultiplier.TunableFactory(description="A multiplier applied to all purchase items"),
-        'purchase_items': TunableList(
+        "payment_source": get_tunable_payment_source_variant(
+            description="All purchases will be debited from this source"
+        ),
+        "payment_destination": TunablePaymentDestinationVariant(
+            description="If enabled, the total debited amount will be credited to this destination."
+        ),
+        "picker_dialog": UiPurchasePicker.TunableFactory(),
+        "price_multiplier": TunableMultiplier.TunableFactory(
+            description="A multiplier applied to all purchase items"
+        ),
+        "purchase_items": TunableList(
             tunable=TunablePurchaseItem.TunableFactory(),
         ),
-        'purchase_success_notification': OptionalTunable(
-            tunable=UiDialogNotification.TunableFactory(description="Notification to display if at least one purchase was successful")
+        "purchase_success_notification": OptionalTunable(
+            tunable=UiDialogNotification.TunableFactory(
+                description="Notification to display if at least one purchase was successful"
+            )
         ),
-        'purchase_failed_notification': OptionalTunable(
-            tunable=UiDialogNotification.TunableFactory(description="Notification to display if at least one purchase failed")
+        "purchase_failed_notification": OptionalTunable(
+            tunable=UiDialogNotification.TunableFactory(
+                description="Notification to display if at least one purchase failed"
+            )
         ),
-        'stock_management': OptionalTunable(
+        "stock_management": OptionalTunable(
             tunable=TunableStockManagement.TunableFactory()
         ),
-        'show_descriptions': Tunable(tunable_type=bool, default=True),
-        'show_tooltips': Tunable(tunable_type=bool, default=True),
-        'stop_on_first_failure': Tunable(description="Stop all purchases if an individual item failed to deliver, or had insufficient funds. Otherwise each item will attempt delivery and debit from sim.", tunable_type=bool, default=False),
+        "show_descriptions": Tunable(tunable_type=bool, default=True),
+        "show_tooltips": Tunable(tunable_type=bool, default=True),
+        "stop_on_first_failure": Tunable(
+            description="Stop all purchases if an individual item failed to deliver, or had insufficient funds. Otherwise each item will attempt delivery and debit from sim.",
+            tunable_type=bool,
+            default=False,
+        ),
     }
 
-    __slots__ = ('owner_participant', 'delivery_method', 'loot_on_success', 'loot_on_failure', 'payment_source', 'payment_destination', 'picker_dialog', 'price_multiplier', 'purchase_items', 'purchase_success_notification', 'purchase_failed_notification', 'stock_management', 'show_descriptions', 'show_tooltips', 'stop_on_first_failure',)
+    __slots__ = (
+        "owner_participant",
+        "delivery_method",
+        "loot_on_success",
+        "loot_on_failure",
+        "payment_source",
+        "payment_destination",
+        "picker_dialog",
+        "price_multiplier",
+        "purchase_items",
+        "purchase_success_notification",
+        "purchase_failed_notification",
+        "stock_management",
+        "show_descriptions",
+        "show_tooltips",
+        "stop_on_first_failure",
+    )
 
     @classmethod
     def _tuning_loaded_callback(cls):
@@ -230,7 +284,9 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
         if self.stock_management is not None:
             if self.stock_management.show_refresh_time:
                 refresh_time = stock_manager.get_time_to_refresh()
-                dialog.right_custom_text = ObjectMarketplacePickerInteraction.REFRESH_TIME_TEXT(refresh_time)
+                dialog.right_custom_text = (
+                    ObjectMarketplacePickerInteraction.REFRESH_TIME_TEXT(refresh_time)
+                )
 
         for row in self._picker_rows_gen():
             dialog.add_row(row)
@@ -245,7 +301,7 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
 
     @classmethod
     def has_valid_choice(cls, target, context, **kwargs):
-        resolver = SingleActorAndObjectResolver(context.sim, target, 'yourmom')
+        resolver = SingleActorAndObjectResolver(context.sim, target, "yourmom")
         picker = cls(resolver)
         for row in picker._picker_rows_gen():
             return True
@@ -254,17 +310,26 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
     @classmethod
     def get_stock_manager(cls):
         if cls.stock_management is not None:
-            return StockManager.get_stock_manager(cls, refresh_period=cls.stock_management.refresh_period)
+            return StockManager.get_stock_manager(
+                cls, refresh_period=cls.stock_management.refresh_period
+            )
 
     def get_purchase_items_gen(self, include_modifiers=True):
         yield from self.purchase_items
         if include_modifiers:
-            for snippet in services.get_instance_manager(Types.SNIPPET).get_ordered_types(only_subclasses_of=(PurchasePickerModifier,)):
-                if snippet.purchase_picker is not None and snippet.purchase_picker.guid64 == self.guid64:
+            for snippet in services.get_instance_manager(
+                Types.SNIPPET
+            ).get_ordered_types(only_subclasses_of=(PurchasePickerModifier,)):
+                if (
+                    snippet.purchase_picker is not None
+                    and snippet.purchase_picker.guid64 == self.guid64
+                ):
                     yield from snippet.additional_purchase_items
 
     def attempt_payment_source_debit(self, total_debit, resolver):
-        return self.payment_source.try_remove_funds(self.sim_info, total_debit, resolver=resolver)
+        return self.payment_source.try_remove_funds(
+            self.sim_info, total_debit, resolver=resolver
+        )
 
     def attempt_payment_destination_credit(self, total_amount, resolver):
         if self.payment_destination is not None:
@@ -288,7 +353,9 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
         """
         return price
 
-    def _hook_row_description(self, original_description, purchase_item, additional_data, resolver, obj=None):
+    def _hook_row_description(
+        self, original_description, purchase_item, additional_data, resolver, obj=None
+    ):
         return original_description
 
     def _hook_obj_purchased(self, obj, purchase_row_data, price, resolver):
@@ -304,7 +371,9 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
         """
         pass
 
-    def _hook_temporary_obj_created(self, obj, purchase_item, additional_data, quality_info=None):
+    def _hook_temporary_obj_created(
+        self, obj, purchase_item, additional_data, quality_info=None
+    ):
         pass
 
     def _hook_on_picker_rows_gen(self):
@@ -321,7 +390,6 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
         # Generate Cached Rows
         if stock_manager and stock_manager.has_picker_cache():
             for picker_data in stock_manager.get_picker_cache_gen():
-
                 definition_data = picker_data.definition_data
                 definition = definition_data.definition
 
@@ -339,13 +407,21 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
 
                 # Recalculate stock if necessary
                 current_stock = stock_manager.get_stock(stock_key)
-                if item.exclude_from_stock_management and item.limited_stock is not None:
-                    current_stock = random.randint(item.limited_stock.lower_bound, item.limited_stock.upper_bound)
+                if (
+                    item.exclude_from_stock_management
+                    and item.limited_stock is not None
+                ):
+                    current_stock = random.randint(
+                        item.limited_stock.lower_bound, item.limited_stock.upper_bound
+                    )
                 elif current_stock == StockManager.STOCK_LEVEL_UNLIMITED:
                     current_stock = None
 
                 # Skip item if stock has changed and should be hidden
-                if item.hide_if_sold_out and current_stock == StockManager.STOCK_LEVEL_ZERO:
+                if (
+                    item.hide_if_sold_out
+                    and current_stock == StockManager.STOCK_LEVEL_ZERO
+                ):
                     continue
 
                 # Spawn temporary object
@@ -354,13 +430,23 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                         if quality_info:
                             for state_value in quality_info.states:
                                 if state_value is not None:
-                                    obj.set_state(state_value.state, state_value, force_update=True)
-                        self._hook_temporary_obj_created(obj, item, additional_data, quality_info=quality_info)
+                                    obj.set_state(
+                                        state_value.state,
+                                        state_value,
+                                        force_update=True,
+                                    )
+                        self._hook_temporary_obj_created(
+                            obj, item, additional_data, quality_info=quality_info
+                        )
                     except:
-                        logger.exception("Failed post_add on cached temp purchase picker object")
+                        logger.exception(
+                            "Failed post_add on cached temp purchase picker object"
+                        )
 
                 if definition_data.recipe is not None:
-                    temp_obj = create_craftable(definition_data.recipe, None, post_add=_post_add)
+                    temp_obj = create_craftable(
+                        definition_data.recipe, None, post_add=_post_add
+                    )
                 else:
                     temp_obj = create_object(definition, post_add=_post_add)
 
@@ -389,41 +475,82 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                 # Get icon override
                 icon_override = None
                 # Override the icon with sold out icon
-                if self.stock_management and self.stock_management.sold_out_icon is not None and current_stock == StockManager.STOCK_LEVEL_ZERO:
-                    icon_override = IconInfoData(icon_resource=self.stock_management.sold_out_icon)
+                if (
+                    self.stock_management
+                    and self.stock_management.sold_out_icon is not None
+                    and current_stock == StockManager.STOCK_LEVEL_ZERO
+                ):
+                    icon_override = IconInfoData(
+                        icon_resource=self.stock_management.sold_out_icon
+                    )
 
                 # Get row name override
                 if item.display_name_override is not None:
-                    row_name = item.display_name_override(build_buy.get_object_catalog_name(definition.id))
+                    row_name = item.display_name_override(
+                        build_buy.get_object_catalog_name(definition.id)
+                    )
                 elif picker_data.custom_name is not None:
-                    row_name = LocalizationHelperTuning.get_raw_text(picker_data.custom_name)
+                    row_name = LocalizationHelperTuning.get_raw_text(
+                        picker_data.custom_name
+                    )
                 else:
-                    row_name = _create_localized_string(build_buy.get_object_catalog_name(definition.id))
+                    row_name = _create_localized_string(
+                        build_buy.get_object_catalog_name(definition.id)
+                    )
 
-                default_description = _create_localized_string(build_buy.get_object_catalog_description(definition.id))
+                default_description = _create_localized_string(
+                    build_buy.get_object_catalog_description(definition.id)
+                )
                 # Show disabled text override if not available to subject
                 if not is_enabled and item.disabled_description is not None:
-                    row_description = item.disabled_description(row_name, default_description)
+                    row_description = item.disabled_description(
+                        row_name, default_description
+                    )
                 # Otherwise show out of stock description if stock is managed
-                elif self.stock_management and self.stock_management.sold_out_description and current_stock == StockManager.STOCK_LEVEL_ZERO:
-                    row_description = self.stock_management.sold_out_description(row_name, default_description)
+                elif (
+                    self.stock_management
+                    and self.stock_management.sold_out_description
+                    and current_stock == StockManager.STOCK_LEVEL_ZERO
+                ):
+                    row_description = self.stock_management.sold_out_description(
+                        row_name, default_description
+                    )
                 # Get row description override
                 elif item.description_override is not None:
-                    row_description = item.description_override(row_name, default_description)
+                    row_description = item.description_override(
+                        row_name, default_description
+                    )
                 # Otherwise fallback to catalog description
                 else:
-                    row_description = self._hook_row_description(default_description, item, additional_data, resolver, obj=temp_obj)
+                    row_description = self._hook_row_description(
+                        default_description,
+                        item,
+                        additional_data,
+                        resolver,
+                        obj=temp_obj,
+                    )
 
                 # Cache row info for immediate dialog response
                 # Assumes dialog.purchase_by_object_ids is set to True.
-                self.current_price_data[temp_obj.id] = (price, base_cost,)
+                self.current_price_data[temp_obj.id] = (
+                    price,
+                    base_cost,
+                )
                 self.current_item_data[temp_obj.id] = picker_data
 
-                row = PurchasePickerRow(def_id=definition.id, is_enable=is_enabled, objects={temp_obj},
-                                        row_description=row_description, num_owned=0, num_available=current_stock,
-                                        tags=category_tags, custom_price=price,
-                                        icon_info_data_override=icon_override, show_discount=is_discounted,
-                                        prediscounted_price=prediscounted_price)
+                row = PurchasePickerRow(
+                    def_id=definition.id,
+                    is_enable=is_enabled,
+                    objects={temp_obj},
+                    row_description=row_description,
+                    num_owned=0,
+                    num_available=current_stock,
+                    tags=category_tags,
+                    custom_price=price,
+                    icon_info_data_override=icon_override,
+                    show_discount=is_discounted,
+                    prediscounted_price=prediscounted_price,
+                )
                 yield row
 
             return
@@ -439,13 +566,20 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
             weighted_qualities = list()
             for row in item.quality_states:
                 weight = row.weight.get_multiplier(resolver)
-                weighted_qualities.append((weight, row,))
+                weighted_qualities.append(
+                    (
+                        weight,
+                        row,
+                    )
+                )
 
             index = 0
 
             # Get Definitions from each source
             for item_source in item.item_sources:
-                for definition_data in item_source.get_definition_data_gen(resolver=resolver):
+                for definition_data in item_source.get_definition_data_gen(
+                    resolver=resolver
+                ):
                     if definition_data.definition is None:
                         logger.warn("Definition not found")
                         continue
@@ -455,7 +589,11 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                         continue
 
                     definition = definition_data.definition
-                    stock_key = (item.stock_id, definition, index,)
+                    stock_key = (
+                        item.stock_id,
+                        definition,
+                        index,
+                    )
 
                     additional_data = AttributeDict()
                     self._hook_additional_row_data(additional_data, item)
@@ -463,36 +601,61 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                     # Calculate available stock
                     current_stock = None
                     # Get current stock if managed
-                    if stock_manager and not stock_manager.should_refresh() and stock_manager.is_tracked(stock_key) and not item.exclude_from_stock_management:
+                    if (
+                        stock_manager
+                        and not stock_manager.should_refresh()
+                        and stock_manager.is_tracked(stock_key)
+                        and not item.exclude_from_stock_management
+                    ):
                         _stock_amount = stock_manager.get_stock(stock_key)
                         if _stock_amount > StockManager.STOCK_LEVEL_UNLIMITED:
                             current_stock = _stock_amount
                     # Otherwise get a random limited stock
                     elif item.limited_stock is not None:
-                        current_stock = random.randint(item.limited_stock.lower_bound, item.limited_stock.upper_bound)
+                        current_stock = random.randint(
+                            item.limited_stock.lower_bound,
+                            item.limited_stock.upper_bound,
+                        )
                         if stock_manager and not item.exclude_from_stock_management:
                             # Update stock manager for refresh
                             stock_manager.set_stock(stock_key, current_stock)
 
                     # Skip object if sold out and should hide
-                    if item.hide_if_sold_out and current_stock == StockManager.STOCK_LEVEL_ZERO:
+                    if (
+                        item.hide_if_sold_out
+                        and current_stock == StockManager.STOCK_LEVEL_ZERO
+                    ):
                         continue
 
                     # Select quality states and add to temp object
-                    quality_info = sims4.random.weighted_random_item(weighted_qualities) if len(weighted_qualities) > 0 else None
+                    quality_info = (
+                        sims4.random.weighted_random_item(weighted_qualities)
+                        if len(weighted_qualities) > 0
+                        else None
+                    )
 
                     def _post_add(obj):
                         try:
                             if quality_info:
                                 for state_value in quality_info.states:
                                     if state_value is not None:
-                                        obj.set_state(state_value.state, state_value, force_update=True)
-                            self._hook_temporary_obj_created(obj, item, additional_data, quality_info=quality_info)
+                                        obj.set_state(
+                                            state_value.state,
+                                            state_value,
+                                            force_update=True,
+                                        )
+                            self._hook_temporary_obj_created(
+                                obj, item, additional_data, quality_info=quality_info
+                            )
                         except:
-                            logger.exception("Failed post_add on cached temp purchase picker object")
+                            logger.exception(
+                                "Failed post_add on cached temp purchase picker object"
+                            )
 
                     if definition_data.recipe is not None:
-                        temp_obj = create_craftable(definition_data.recipe, None, post_add=_post_add)
+                        temp_obj = create_craftable(
+                            definition_data.recipe, None, post_add=_post_add
+                        )
                     else:
                         temp_obj = create_object(definition, post_add=_post_add)
 
@@ -506,10 +669,16 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
 
                     # Include recipe tags
                     if item.include_recipe_tags and definition_data.recipe is not None:
-                        category_tags = category_tags.union(definition_data.recipe.recipe_tags)
+                        category_tags = category_tags.union(
+                            definition_data.recipe.recipe_tags
+                        )
 
                     # Calculate price
-                    base_cost = item.custom_price if item.custom_price is not None else definition.price
+                    base_cost = (
+                        item.custom_price
+                        if item.custom_price is not None
+                        else definition.price
+                    )
                     price = base_cost
 
                     # Add quality_info multiplier
@@ -532,8 +701,14 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                     # Get icon override
                     icon_override = None
                     # Override the icon with sold out icon
-                    if self.stock_management and self.stock_management.sold_out_icon is not None and current_stock == StockManager.STOCK_LEVEL_ZERO:
-                        icon_override = IconInfoData(icon_resource=self.stock_management.sold_out_icon)
+                    if (
+                        self.stock_management
+                        and self.stock_management.sold_out_icon is not None
+                        and current_stock == StockManager.STOCK_LEVEL_ZERO
+                    ):
+                        icon_override = IconInfoData(
+                            icon_resource=self.stock_management.sold_out_icon
+                        )
 
                     # Get Custom Name
                     custom_name = None
@@ -542,27 +717,49 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
 
                     # Get row name override
                     if item.display_name_override is not None:
-                        row_name = item.display_name_override(build_buy.get_object_catalog_name(definition.id))
+                        row_name = item.display_name_override(
+                            build_buy.get_object_catalog_name(definition.id)
+                        )
                     elif custom_name is not None:
                         row_name = LocalizationHelperTuning.get_raw_text(custom_name)
                     else:
-                        row_name = _create_localized_string(build_buy.get_object_catalog_name(definition.id))
+                        row_name = _create_localized_string(
+                            build_buy.get_object_catalog_name(definition.id)
+                        )
 
                     # Get row description, fallback to object catalog description
-                    default_description = _create_localized_string(build_buy.get_object_catalog_description(definition.id))
+                    default_description = _create_localized_string(
+                        build_buy.get_object_catalog_description(definition.id)
+                    )
 
                     # Show disabled text override if not available to subject
                     if not is_enabled and item.disabled_description is not None:
-                        row_description = item.disabled_description(row_name, default_description)
+                        row_description = item.disabled_description(
+                            row_name, default_description
+                        )
                     # Otherwise show out of stock description if stock is managed
-                    elif self.stock_management and self.stock_management.sold_out_description and current_stock == StockManager.STOCK_LEVEL_ZERO:
-                        row_description = self.stock_management.sold_out_description(row_name, default_description)
+                    elif (
+                        self.stock_management
+                        and self.stock_management.sold_out_description
+                        and current_stock == StockManager.STOCK_LEVEL_ZERO
+                    ):
+                        row_description = self.stock_management.sold_out_description(
+                            row_name, default_description
+                        )
                     # Get row description override
                     elif item.description_override is not None:
-                        row_description = item.description_override(row_name, default_description)
+                        row_description = item.description_override(
+                            row_name, default_description
+                        )
                     # Otherwise fallback to catalog description
                     else:
-                        row_description = self._hook_row_description(default_description, item, additional_data, resolver, obj=temp_obj)
+                        row_description = self._hook_row_description(
+                            default_description,
+                            item,
+                            additional_data,
+                            resolver,
+                            obj=temp_obj,
+                        )
 
                     # Cache item data
                     purchase_row_data = self._create_purchase_data()
@@ -579,7 +776,10 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
 
                     # Cache row info for immediate dialog response
                     # Assumes dialog.purchase_by_object_ids is set to True.
-                    self.current_price_data[temp_obj.id] = (price, base_cost,)
+                    self.current_price_data[temp_obj.id] = (
+                        price,
+                        base_cost,
+                    )
                     self.current_item_data[temp_obj.id] = purchase_row_data
 
                     # Cache picker row for future use
@@ -589,11 +789,19 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                     # Increment row index for stock key
                     index += 1
 
-                    row = PurchasePickerRow(def_id=definition.id, is_enable=is_enabled, objects={temp_obj},
-                                            row_description=row_description, num_owned=0,
-                                            num_available=current_stock, tags=category_tags,
-                                            custom_price=price, icon_info_data_override=icon_override,
-                                            show_discount=is_discounted, prediscounted_price=prediscounted_price)
+                    row = PurchasePickerRow(
+                        def_id=definition.id,
+                        is_enable=is_enabled,
+                        objects={temp_obj},
+                        row_description=row_description,
+                        num_owned=0,
+                        num_available=current_stock,
+                        tags=category_tags,
+                        custom_price=price,
+                        icon_info_data_override=icon_override,
+                        show_discount=is_discounted,
+                        prediscounted_price=prediscounted_price,
+                    )
                     yield row
 
     def _show_purchase_notification(self, dialog_factory, resolver, tokens=()):
@@ -629,13 +837,17 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                     for x in range(amount_to_purchase):
                         try:
                             # Attempt payment
-                            if price > 0 and not self.attempt_payment_source_debit(price, resolver):
+                            if price > 0 and not self.attempt_payment_source_debit(
+                                price, resolver
+                            ):
                                 raise PurchaseException("NOT_ENOUGH_FUNDS")
 
                             # Object Creation
                             if purchase_data.definition_data.recipe is not None:
                                 # Attempt to craft object from recipe if available
-                                obj = create_craftable(purchase_data.definition_data.recipe, None)
+                                obj = create_craftable(
+                                    purchase_data.definition_data.recipe, None
+                                )
                             else:
                                 # Otherwise create object from definition
                                 obj = create_object(purchase_data.definition)
@@ -648,30 +860,58 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                                 for state_value in purchase_data.quality.states:
                                     try:
                                         if state_value is not None:
-                                            obj.set_state(state_value.state, state_value)
+                                            obj.set_state(
+                                                state_value.state, state_value
+                                            )
                                     except:
-                                        logger.exception("Failed setting state on final purchase picker object")
+                                        logger.exception(
+                                            "Failed setting state on final purchase picker object"
+                                        )
 
                             # Apply loot actions on object creation
-                            obj_resolver = SingleActorAndObjectResolver(actor, obj, source='yourmom')
-                            for loot_action in purchase_data.purchase_item.actions_on_creation:
+                            obj_resolver = SingleActorAndObjectResolver(
+                                actor, obj, source="yourmom"
+                            )
+                            for (
+                                loot_action
+                            ) in purchase_data.purchase_item.actions_on_creation:
                                 loot_action.apply_to_resolver(obj_resolver)
 
                             # Set Custom Name
-                            if purchase_data.custom_name is not None and purchase_data.purchase_item.set_custom_name_on_object:
+                            if (
+                                purchase_data.custom_name is not None
+                                and purchase_data.purchase_item.set_custom_name_on_object
+                            ):
                                 if not obj.has_component(NAME_COMPONENT):
-                                    obj.add_component(NameComponent(obj, allow_name=True, allow_description=False))
-                                obj.name_component.set_custom_name(purchase_data.custom_name)
+                                    obj.add_component(
+                                        NameComponent(
+                                            obj,
+                                            allow_name=True,
+                                            allow_description=False,
+                                        )
+                                    )
+                                obj.name_component.set_custom_name(
+                                    purchase_data.custom_name
+                                )
 
                             # Set Ownership
                             obj.set_household_owner_id(self.sim_info.household.id)
-                            if purchase_data.purchase_item.set_sim_as_owner and obj.ownable_component:
-                                obj.ownable_component.update_sim_ownership(self.sim_info.sim_id)
+                            if (
+                                purchase_data.purchase_item.set_sim_as_owner
+                                and obj.ownable_component
+                            ):
+                                obj.ownable_component.update_sim_ownership(
+                                    self.sim_info.sim_id
+                                )
 
                             # Get "off-the-lot" Depreciation
-                            depreciation_multiplier = purchase_data.purchase_item.depreciation_multiplier.get_multiplier(resolver)
+                            depreciation_multiplier = purchase_data.purchase_item.depreciation_multiplier.get_multiplier(
+                                resolver
+                            )
                             if purchase_data.quality is not None:
-                                depreciation_multiplier *= purchase_data.quality.static_depreciation_multiplier
+                                depreciation_multiplier *= (
+                                    purchase_data.quality.static_depreciation_multiplier
+                                )
 
                             # Set object value to purchase price
                             if purchase_data.purchase_item.use_base_cost_as_value:
@@ -683,15 +923,24 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                             obj.current_value = obj_value * depreciation_multiplier
 
                             # Handle Object Purchased Hook
-                            self._hook_obj_purchased(obj, purchase_data, price, resolver)
+                            self._hook_obj_purchased(
+                                obj, purchase_data, price, resolver
+                            )
 
                             # Attempt to deliver object
-                            if purchase_data.purchase_item.delivery_override is not None:
-                                delivery_method = purchase_data.purchase_item.delivery_override
+                            if (
+                                purchase_data.purchase_item.delivery_override
+                                is not None
+                            ):
+                                delivery_method = (
+                                    purchase_data.purchase_item.delivery_override
+                                )
                             else:
                                 delivery_method = self.delivery_method
 
-                            if not delivery_method(resolver, obj, participant=self.owner_participant):
+                            if not delivery_method(
+                                resolver, obj, participant=self.owner_participant
+                            ):
                                 obj.destroy()
                                 raise PurchaseException("DELIVERY_FAILED")
 
@@ -704,7 +953,11 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                                 stock_manager.subtract_stock(stock_key)
 
                         except PurchaseException:
-                            logger.exception("Delivery failed for purchase item with stock key: {}".format(stock_key))
+                            logger.exception(
+                                "Delivery failed for purchase item with stock key: {}".format(
+                                    stock_key
+                                )
+                            )
                             # Aggregate failure count and stop looping if flagged to stop
                             if self.stop_on_first_failure:
                                 failed_count = amount_to_purchase
@@ -723,7 +976,15 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                     self.attempt_payment_destination_credit(total_debit, resolver)
 
                     # Show success notification
-                    self._show_purchase_notification(self.purchase_success_notification, resolver, tokens=(purchase_count, failed_count, total_debit,))
+                    self._show_purchase_notification(
+                        self.purchase_success_notification,
+                        resolver,
+                        tokens=(
+                            purchase_count,
+                            failed_count,
+                            total_debit,
+                        ),
+                    )
 
                 if failed_count > 0:
                     # Apply failure loot
@@ -731,7 +992,15 @@ class PurchasePickerSnippet(metaclass=HashedTunedInstanceMetaclass, manager=serv
                         loot.apply_to_resolver(resolver)
 
                     # Show failure notification
-                    self._show_purchase_notification(self.purchase_failed_notification, resolver, tokens=(purchase_count, failed_count, total_debit,))
+                    self._show_purchase_notification(
+                        self.purchase_failed_notification,
+                        resolver,
+                        tokens=(
+                            purchase_count,
+                            failed_count,
+                            total_debit,
+                        ),
+                    )
         except:
             logger.exception("failed purchasing")
         finally:

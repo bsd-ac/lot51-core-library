@@ -8,10 +8,16 @@ from sims4.tuning.tunable import OptionalTunable, TunableInterval
 
 class TransformObjectLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'object_source': ObjectSearchMethodVariant(),
-        'orientation': OptionalTunable(
+        "object_source": ObjectSearchMethodVariant(),
+        "orientation": OptionalTunable(
             description="A 360 degree angle value to add to the current object orientation",
-            tunable=TunableInterval(tunable_type=int, default_lower=0, default_upper=360, minimum=-360, maximum=360)
+            tunable=TunableInterval(
+                tunable_type=int,
+                default_lower=0,
+                default_upper=360,
+                minimum=-360,
+                maximum=360,
+            ),
         ),
     }
 
@@ -31,7 +37,9 @@ class TransformObjectLoot(BaseLootOperation):
         for obj in self._object_source.get_objects_gen(resolver=resolver):
             try:
                 if self._orientation is not None:
-                    chosen_angle = random.randint(self._orientation.lower_bound, self._orientation.upper_bound)
+                    chosen_angle = random.randint(
+                        self._orientation.lower_bound, self._orientation.upper_bound
+                    )
                     self._apply_orientation(obj, angle=chosen_angle)
             except:
                 logger.exception("Failed to transform object: {}".format(obj))

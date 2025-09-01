@@ -35,4 +35,3 @@ class Context:
     def get_current_context():
         zone = services.current_zone()
         return Context(zone)
-

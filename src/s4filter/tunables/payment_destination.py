@@ -1,10 +1,16 @@
-from interactions.payment.payment_dest import PaymentDestNone, PaymentDestActiveHousehold, \
-    PaymentDestParticipantHousehold, PaymentDestBusiness, PaymentDestStatistic, PaymentDestRentalUnitPropertyOwners
+from interactions.payment.payment_dest import (
+    PaymentDestNone,
+    PaymentDestActiveHousehold,
+    PaymentDestParticipantHousehold,
+    PaymentDestBusiness,
+    PaymentDestStatistic,
+    PaymentDestRentalUnitPropertyOwners,
+)
 from sims4.tuning.tunable import TunableVariant
 
 
 class TunablePaymentDestinationVariant(TunableVariant):
-    def __init__(self, default='disabled', **kwargs):
+    def __init__(self, default="disabled", **kwargs):
         super().__init__(
             default=default,
             disabled=PaymentDestNone.TunableFactory(),

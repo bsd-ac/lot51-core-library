@@ -19,7 +19,6 @@ with sims4.reload.protected(globals()):
 
 
 class SaveBasedConfig:
-
     def __init__(self, config_name, logger, default_data: dict = None, unpickler=None):
         self._config = dict()
         self._config_name = config_name
@@ -76,28 +75,38 @@ class SaveBasedConfig:
                 return household
 
     def _create_household(self):
-        (sim_info_list, new_household) = SimSpawner.create_sim_infos((SimCreator(),), zone_id=0)
+        (sim_info_list, new_household) = SimSpawner.create_sim_infos(
+            (SimCreator(),), zone_id=0
+        )
         sim_info_list[0].request_lod(SimInfoLODLevel.MINIMUM)
         new_household.set_to_hidden()
         new_household.name = self.household_name
-        new_household.description = ''
+        new_household.description = ""
         return new_household
 
     def find_or_create_household(self):
         household = self._find_household()
         if household:
-            self.logger.debug("[SaveBasedConfig] Found save based config household: {}".format(household))
+            self.logger.debug(
+                "[SaveBasedConfig] Found save based config household: {}".format(
+                    household
+                )
+            )
             return household
         household = self._create_household()
         if household:
-            self.logger.debug("[SaveBasedConfig] Created new save based config household: {}".format(household))
+            self.logger.debug(
+                "[SaveBasedConfig] Created new save based config household: {}".format(
+                    household
+                )
+            )
             return household
         raise Exception("[SaveBasedConfig] Failed to create household")
 
     def _load(self):
         household = self.find_or_create_household()
         # self.logger.debug("household description is: {}".format(household.description))
-        serialized = bytes(household.description, encoding='latin1')
+        serialized = bytes(household.description, encoding="latin1")
         # self.logger.debug("loaded save based config data: {}".format(serialized))
         try:
             if self._unpickler:
@@ -110,15 +119,21 @@ class SaveBasedConfig:
 
     def _save(self, data):
         household = self.find_or_create_household()
-        serialized = str(pickle.dumps(data), encoding='latin1')
+        serialized = str(pickle.dumps(data), encoding="latin1")
         household.description = serialized
         # self.logger.debug("set save based config data: {} -> {}".format(data, serialized))
 
 
-@inject_to(SimInfo, 'get_culling_immunity_reasons')
-def lot51_save_based_config_get_culling_immunity_reasons(original, self, *args, **kwargs):
+@inject_to(SimInfo, "get_culling_immunity_reasons")
+def lot51_save_based_config_get_culling_immunity_reasons(
+    original, self, *args, **kwargs
+):
     global instanced_configs
-    lot51_core.logger.debug("[SavedBasedConfig] getting culling immunity reasons for sim {}".format(get_sim_name(self)))
+    lot51_core.logger.debug(
+        "[SavedBasedConfig] getting culling immunity reasons for sim {}".format(
+            get_sim_name(self)
+        )
+    )
     reasons = original(self, *args, **kwargs)
     if len(reasons) or self.household is None:
         return reasons
@@ -126,6 +141,10 @@ def lot51_save_based_config_get_culling_immunity_reasons(original, self, *args, 
     for config in instanced_configs:
         if config.household_name == household_name:
             reasons.append(CullingReasons.TRAIT_IMMUNE)
-            config.logger.warn("[SavedBasedConfig] Sim in config storage household '{}' was attempted to be culled!".format(config.config_name))
+            config.logger.warn(
+                "[SavedBasedConfig] Sim in config storage household '{}' was attempted to be culled!".format(
+                    config.config_name
+                )
+            )
             break
     return reasons

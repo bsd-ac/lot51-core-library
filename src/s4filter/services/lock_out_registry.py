@@ -10,7 +10,6 @@ from event_testing.register_test_event_mixin import RegisterTestEventMixin
 
 
 class AffordanceLockOutRegistry(RegisterTestEventMixin):
-
     def __init__(self):
         super().__init__()
         self._registry = dict()
@@ -31,7 +30,15 @@ class AffordanceLockOutRegistry(RegisterTestEventMixin):
                 if row._disabled:
                     continue
                 if affordance in row.affordances:
-                    if (is_user_directed and row.compatibility_type is LockCompatibilityType.AUTONOMOUS_ONLY) or (not is_user_directed and row.compatibility_type is LockCompatibilityType.USER_DIRECTED_ONLY):
+                    if (
+                        is_user_directed
+                        and row.compatibility_type
+                        is LockCompatibilityType.AUTONOMOUS_ONLY
+                    ) or (
+                        not is_user_directed
+                        and row.compatibility_type
+                        is LockCompatibilityType.USER_DIRECTED_ONLY
+                    ):
                         return 0
                     return row.interval.random_float()
         return default
@@ -39,18 +46,29 @@ class AffordanceLockOutRegistry(RegisterTestEventMixin):
     def on_interaction_start(self, interaction):
         now = services.time_service().sim_now
         if interaction.is_super:
-            duration = self.get_lock_out_time(interaction.get_interaction_type(), is_user_directed=interaction.is_user_directed)
+            duration = self.get_lock_out_time(
+                interaction.get_interaction_type(),
+                is_user_directed=interaction.is_user_directed,
+            )
             if duration > 0:
                 lock_out_time = now + create_time_span(minutes=duration)
                 actor = interaction.sim.sim_info
-                key = self.get_key(actor, interaction.get_interaction_type(), target=interaction.target)
+                key = self.get_key(
+                    actor, interaction.get_interaction_type(), target=interaction.target
+                )
                 self._registry[key] = lock_out_time
-                logger.debug("[AffordanceLockOutRegistry] interaction is now locked: {} for {} minutes".format(key, duration))
+                logger.debug(
+                    "[AffordanceLockOutRegistry] interaction is now locked: {} for {} minutes".format(
+                        key, duration
+                    )
+                )
 
     def _setup_cleanup_alarm(self):
         if self._cleanup_alarm is None:
             time_span = create_time_span(hours=3)
-            self._cleanup_alarm = alarms.add_alarm(self, time_span, self._handle_cleanup_alarm)
+            self._cleanup_alarm = alarms.add_alarm(
+                self, time_span, self._handle_cleanup_alarm
+            )
 
     def _handle_cleanup_alarm(self, _):
         try:
@@ -77,7 +95,7 @@ class AffordanceLockOutRegistry(RegisterTestEventMixin):
 
     def handle_event(self, sim_info, event, resolver):
         if event == TestEvent.InteractionStart:
-            interaction = resolver.event_kwargs['interaction']
+            interaction = resolver.event_kwargs["interaction"]
             self.on_interaction_start(interaction)
 
 
@@ -94,10 +112,10 @@ def _lockout_on_zone_unload(*args, **kwargs):
     lock_out_registry.stop()
 
 
-@Command('lock_out.print_keys', command_type=CommandType.Live)
+@Command("lock_out.print_keys", command_type=CommandType.Live)
 def _print_lock_out_keys(_connection=None):
-    logger.info('#### LOCKOUT KEYS ####')
-    logger.info('Current Time: {}'.format(services.time_service().sim_now))
+    logger.info("#### LOCKOUT KEYS ####")
+    logger.info("Current Time: {}".format(services.time_service().sim_now))
     for key, value in lock_out_registry._registry.items():
         logger.info("Key: {}".format(key))
         logger.info("Value: {}".format(value))

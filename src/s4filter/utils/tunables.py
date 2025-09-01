@@ -14,7 +14,7 @@ def create_factory_wrapper(cls, locked_args=None, **tuned_values):
     if isinstance(cls, type) and issubclass(cls, TunableFactory):
         # this means the cls is a subclass of TunableFactory and can be called directly
         factory = cls(locked_args=locked_args)
-    elif hasattr(cls, 'TunableFactory'):
+    elif hasattr(cls, "TunableFactory"):
         # this means the cls is a subclass of HasFactoryTunable or HasFactorySingletonTunable
         # and provides the TunableFactory as a property.
         factory = cls.TunableFactory(locked_args=locked_args)
@@ -32,7 +32,9 @@ def create_factory_wrapper(cls, locked_args=None, **tuned_values):
     return factory._create_dict(tuned_values, factory.locked_args)
 
 
-def clone_factory_wrapper_with_overrides(wrapper, locked_args=None, **tuned_values_overrides):
+def clone_factory_wrapper_with_overrides(
+    wrapper, locked_args=None, **tuned_values_overrides
+):
     """
     Clones a TunableFactoryWrapper with optional overrides. The wrapped class usually extends HasTunableFactory.
 
@@ -51,7 +53,9 @@ def clone_factory_wrapper_with_overrides(wrapper, locked_args=None, **tuned_valu
     return TunableFactory.TunableFactoryWrapper(tuned_values, wrapper._name, cls)
 
 
-def clone_factory_with_overrides(cls, auto_init=True, locked_args=None, **tuned_values_overrides):
+def clone_factory_with_overrides(
+    cls, auto_init=True, locked_args=None, **tuned_values_overrides
+):
     """
     Clones an instantiated tunable that extends HasTunableSingletonFactory, with optional overrides.
     Turn auto_init off to return a wrapper.

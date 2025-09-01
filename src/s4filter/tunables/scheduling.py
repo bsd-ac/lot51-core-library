@@ -5,8 +5,16 @@ import services
 from date_and_time import create_time_span, DateAndTime, TimeSpan, create_date_and_time
 from lot51_core import logger
 from lot51_core.constants import DayOfWeek
-from sims4.tuning.tunable import TunableVariant, TunableRange, HasTunableFactory, AutoFactoryInit, TunableTuple, \
-    OptionalTunable, TunableEnumSet, Tunable, TunableInterval
+from sims4.tuning.tunable import (
+    TunableVariant,
+    TunableRange,
+    HasTunableFactory,
+    AutoFactoryInit,
+    TunableTuple,
+    OptionalTunable,
+    TunableEnumSet,
+    TunableInterval,
+)
 
 
 class BaseTunableAlarm(HasTunableFactory, AutoFactoryInit):
@@ -49,7 +57,11 @@ class BaseTunableAlarm(HasTunableFactory, AutoFactoryInit):
 
         time_span = self.get_time_span(on_reschedule=on_reschedule)
         if time_span <= TimeSpan.ONE:
-            logger.warn("[{}] Alarm is a performance risk. Preventing schedule from continuing.".format(self))
+            logger.warn(
+                "[{}] Alarm is a performance risk. Preventing schedule from continuing.".format(
+                    self
+                )
+            )
             return
         if time_span < self.MINIMUM_INTERVAL:
             time_span = self.MINIMUM_INTERVAL
@@ -73,25 +85,26 @@ class BaseTunableAlarm(HasTunableFactory, AutoFactoryInit):
 
 
 class TunableIntervalAlarm(BaseTunableAlarm):
-
     FACTORY_TUNABLES = {
-        'days_available': TunableEnumSet(enum_type=DayOfWeek),
-        'start_time': OptionalTunable(
+        "days_available": TunableEnumSet(enum_type=DayOfWeek),
+        "start_time": OptionalTunable(
             tunable=TunableTuple(
                 hour=TunableRange(tunable_type=int, minimum=0, maximum=23, default=8),
-                minutes=TunableRange(tunable_type=int, minimum=0, maximum=59, default=0),
+                minutes=TunableRange(
+                    tunable_type=int, minimum=0, maximum=59, default=0
+                ),
             )
         ),
-        'random_offset': OptionalTunable(
+        "random_offset": OptionalTunable(
             tunable=TunableInterval(
                 default_lower=0,
                 default_upper=1440,
                 tunable_type=int,
             ),
         ),
-        'days': TunableRange(tunable_type=int, minimum=0, default=0),
-        'hours': TunableRange(tunable_type=int, minimum=0, default=0),
-        'minutes': TunableRange(tunable_type=int, minimum=0, default=0),
+        "days": TunableRange(tunable_type=int, minimum=0, default=0),
+        "hours": TunableRange(tunable_type=int, minimum=0, default=0),
+        "minutes": TunableRange(tunable_type=int, minimum=0, default=0),
     }
 
     def is_day_available(self, now):
@@ -103,14 +116,25 @@ class TunableIntervalAlarm(BaseTunableAlarm):
         now = services.time_service().sim_now
 
         if self.random_offset is not None:
-            random_offset = create_time_span(minutes=random.randint(self.random_offset.lower_bound, self.random_offset.upper_bound))
+            random_offset = create_time_span(
+                minutes=random.randint(
+                    self.random_offset.lower_bound, self.random_offset.upper_bound
+                )
+            )
         else:
             random_offset = TimeSpan(0)
 
         if self.start_time is not None and not on_reschedule:
-            time_span = clock.time_until_hour_of_day(now, self.start_time.hour) + create_time_span(minutes=self.start_time.minutes) + random_offset
+            time_span = (
+                clock.time_until_hour_of_day(now, self.start_time.hour)
+                + create_time_span(minutes=self.start_time.minutes)
+                + random_offset
+            )
         else:
-            time_span = create_time_span(days=self.days, hours=self.hours, minutes=self.minutes) + random_offset
+            time_span = (
+                create_time_span(days=self.days, hours=self.hours, minutes=self.minutes)
+                + random_offset
+            )
 
         schedule_time = now + time_span
 
@@ -130,8 +154,8 @@ class TunableIntervalAlarm(BaseTunableAlarm):
 
 class TunableAlarmVariant(TunableVariant):
     VARIANT_TYPES = {
-        'interval': TunableIntervalAlarm.TunableFactory(),
+        "interval": TunableIntervalAlarm.TunableFactory(),
     }
 
     def __init__(self, *args, default=None, **kwargs):
-        super().__init__(*args, **self.VARIANT_TYPES, default='interval', **kwargs)
+        super().__init__(*args, **self.VARIANT_TYPES, default="interval", **kwargs)

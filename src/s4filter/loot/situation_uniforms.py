@@ -8,11 +8,13 @@ from sims4.tuning.tunable import OptionalTunable, TunableReference
 
 class ReapplyJobUniformLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'situation': OptionalTunable(
+        "situation": OptionalTunable(
             description="Require target sims to be in a specific situation",
-            tunable=TunableReference(manager=services.get_instance_manager(Types.SITUATION))
+            tunable=TunableReference(
+                manager=services.get_instance_manager(Types.SITUATION)
+            ),
         ),
-        'object_source': ObjectSearchMethodVariant(),
+        "object_source": ObjectSearchMethodVariant(),
     }
 
     def __init__(self, object_source=None, situation=None, **kwargs):
@@ -25,9 +27,14 @@ class ReapplyJobUniformLoot(BaseLootOperation):
             if not sim.is_sim or sim.is_hidden():
                 continue
             logger.debug("applying situation uniform for sim {}".format(sim))
-            situations = services.get_zone_situation_manager().get_situations_sim_is_in(sim)
+            situations = services.get_zone_situation_manager().get_situations_sim_is_in(
+                sim
+            )
             for situation in situations:
-                if self._situation is not None and self._situation.guid64 != situation.guid64:
+                if (
+                    self._situation is not None
+                    and self._situation.guid64 != situation.guid64
+                ):
                     continue
                 logger.debug("found situation {}".format(situation))
                 job_type = situation.get_current_job_for_sim(sim)

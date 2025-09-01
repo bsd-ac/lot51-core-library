@@ -5,28 +5,49 @@ import sims4.random
 from lot51_core.tunables.bitwise_flags import TunableFlags
 from objects.object_enums import ResetReason
 from placement import create_starting_location, FGLSearchFlag
-from routing import get_routing_surface_at_or_below_position, SurfaceType, SurfaceIdentifier
+from routing import (
+    get_routing_surface_at_or_below_position,
+    SurfaceType,
+    SurfaceIdentifier,
+)
 from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, Tunable
 
-DEFAULT_ON_LOT_SEARCH_FLAGS = FGLSearchFlag.CALCULATE_RESULT_TERRAIN_HEIGHTS | FGLSearchFlag.DONE_ON_MAX_RESULTS | FGLSearchFlag.STAY_OUTSIDE | FGLSearchFlag.STAY_IN_LOT
+DEFAULT_ON_LOT_SEARCH_FLAGS = (
+    FGLSearchFlag.CALCULATE_RESULT_TERRAIN_HEIGHTS
+    | FGLSearchFlag.DONE_ON_MAX_RESULTS
+    | FGLSearchFlag.STAY_OUTSIDE
+    | FGLSearchFlag.STAY_IN_LOT
+)
 
 
 class TunableCoordinates(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
-        'x': Tunable(
+        "x": Tunable(
             tunable_type=float,
             default=None,
             allow_empty=True,
         ),
-        'z': Tunable(
+        "z": Tunable(
             tunable_type=float,
             default=None,
             allow_empty=True,
         ),
-        'search_flags': TunableFlags(enum_type=FGLSearchFlag, default_enum_list={FGLSearchFlag.CALCULATE_RESULT_TERRAIN_HEIGHTS,FGLSearchFlag.DONE_ON_MAX_RESULTS,FGLSearchFlag.STAY_OUTSIDE,FGLSearchFlag.STAY_IN_LOT})
+        "search_flags": TunableFlags(
+            enum_type=FGLSearchFlag,
+            default_enum_list={
+                FGLSearchFlag.CALCULATE_RESULT_TERRAIN_HEIGHTS,
+                FGLSearchFlag.DONE_ON_MAX_RESULTS,
+                FGLSearchFlag.STAY_OUTSIDE,
+                FGLSearchFlag.STAY_IN_LOT,
+            },
+        ),
     }
 
-    __slots__ = ('x', 'z', 'search_flags',)
+    __slots__ = (
+        "x",
+        "z",
+        "search_flags",
+    )
 
     @classmethod
     def create_from_target(cls, obj):
@@ -42,17 +63,21 @@ class TunableCoordinates(HasTunableSingletonFactory, AutoFactoryInit):
 
         sim.routing_component.on_slot = None
         sim.set_location(location)
-        sim.reset(ResetReason.RESET_EXPECTED, None, 'Command')
+        sim.reset(ResetReason.RESET_EXPECTED, None, "Command")
         return True
 
-    def move_object_to(self, obj, facing_coordinates=None, use_fgl=False, search_flags=None):
+    def move_object_to(
+        self, obj, facing_coordinates=None, use_fgl=False, search_flags=None
+    ):
         orientation = self._get_orientation(facing_coordinates)
         if search_flags is None:
             search_flags = self.search_flags.get()
 
         if use_fgl:
             location = self._get_starting_location()
-            fgl_context = placement.create_fgl_context_for_object(location, obj, search_flags=search_flags)
+            fgl_context = placement.create_fgl_context_for_object(
+                location, obj, search_flags=search_flags
+            )
             (position, _, _) = fgl_context.find_good_location()
         else:
             location = self._get_location(orientation)
@@ -60,26 +85,44 @@ class TunableCoordinates(HasTunableSingletonFactory, AutoFactoryInit):
 
         if position is None:
             return False
-        obj.move_to(translation=position, orientation=orientation, routing_surface=location.routing_surface)
+        obj.move_to(
+            translation=position,
+            orientation=orientation,
+            routing_surface=location.routing_surface,
+        )
         obj.reset(ResetReason.RESET_EXPECTED)
         return True
 
-    def move_object_to_off_lot(self, obj, facing_coordinates=None, use_fgl=False, max_distance=3):
+    def move_object_to_off_lot(
+        self, obj, facing_coordinates=None, use_fgl=False, max_distance=3
+    ):
         orientation = self._get_orientation(facing_coordinates)
         use_world_routing_surface = True
         if use_fgl:
-            self._set_object_location(obj, orientation, use_world_routing_surface=use_world_routing_surface)
-            location = self._get_starting_location(use_world_routing_surface=use_world_routing_surface)
-            fgl_context = placement.create_fgl_context_for_object_off_lot(location, obj, max_distance=max_distance)
+            self._set_object_location(
+                obj, orientation, use_world_routing_surface=use_world_routing_surface
+            )
+            location = self._get_starting_location(
+                use_world_routing_surface=use_world_routing_surface
+            )
+            fgl_context = placement.create_fgl_context_for_object_off_lot(
+                location, obj, max_distance=max_distance
+            )
             (position, _, _) = fgl_context.find_good_location()
         else:
-            location = self._get_location(orientation, use_world_routing_surface=use_world_routing_surface)
+            location = self._get_location(
+                orientation, use_world_routing_surface=use_world_routing_surface
+            )
             position = location.transform.translation
 
         if position is None:
             return False
 
-        obj.move_to(translation=position, orientation=orientation, routing_surface=location.routing_surface)
+        obj.move_to(
+            translation=position,
+            orientation=orientation,
+            routing_surface=location.routing_surface,
+        )
         obj.reset(ResetReason.RESET_EXPECTED)
         return True
 
@@ -94,12 +137,20 @@ class TunableCoordinates(HasTunableSingletonFactory, AutoFactoryInit):
         return get_routing_surface_at_or_below_position(position)
 
     def _get_world_routing_surface(self):
-        return SurfaceIdentifier(services.current_zone_id(), 0, SurfaceType.SURFACETYPE_WORLD)
+        return SurfaceIdentifier(
+            services.current_zone_id(), 0, SurfaceType.SURFACETYPE_WORLD
+        )
 
     def _get_starting_location(self, use_world_routing_surface=False):
         position = self._get_position()
-        routing_surface = self._get_world_routing_surface() if use_world_routing_surface else self._get_routing_surface()
-        return create_starting_location(position=position, routing_surface=routing_surface)
+        routing_surface = (
+            self._get_world_routing_surface()
+            if use_world_routing_surface
+            else self._get_routing_surface()
+        )
+        return create_starting_location(
+            position=position, routing_surface=routing_surface
+        )
 
     def _get_orientation_to_position(self, target_position):
         starting_position = self._get_position()
@@ -120,8 +171,14 @@ class TunableCoordinates(HasTunableSingletonFactory, AutoFactoryInit):
 
     def _get_location(self, orientation, use_world_routing_surface=False):
         transform = self._get_transform(orientation)
-        routing_surface = self._get_world_routing_surface() if use_world_routing_surface else self._get_routing_surface()
+        routing_surface = (
+            self._get_world_routing_surface()
+            if use_world_routing_surface
+            else self._get_routing_surface()
+        )
         return sims4.math.Location(transform, routing_surface)
 
     def _set_object_location(self, obj, orientation, use_world_routing_surface=False):
-        obj.location = self._get_location(orientation, use_world_routing_surface=use_world_routing_surface)
+        obj.location = self._get_location(
+            orientation, use_world_routing_surface=use_world_routing_surface
+        )

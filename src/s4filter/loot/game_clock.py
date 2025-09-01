@@ -6,7 +6,14 @@ from sims4.tuning.tunable import TunableEnumEntry
 
 class GameClockSpeedLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'clock_speed': TunableEnumEntry(tunable_type=ClockSpeedMode, default=ClockSpeedMode.NORMAL, invalid_enums=(ClockSpeedMode.INTERACTION_STARTUP_SPEED, ClockSpeedMode.SUPER_SPEED3,)),
+        "clock_speed": TunableEnumEntry(
+            tunable_type=ClockSpeedMode,
+            default=ClockSpeedMode.NORMAL,
+            invalid_enums=(
+                ClockSpeedMode.INTERACTION_STARTUP_SPEED,
+                ClockSpeedMode.SUPER_SPEED3,
+            ),
+        ),
     }
 
     def __init__(self, clock_speed=False, **kwargs):

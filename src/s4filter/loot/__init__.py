@@ -22,33 +22,36 @@ from tunable_multiplier import TunableMultiplier
 
 
 class LotFiftyOneCoreLootActionVariant(LootActionVariant):
-
     LOOT_VARIANTS = {
-        'actions_by_object_source': DoActionsByObjectSource.TunableFactory(),
-        'balloon': BalloonLoot.TunableFactory(),
-        'camera_focus': CameraFocusLoot.TunableFactory(),
-        'clock_speed': GameClockSpeedLoot.TunableFactory(),
-        'create_object_ring': CreateObjectRingLoot.TunableFactory(),
-        'end_vacation': EndVacationLoot.TunableFactory(),
-        'flag_stat': FlagStatLoot.TunableFactory(),
-        'open_purchase_picker': OpenPurchasePickerLoot.TunableFactory(),
-        'reapply_job_uniform': ReapplyJobUniformLoot.TunableFactory(),
-        'return_stolen_object': ReturnStolenObjectLoot.TunableFactory(),
-        'schedule_situation': ScheduleSituationVariant(),
-        'single_notification': SingleNotification.TunableFactory(),
-        'spawn_object': SpawnObjectLoot.TunableFactory(),
-        'transform_object': TransformObjectLoot.TunableFactory(),
+        "actions_by_object_source": DoActionsByObjectSource.TunableFactory(),
+        "balloon": BalloonLoot.TunableFactory(),
+        "camera_focus": CameraFocusLoot.TunableFactory(),
+        "clock_speed": GameClockSpeedLoot.TunableFactory(),
+        "create_object_ring": CreateObjectRingLoot.TunableFactory(),
+        "end_vacation": EndVacationLoot.TunableFactory(),
+        "flag_stat": FlagStatLoot.TunableFactory(),
+        "open_purchase_picker": OpenPurchasePickerLoot.TunableFactory(),
+        "reapply_job_uniform": ReapplyJobUniformLoot.TunableFactory(),
+        "return_stolen_object": ReturnStolenObjectLoot.TunableFactory(),
+        "schedule_situation": ScheduleSituationVariant(),
+        "single_notification": SingleNotification.TunableFactory(),
+        "spawn_object": SpawnObjectLoot.TunableFactory(),
+        "transform_object": TransformObjectLoot.TunableFactory(),
     }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, statistic_pack_safe=True, **kwargs, **self.LOOT_VARIANTS)
+        super().__init__(
+            *args, statistic_pack_safe=True, **kwargs, **self.LOOT_VARIANTS
+        )
 
 
 class LotFiftyOneCoreRandomWeightedLoot(RandomWeightedLoot):
     INSTANCE_TUNABLES = {
-        'random_loot_actions': TunableList(
+        "random_loot_actions": TunableList(
             tunable=TunableTuple(
-                action=LotFiftyOneCoreLootActionVariant(do_nothing=DoNothingLootOp.TunableFactory()),
+                action=LotFiftyOneCoreLootActionVariant(
+                    do_nothing=DoNothingLootOp.TunableFactory()
+                ),
                 weight=TunableMultiplier.TunableFactory(),
             )
         )
@@ -56,13 +59,12 @@ class LotFiftyOneCoreRandomWeightedLoot(RandomWeightedLoot):
 
 
 class LotFiftyOneCoreLootActions(LootActions):
-
     INSTANCE_TUNABLES = {
-        'loot_actions': TunableList(
-            description='List of loot operations that will be awarded.',
-            tunable=LotFiftyOneCoreLootActionVariant()
+        "loot_actions": TunableList(
+            description="List of loot operations that will be awarded.",
+            tunable=LotFiftyOneCoreLootActionVariant(),
         ),
-        'chance': OptionalTunable(
+        "chance": OptionalTunable(
             tunable=SuccessChance.TunableFactory(),
         ),
     }
@@ -78,7 +80,11 @@ class LotFiftyOneCoreLootActions(LootActions):
     @blueprintmethod
     def get_loot_ops_gen(self, resolver=None, **kwargs):
         try:
-            if resolver is not None and self.tests and not self.tests.run_tests(resolver):
+            if (
+                resolver is not None
+                and self.tests
+                and not self.tests.run_tests(resolver)
+            ):
                 return
             if self.chance is not None:
                 chance = self.chance.get_chance(resolver)

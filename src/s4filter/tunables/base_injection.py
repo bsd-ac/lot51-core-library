@@ -11,7 +11,6 @@ class InjectionTiming(enum.Int):
 
 
 class BaseTunableInjection(HasTunableSingletonFactory, AutoFactoryInit):
-
     @property
     def injection_timing(self):
         return InjectionTiming.TUNING_LOADED

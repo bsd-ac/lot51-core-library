@@ -14,47 +14,57 @@ from tunable_multiplier import TunableMultiplier
 try:
     from luck.luck_option import TunableLuckOptionData
 except:
+
     class TunableLuckOptionData(TunableTuple):
         pass
 
 
 class TunableLootInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
-        'loot': TunableReference(manager=services.get_instance_manager(Types.ACTION)),
-        'ops': TunableList(tunable=LotFiftyOneCoreLootActionVariant()),
-        'modify_tests': TestInjectionVariant(),
+        "loot": TunableReference(manager=services.get_instance_manager(Types.ACTION)),
+        "ops": TunableList(tunable=LotFiftyOneCoreLootActionVariant()),
+        "modify_tests": TestInjectionVariant(),
     }
 
-    __slots__ = ('loot', 'ops', 'modify_tests',)
+    __slots__ = (
+        "loot",
+        "ops",
+        "modify_tests",
+    )
 
     def inject(self):
         if self.loot is None:
             logger.warn("Failed to inject ops, loot not found")
             return
 
-        inject_list(self.loot, 'loot_actions', self.ops)
+        inject_list(self.loot, "loot_actions", self.ops)
 
         if self.modify_tests is not None:
-            self.modify_tests.inject(self.loot, 'tests')
+            self.modify_tests.inject(self.loot, "tests")
 
 
 class TunableRandomWeightedLootInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
-        'loot': TunableReference(manager=services.get_instance_manager(Types.ACTION)),
-        'random_loot_actions': TunableList(
+        "loot": TunableReference(manager=services.get_instance_manager(Types.ACTION)),
+        "random_loot_actions": TunableList(
             tunable=TunableTuple(
-                action=LotFiftyOneCoreLootActionVariant(do_nothing=DoNothingLootOp.TunableFactory()),
+                action=LotFiftyOneCoreLootActionVariant(
+                    do_nothing=DoNothingLootOp.TunableFactory()
+                ),
                 weight=TunableMultiplier.TunableFactory(),
                 luck_option_config=TunableLuckOptionData(),
             )
-        )
+        ),
     }
 
-    __slots__ = ('loot', 'random_loot_actions',)
+    __slots__ = (
+        "loot",
+        "random_loot_actions",
+    )
 
     def inject(self):
         if self.loot is None:
             logger.warn("Failed to inject loot actions, random weighted loot not found")
             return
 
-        inject_list(self.loot, 'random_loot_actions', self.random_loot_actions)
+        inject_list(self.loot, "random_loot_actions", self.random_loot_actions)

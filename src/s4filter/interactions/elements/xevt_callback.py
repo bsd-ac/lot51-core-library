@@ -19,7 +19,11 @@ class CallbackXevtElement(ParentElement):
         sequence = self._sequence
 
         def register_xevt(_):
-            self._xevt_handle = self._interaction.animation_context.register_event_handler(lambda _: self._run_xevt(timeline), handler_id=self._xevt_id)
+            self._xevt_handle = (
+                self._interaction.animation_context.register_event_handler(
+                    lambda _: self._run_xevt(timeline), handler_id=self._xevt_id
+                )
+            )
 
         def release_xevt(_):
             self._xevt_handle.release()
@@ -27,4 +31,3 @@ class CallbackXevtElement(ParentElement):
 
         sequence = build_critical_section(register_xevt, sequence, release_xevt)
         return timeline.run_child(sequence)
-

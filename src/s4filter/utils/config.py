@@ -4,7 +4,9 @@ from lot51_core.utils.collections import AttributeDict
 
 
 class Config:
-    def __init__(self, root_path, config_filename, logger, default_data: dict = None, lazy=False):
+    def __init__(
+        self, root_path, config_filename, logger, default_data: dict = None, lazy=False
+    ):
         self._config = dict()
         self._default_data = dict(default_data if default_data is not None else {})
         self._root_path = root_path
@@ -32,7 +34,7 @@ class Config:
             self._save_config_file(self._config)
             return True
         except:
-            self.logger.exception('[Config] failed to save')
+            self.logger.exception("[Config] failed to save")
         return False
 
     def get(self, key, default=None):
@@ -58,7 +60,11 @@ class Config:
         return self._root_path
 
     def _save_config_file(self, data):
-        with open(os.path.join(self.get_root_path(), self.config_filename), 'w', encoding='utf-8') as f:
+        with open(
+            os.path.join(self.get_root_path(), self.config_filename),
+            "w",
+            encoding="utf-8",
+        ) as f:
             json.dump(data, f)
             return True
 
@@ -73,10 +79,10 @@ class Config:
     def _load_config_file(self):
         try:
             full_path = os.path.join(self.get_root_path(), self.config_filename)
-            with open(full_path, 'r', encoding='utf-8') as f:
+            with open(full_path, "r", encoding="utf-8") as f:
                 data = json.loads(f.read())
                 if data:
                     return self._parse_value(data)
         except:
-            self.logger.warn('[Config] using default data')
+            self.logger.warn("[Config] using default data")
         return dict(self._default_data)

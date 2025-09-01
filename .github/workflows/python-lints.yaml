@@ -19,19 +19,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up anaconda
+        uses: s-weigand/setup-conda@v1
         with:
-          python-version-file: 'pyproject.toml'
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          enable-cache: true
+          python-version: '3.7.1'
 
       - name: Install dependencies
         run: |
-          uv sync --frozen --all-groups
+          pip install -r requirements.txt
 
       - name: Download Sims 4 scripts
         run: |
@@ -47,19 +42,14 @@ jobs:
 
       - name: Run ruff formatter
         run: |
-          uv run ruff format --check .
+          ruff format --check .
 
       - name: Run ruff linter
         if: ${{ success() || failure() }}
         run: |
-          uv run ruff check --preview .
-
-      - name: Ensure uv lockfile is up-to-date
-        if: ${{ success() || failure() }}
-        run: |
-          uv lock --check
+          ruff check --preview .
 
       - name: Check that mypy is happy
         if: ${{ success() || failure() }}
         run: |
-          uv run mypy .
+          mypy .

@@ -7,12 +7,12 @@ from sims4.tuning.tunable import OptionalTunable, TunableTuple, Tunable
 
 class ReturnStolenObjectLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
-        'object_source': ObjectSearchMethodVariant(),
-        'fade_in': OptionalTunable(
+        "object_source": ObjectSearchMethodVariant(),
+        "fade_in": OptionalTunable(
             tunable=TunableTuple(
                 duration=Tunable(tunable_type=float, default=1.5),
             )
-        )
+        ),
     }
 
     def __init__(self, object_source=None, fade_in=None, **kwargs):

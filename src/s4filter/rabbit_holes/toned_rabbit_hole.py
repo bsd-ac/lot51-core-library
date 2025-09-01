@@ -13,20 +13,25 @@ from rabbit_hole.rabbit_hole import RabbitHole
 from services import get_instance_manager
 from services.rabbit_hole_service import RabbitHoleService
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableList, TunableTuple, Tunable, TunableSimMinute
+from sims4.tuning.tunable import (
+    TunableReference,
+    TunableList,
+    TunableTuple,
+    Tunable,
+    TunableSimMinute,
+)
 
 
 class RabbitHoleTone(AwayAction):
-
     INSTANCE_TUNABLES = {
-        'periodic_loot': TunableList(
+        "periodic_loot": TunableList(
             tunable=TunableReference(manager=get_instance_manager(Types.ACTION))
         ),
-        'periodic_loot_minutes': TunableSimMinute(default=15),
-        'trigger_loot_on_stop': Tunable(tunable_type=bool, default=True)
+        "periodic_loot_minutes": TunableSimMinute(default=15),
+        "trigger_loot_on_stop": Tunable(tunable_type=bool, default=True),
     }
 
-    __slots__ = ('periodic_loot', 'periodic_loot_minutes', 'trigger_loot_on_stop')
+    __slots__ = ("periodic_loot", "periodic_loot_minutes", "trigger_loot_on_stop")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -37,7 +42,9 @@ class RabbitHoleTone(AwayAction):
         super().run(callback)
         self._last_update_time = services.time_service().sim_now
         time_span = clock.interval_in_sim_minutes(self.periodic_loot_minutes)
-        self._update_alarm_handle = alarms.add_alarm(self, time_span, lambda alarm_handle: self._update(), repeating=True)
+        self._update_alarm_handle = alarms.add_alarm(
+            self, time_span, lambda alarm_handle: self._update(), repeating=True
+        )
 
     def stop(self):
         if self._update_alarm_handle is not None:
@@ -57,42 +64,46 @@ class RabbitHoleTone(AwayAction):
 
 
 class TonedRabbitHole(RabbitHole):
-    REMOVE_INSTANCE_TUNABLES = ('away_action',)
+    REMOVE_INSTANCE_TUNABLES = ("away_action",)
 
     INSTANCE_TUNABLES = {
-        'allow_leave_early': Tunable(tunable_type=bool, default=True),
-        'additional_affordances': TunableList(
+        "allow_leave_early": Tunable(tunable_type=bool, default=True),
+        "additional_affordances": TunableList(
             description="Additional interactions that are available in the rabbit hole pie menu.",
-            tunable=TunableReference(
-                manager=get_instance_manager(Types.INTERACTION)
-            ),
+            tunable=TunableReference(manager=get_instance_manager(Types.INTERACTION)),
         ),
-        'tone_interaction': TunableReference(
+        "tone_interaction": TunableReference(
             description="The default interaction to trigger Tones/Away Actions",
             manager=get_instance_manager(Types.INTERACTION),
             class_restrictions=(ApplyAwayActionInteraction,),
         ),
-        'default_tones': TunableList(
+        "default_tones": TunableList(
             description="A list of possible Away Actions to choose as the default when activating this rabbit hole. Does not have to be listed in 'tones' below.",
             tunable=TunableTuple(
                 away_action=TunableReference(
                     manager=get_instance_manager(Types.AWAY_ACTION)
                 ),
                 tests=TunableTestSet(),
-            )
+            ),
         ),
-        'tones': TunableList(
+        "tones": TunableList(
             description="A list of possible Away Actions to display in the rabbit hole pie menu.",
             tunable=TunableTuple(
                 away_action=TunableReference(
                     manager=get_instance_manager(Types.AWAY_ACTION)
                 ),
                 tests=TunableTestSet(),
-            )
+            ),
         ),
     }
 
-    __slots__ = ('allow_leave_early', 'additional_affordances', 'tone_interaction', 'default_tones', 'tones')
+    __slots__ = (
+        "allow_leave_early",
+        "additional_affordances",
+        "tone_interaction",
+        "default_tones",
+        "tones",
+    )
 
     def get_resolver(self):
         sim_info = services.sim_info_manager().get(self.sim_id)
@@ -126,7 +137,11 @@ class TonedRabbitHole(RabbitHole):
             if tracker and tone:
                 tracker.create_and_apply_away_action(tone)
             else:
-                logger.warn("Failed to find select default tone for rabbit hole: {}".format(self))
+                logger.warn(
+                    "Failed to find select default tone for rabbit hole: {}".format(
+                        self
+                    )
+                )
         except:
             logger.exception("failed on rabbithole activate")
 
@@ -151,18 +166,24 @@ class TonedRabbitHole(RabbitHole):
                 )
 
             for affordance in self.additional_affordances:
-                for aop in affordance.potential_interactions(None, context, sim_info=sim_info, **kwargs):
+                for aop in affordance.potential_interactions(
+                    None, context, sim_info=sim_info, **kwargs
+                ):
                     yield aop
 
             if self.allow_leave_early:
-                for aop in services.get_rabbit_hole_service().LEAVE_EARLY_INTERACTION.potential_interactions(None, context, sim_info=sim_info, **kwargs):
+                for aop in services.get_rabbit_hole_service().LEAVE_EARLY_INTERACTION.potential_interactions(
+                    None, context, sim_info=sim_info, **kwargs
+                ):
                     yield aop
         except:
             logger.exception("failed generating rabbithole aops")
 
 
-@inject_to(RabbitHoleService, 'sim_skewer_rabbit_hole_affordances_gen')
-def _sim_skewer_rabbit_hole_affordances_gen(original, self, sim_info, context, *args, **kwargs):
+@inject_to(RabbitHoleService, "sim_skewer_rabbit_hole_affordances_gen")
+def _sim_skewer_rabbit_hole_affordances_gen(
+    original, self, sim_info, context, *args, **kwargs
+):
     rabbit_hole_id = self.get_head_rabbit_hole_id(sim_info.sim_id)
     rabbit_hole = self._get_rabbit_hole(sim_info.sim_id, rabbit_hole_id)
     if isinstance(rabbit_hole, TonedRabbitHole):

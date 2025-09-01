@@ -8,30 +8,41 @@ from lot51_core.utils.flags import Flag
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.math import MAX_INT32
 from sims4.resources import Types
-from sims4.tuning.tunable import OptionalTunable, TunableMapping, TunableTuple, TunableRange, TunableReference
+from sims4.tuning.tunable import (
+    OptionalTunable,
+    TunableMapping,
+    TunableTuple,
+    TunableRange,
+    TunableReference,
+)
 from sims4.utils import flexmethod
 from ui.ui_dialog_picker import ObjectPickerRow
 
 
 class FlagStatPickerSuperInteraction(PickerSuperInteraction):
-
     INSTANCE_TUNABLES = {
-        '_active_icon': OptionalTunable(tunable=TunableIconVariant()),
-        '_inactive_icon': OptionalTunable(tunable=TunableIconVariant()),
-        'stat_type': TunableReference(manager=services.get_instance_manager(Types.STATISTIC)),
-        'flag_values': TunableMapping(
-            key_type=TunableRange(tunable_type=int, default=1, minimum=0, maximum=MAX_INT32),
+        "_active_icon": OptionalTunable(tunable=TunableIconVariant()),
+        "_inactive_icon": OptionalTunable(tunable=TunableIconVariant()),
+        "stat_type": TunableReference(
+            manager=services.get_instance_manager(Types.STATISTIC)
+        ),
+        "flag_values": TunableMapping(
+            key_type=TunableRange(
+                tunable_type=int, default=1, minimum=0, maximum=MAX_INT32
+            ),
             value_type=TunableTuple(
                 flag_name=TunableLocalizedStringFactory(),
                 display_description=TunableLocalizedStringFactory(),
                 tests=TunableTestSet(),
                 tooltip=OptionalTunable(tunable=TunableLocalizedStringFactory()),
-            )
-        )
+            ),
+        ),
     }
 
     def on_choice_selected(self, raw_flag_value, **kwargs):
-        stat = self.target.get_tracker(self.stat_type).get_statistic(self.stat_type, add=True)
+        stat = self.target.get_tracker(self.stat_type).get_statistic(
+            self.stat_type, add=True
+        )
         flag = Flag(stat.get_value() if stat is not None else 0)
         flag_value = 1 << raw_flag_value
         if flag.has(flag_value):
@@ -46,7 +57,11 @@ class FlagStatPickerSuperInteraction(PickerSuperInteraction):
     def picker_rows_gen(cls, inst, target, context, **kwargs):
         inst_or_cls = inst if inst is not None else cls
         for flag_value, flag_data in inst_or_cls.flag_values.items():
-            yield ObjectPickerRow(name=flag_data.flag_name(), row_description=flag_data.display_description(), tag=flag_value)
+            yield ObjectPickerRow(
+                name=flag_data.flag_name(),
+                row_description=flag_data.display_description(),
+                tag=flag_value,
+            )
 
     def _run_interaction_gen(self, timeline):
         self._show_picker_dialog(self.sim)
@@ -67,7 +82,7 @@ class FlagStatPickerSuperInteraction(PickerSuperInteraction):
                     tooltip = test_result.tooltip
                     picker_row_data.is_enable = False
                     if flag_data.tooltip is not None:
-                         tooltip = flag_data.tooltip
+                        tooltip = flag_data.tooltip
                     picker_row_data.row_tooltip = tooltip
 
                 if flag.has(flag_value):
