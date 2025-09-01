@@ -14,6 +14,7 @@ MOD_ROOT = "build"
 MOD_CACHE = "build/cache"
 MOD_FINAL = "build/mods"
 
+
 def build():
     args = parser.parse_args()
 
@@ -34,10 +35,11 @@ def build():
         shutil.copy(file, dest)
 
     # zip the files
-    shutil.make_archive(f"{MOD_CACHE}/{args.name}", 'zip', mod_dir)
+    shutil.make_archive(f"{MOD_CACHE}/{args.name}", "zip", mod_dir)
     # move the zip to the final mods folder
     os.makedirs(MOD_FINAL, exist_ok=True)
     shutil.move(f"{MOD_CACHE}/{args.name}.zip", f"{MOD_FINAL}/{args.name}.ts4script")
+
 
 if __name__ == "__main__":
     build()

@@ -142,9 +142,7 @@ wheels = [
 name = "s4filter"
 version = "1.0.0"
 source = { editable = "." }
-
-[package.optional-dependencies]
-dev = [
+dependencies = [
     { name = "mypy" },
     { name = "pytest" },
     { name = "ruff" },
@@ -152,11 +150,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mypy", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'dev'" },
-    { name = "ruff", marker = "extra == 'dev'" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "ruff" },
 ]
-provides-extras = ["dev"]
 
 [[package]]
 name = "tomli"
