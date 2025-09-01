@@ -6,10 +6,10 @@ from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, Tu
 
 class DaytimeTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     FACTORY_TUNABLES = {
-        'is_daytime': Tunable(tunable_type=bool, default=True),
+        "is_daytime": Tunable(tunable_type=bool, default=True),
     }
 
-    __slots__ = ('is_daytime',)
+    __slots__ = ("is_daytime",)
 
     def get_expected_args(self):
         return {}
@@ -17,5 +17,10 @@ class DaytimeTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     def __call__(self, **kwargs):
         is_daytime = services.time_service().is_day_time()
         if is_daytime != self.is_daytime:
-            return TestResult(False, 'Daytime test failed, expecting {} and is {}'.format(self.is_daytime, is_daytime))
+            return TestResult(
+                False,
+                "Daytime test failed, expecting {} and is {}".format(
+                    self.is_daytime, is_daytime
+                ),
+            )
         return TestResult.TRUE

@@ -7,28 +7,44 @@ from interactions import ParticipantTypeSingle
 from lot51_core.utils.flags import Flag
 from sims4.math import MAX_INT32
 from sims4.resources import Types
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, TunableEnumEntry, Tunable, \
-    TunableReference, TunableRange
+from sims4.tuning.tunable import (
+    HasTunableSingletonFactory,
+    AutoFactoryInit,
+    TunableEnumEntry,
+    Tunable,
+    TunableReference,
+    TunableRange,
+)
 
 
 class FlagStatTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     test_events = (TestEvent.StatValueUpdate,)
     FACTORY_TUNABLES = {
-        'subject': TunableEnumEntry(
-            description='The subject of the test.',
+        "subject": TunableEnumEntry(
+            description="The subject of the test.",
             tunable_type=ParticipantTypeSingle,
-            default=ParticipantTypeSingle.Object
+            default=ParticipantTypeSingle.Object,
         ),
-        'stat_type': TunableReference(manager=services.get_instance_manager(Types.STATISTIC)),
-        'flag_value': TunableRange(tunable_type=int, default=1, minimum=0, maximum=MAX_INT32),
-        'has_value': Tunable(tunable_type=bool, default=True),
-        'pass_if_flag_null': Tunable(tunable_type=bool, default=False),
+        "stat_type": TunableReference(
+            manager=services.get_instance_manager(Types.STATISTIC)
+        ),
+        "flag_value": TunableRange(
+            tunable_type=int, default=1, minimum=0, maximum=MAX_INT32
+        ),
+        "has_value": Tunable(tunable_type=bool, default=True),
+        "pass_if_flag_null": Tunable(tunable_type=bool, default=False),
     }
 
-    __slots__ = ('subject', 'stat_type', 'flag_value', 'has_value', 'pass_if_flag_null',)
+    __slots__ = (
+        "subject",
+        "stat_type",
+        "flag_value",
+        "has_value",
+        "pass_if_flag_null",
+    )
 
     def get_expected_args(self):
-        return {'subjects': self.subject}
+        return {"subjects": self.subject}
 
     @cached_test
     def __call__(self, subjects=(), **kwargs):
@@ -46,4 +62,9 @@ class FlagStatTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
             elif self.pass_if_flag_null:
                 return TestResult.TRUE
 
-        return TestResult(False, "Flag value ({}) failed, expected to have? {}".format(self.flag_value, self.has_value))
+        return TestResult(
+            False,
+            "Flag value ({}) failed, expected to have? {}".format(
+                self.flag_value, self.has_value
+            ),
+        )

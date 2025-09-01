@@ -2,7 +2,6 @@ import random
 import math
 
 
-
 def range_by(start, stop, step=1):
     n = int(round((stop - start) / float(step)))
     if n > 1:

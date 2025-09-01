@@ -22,39 +22,42 @@ from lot51_core.tests.stolen import ObjectStolenTest
 from lot51_core.tests.stored_sim_component import StoredSimComponentTest
 from lot51_core.tests.terrain import TerrainTest
 from lot51_core.tests.resource_test import ResourceExistenceTest
-from lot51_core.tests.valid_picker_choice import ValidPickerChoiceTest, ValidPurchasePickerChoiceTest
+from lot51_core.tests.valid_picker_choice import (
+    ValidPickerChoiceTest,
+    ValidPurchasePickerChoiceTest,
+)
 from lot51_core.tests.walkstyle import WalkstyleTest
 from event_testing.tests import TestSetInstance, TunableTestVariant, _TunableTestSetBase
 
 
 class LotFiftyOneCoreTestSet(_TunableTestSetBase, is_fragment=True):
     MY_TEST_VARIANTS = {
-        'affordance_lock_out': AffordanceLockOutTest,
-        'custom_food_restriction_test': CustomFoodRestrictionTest,
-        'custom_state_situation_test': CustomStateSituationTest,
-        'daytime': DaytimeTest,
-        'distance_2d': Distance2dTest,
-        'has_pack': PackTest,
-        'flag_stat_test': FlagStatTest,
-        'identity_comparison': IdentityComparisonTest,
-        'inventory_owner': InventoryOwnerTest,
-        'lot_size': LotSizeTest,
-        'mood_intensity': MoodIntensityTest,
-        'mood_weight': MoodWeightTest,
-        'object_in_room': ObjectInRoomTest,
-        'object_query_test': ObjectQueryTest,
-        'object_tuning_test': ObjectTuningTest,
-        'object_slots_in_use': ObjectSlotInUseTest,
-        'object_stolen': ObjectStolenTest,
-        'owned_zone_threshold': OwnedZoneThresholdTest,
-        'resource_existence': ResourceExistenceTest,
-        'situation_target': SituationTargetObjectTest,
-        'statistic_locked': StatisticLockedTest,
-        'stored_sim_test': StoredSimComponentTest,
-        'terrain_features': TerrainTest,
-        'valid_picker_choice': ValidPickerChoiceTest,
-        'valid_purchase_picker_choice': ValidPurchasePickerChoiceTest,
-        'walkstyle': WalkstyleTest,
+        "affordance_lock_out": AffordanceLockOutTest,
+        "custom_food_restriction_test": CustomFoodRestrictionTest,
+        "custom_state_situation_test": CustomStateSituationTest,
+        "daytime": DaytimeTest,
+        "distance_2d": Distance2dTest,
+        "has_pack": PackTest,
+        "flag_stat_test": FlagStatTest,
+        "identity_comparison": IdentityComparisonTest,
+        "inventory_owner": InventoryOwnerTest,
+        "lot_size": LotSizeTest,
+        "mood_intensity": MoodIntensityTest,
+        "mood_weight": MoodWeightTest,
+        "object_in_room": ObjectInRoomTest,
+        "object_query_test": ObjectQueryTest,
+        "object_tuning_test": ObjectTuningTest,
+        "object_slots_in_use": ObjectSlotInUseTest,
+        "object_stolen": ObjectStolenTest,
+        "owned_zone_threshold": OwnedZoneThresholdTest,
+        "resource_existence": ResourceExistenceTest,
+        "situation_target": SituationTargetObjectTest,
+        "statistic_locked": StatisticLockedTest,
+        "stored_sim_test": StoredSimComponentTest,
+        "terrain_features": TerrainTest,
+        "valid_picker_choice": ValidPickerChoiceTest,
+        "valid_purchase_picker_choice": ValidPurchasePickerChoiceTest,
+        "walkstyle": WalkstyleTest,
     }
 
     def __init__(self, **kwargs):
@@ -64,4 +67,4 @@ class LotFiftyOneCoreTestSet(_TunableTestSetBase, is_fragment=True):
 
 
 class LotFiftyOneLibTestSetInstance(TestSetInstance):
-    INSTANCE_TUNABLES = {'test': LotFiftyOneCoreTestSet()}
+    INSTANCE_TUNABLES = {"test": LotFiftyOneCoreTestSet()}
