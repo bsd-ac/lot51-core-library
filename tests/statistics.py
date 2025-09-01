@@ -1,3 +1,5 @@
+from statistics.commodity import Commodity
+
 from caches import cached_test
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
@@ -6,29 +8,39 @@ from interactions import ParticipantTypeSingle
 from objects.components.types import STATISTIC_COMPONENT
 from services import get_instance_manager
 from sims4.resources import Types
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, TunableEnumEntry, TunableReference
-from statistics.commodity import Commodity
+from sims4.tuning.tunable import (
+    AutoFactoryInit,
+    HasTunableSingletonFactory,
+    TunableEnumEntry,
+    TunableReference,
+)
 
 
 class StatisticLockedTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
+    """Tests if the subject has the provided commodity and is in the locked state preventing decay.
     """
-    Tests if the subject has the provided commodity and is in the locked state preventing decay.
-    """
+
     test_events = (TestEvent.ObjectStateChange,)
 
     FACTORY_TUNABLES = {
-        'subject': TunableEnumEntry(
-            description='The subject of the test.',
+        "subject": TunableEnumEntry(
+            description="The subject of the test.",
             tunable_type=ParticipantTypeSingle,
-            default=ParticipantTypeSingle.Object
+            default=ParticipantTypeSingle.Object,
         ),
-        'stat': TunableReference(manager=get_instance_manager(Types.STATISTIC), class_restrictions=(Commodity,)),
+        "stat": TunableReference(
+            manager=get_instance_manager(Types.STATISTIC),
+            class_restrictions=(Commodity,),
+        ),
     }
 
-    __slots__ = ('subject', 'stat',)
+    __slots__ = (
+        "stat",
+        "subject",
+    )
 
     def get_expected_args(self):
-        return {'subjects': self.subject}
+        return {"subjects": self.subject}
 
     @cached_test
     def __call__(self, subjects=(), **kwargs):
@@ -44,7 +56,10 @@ class StatisticLockedTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest)
             return TestResult.TRUE
 
         for modifier in subject.autonomy_modifiers:
-            if modifier._locked_stats is not None and self.stat in modifier._locked_stats:
+            if (
+                modifier._locked_stats is not None
+                and self.stat in modifier._locked_stats
+            ):
                 return TestResult.TRUE
 
         return TestResult(False, "Commodity is not locked", tooltip=self.tooltip)

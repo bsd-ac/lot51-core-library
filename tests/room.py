@@ -7,24 +7,30 @@ from interactions import ParticipantTypeSingle
 from lot51_core.tunables.object_query import ObjectSearchMethodVariant
 from objects.terrain import TerrainPoint
 from sims.sim_info import SimInfo
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit, TunableEnumEntry
+from sims4.tuning.tunable import (
+    AutoFactoryInit,
+    HasTunableSingletonFactory,
+    TunableEnumEntry,
+)
 
 
 class ObjectInRoomTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
+    """Tests if the subject is in the same room as any of the objects returned from the object_source query.
     """
-    Tests if the subject is in the same room as any of the objects returned from the object_source query.
-    """
+
     test_events = ()
 
     FACTORY_TUNABLES = {
-        'subject': TunableEnumEntry(tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor),
-        'object_source': ObjectSearchMethodVariant()
+        "subject": TunableEnumEntry(
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor,
+        ),
+        "object_source": ObjectSearchMethodVariant(),
     }
 
-    __slots__ = ('subject', 'object_source')
+    __slots__ = ("object_source", "subject")
 
     def get_expected_args(self):
-        return {'subjects': self.subject, 'resolver': RESOLVER_PARTICIPANT}
+        return {"subjects": self.subject, "resolver": RESOLVER_PARTICIPANT}
 
     def __call__(self, subjects=(), resolver=None, **kwargs):
         subject = next(iter(subjects))
@@ -32,7 +38,9 @@ class ObjectInRoomTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
         if isinstance(subject, SimInfo):
             subject = subject.get_sim_instance()
             if subject is None:
-                return TestResult(False, "Target sim is not instanced", tooltip=self.tooltip)
+                return TestResult(
+                    False, "Target sim is not instanced", tooltip=self.tooltip,
+                )
             zone_id = subject.zone_id
         elif isinstance(subject, TerrainPoint):
             zone_id = services.current_zone_id()
@@ -41,10 +49,12 @@ class ObjectInRoomTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
 
         all_results = list()
         for obj in self.object_source.get_objects_gen(resolver=resolver):
-            result = obj.level == subject.level and get_room_id(zone_id, subject.position, subject.level) == get_room_id(obj.zone_id, obj.position, obj.level)
+            result = obj.level == subject.level and get_room_id(
+                zone_id, subject.position, subject.level,
+            ) == get_room_id(obj.zone_id, obj.position, obj.level)
             all_results.append(result)
 
-        if len(all_results) and any(all_results):
+        if all_results and any(all_results):
             return TestResult.TRUE
 
         return TestResult(False, "No object found in room", tooltip=self.tooltip)

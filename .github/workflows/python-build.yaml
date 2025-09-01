@@ -1,0 +1,38 @@
+name: Python Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: 
+      - "*"
+
+jobs:
+  python-build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up anaconda
+        uses: s-weigand/setup-conda@v1
+        with:
+          python-version: '3.7.1'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compile all python files
+        run: |
+          python -m compileall src
+
+      - name: Create mod
+        run: |
+          python tools/build.py --root src/s4filter --name s4filter
+
+      - name: Artifact the mod
+        uses: actions/upload-artifact@v4
+        with:
+          name: s4filter
+          path: build/mods
