@@ -34,4 +34,10 @@ jobs:
 
       - name: Create mod
         run: |
-          uv run tools/build.py
+          uv run tools/build.py --root src/s4filter --name s4filter
+
+      - name: Artifact the mod
+        uses: actions/upload-artifact@v3
+        with:
+          name: s4filter
+          path: build/mods
