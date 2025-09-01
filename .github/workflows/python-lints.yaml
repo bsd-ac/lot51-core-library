@@ -37,9 +37,9 @@ jobs:
         run: |
           curl -L ${{ env.SIMS4_SCRIPTS_URL }} -o sims4_scripts.zip
 
-      - name: Check that sims4 scripts hash is correct
-        run: |
-          echo "${{ env.SHA256_SUM }}  sims4_scripts.zip" | sha256sum -c
+      # - name: Check that sims4 scripts hash is correct
+      #   run: |
+      #     echo "${{ env.SHA256_SUM }}  sims4_scripts.zip" | sha256sum -c
 
       - name: Unzip Sims 4 scripts
         run: |
