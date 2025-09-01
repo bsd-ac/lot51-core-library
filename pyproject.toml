@@ -9,7 +9,7 @@ description = "utilities for sims4 modding"
 readme = "README.md"
 license = {text = "MIT"}
 keywords = ["sims4", "mod", "modding", "utilities", "filter"]
-requires-python = "==3.7.0"
+requires-python = "==3.7.1"
 classifiers = [
   "Programming Language :: Python"
 ]
