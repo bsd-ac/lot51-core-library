@@ -9,6 +9,7 @@ requires-python = "==3.7.1"
 classifiers = [
   "Programming Language :: Python"
 ]
+# no dep groups in 3.7
 dependencies = [
     "mypy",
     "pytest",
