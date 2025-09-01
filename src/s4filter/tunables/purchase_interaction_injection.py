@@ -1,35 +1,35 @@
 import sims4
 from interactions.base.picker_interaction import (
-    DefinitionsFromTags,
     DefinitionsExplicit,
-    InventoryItems,
+    DefinitionsFromTags,
     DefinitionsRandom,
     DefinitionsTested,
-    LimitedItemList,
-    PurchaseToInventory,
-    MailmanDelivery,
-    SlotToParent,
     DeliveryServiceNPC,
+    InventoryItems,
+    LimitedItemList,
+    MailmanDelivery,
+    PurchaseToInventory,
+    SlotToParent,
 )
 from lot51_core import logger
 from lot51_core.tunables.multiplier_injection import TunableMultiplierInjection
 from lot51_core.utils.collections import AttributeDict
-from lot51_core.utils.injection import merge_list, inject_list
+from lot51_core.utils.injection import inject_list, merge_list
 from lot51_core.utils.tunables import clone_factory_wrapper_with_overrides
 from services import get_instance_manager
 from sims4.localization import TunableLocalizedString
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableList,
-    TunableVariant,
-    TunableReference,
-    TunableTuple,
-    TunableEnumEntry,
-    TunableResourceKey,
+    HasTunableSingletonFactory,
     OptionalTunable,
     Tunable,
+    TunableEnumEntry,
+    TunableList,
+    TunableReference,
+    TunableResourceKey,
+    TunableTuple,
+    TunableVariant,
 )
 from tag import Tag
 
@@ -51,12 +51,12 @@ class TunablePurchaseInteractionInjection(HasTunableSingletonFactory, AutoFactor
                     resource_types=sims4.resources.CompoundTypes.IMAGE,
                 ),
                 tooltip=TunableLocalizedString(
-                    description="A localized string for the tooltip of the category."
+                    description="A localized string for the tooltip of the category.",
                 ),
                 disabled_tooltip=OptionalTunable(
                     description="If enabled then when there are no items in this category, the button will be disabled instead of hidden and will have this tooltip explaining why it is hidden.",
                     tunable=TunableLocalizedString(
-                        description="The string to display as a tooltip when the category button is disabled because it is empty."
+                        description="The string to display as a tooltip when the category button is disabled because it is empty.",
                     ),
                 ),
             ),
@@ -64,16 +64,16 @@ class TunablePurchaseInteractionInjection(HasTunableSingletonFactory, AutoFactor
         "delivery_method_override": TunableVariant(
             description="Where the objects purchased will be delivered.",
             purchase_to_inventory=PurchaseToInventory(
-                description="Purchase the objects directly into a participant's inventory."
+                description="Purchase the objects directly into a participant's inventory.",
             ),
             mailman_delivery=MailmanDelivery(
-                description="Deliver the objects by the mailman."
+                description="Deliver the objects by the mailman.",
             ),
             slot_to_parent=SlotToParent(
-                description=" Deliver the objects by slotting them to a parent object."
+                description=" Deliver the objects by slotting them to a parent object.",
             ),
             delivery_service_npc=DeliveryServiceNPC(
-                description="Purchased objects will be delivered by the delivery service npc."
+                description="Purchased objects will be delivered by the delivery service npc.",
             ),
             locked_args={"none": None},
             default="none",
@@ -94,37 +94,37 @@ class TunablePurchaseInteractionInjection(HasTunableSingletonFactory, AutoFactor
             tunable=TunableVariant(
                 description="The method that will be used to generate the list of objects that will populate the picker.",
                 all_items=DefinitionsFromTags.TunableFactory(
-                    description="Look through all the items that are possible to purchase. This should be accompanied with specific filtering tags in Object Populate Filter to get a good result."
+                    description="Look through all the items that are possible to purchase. This should be accompanied with specific filtering tags in Object Populate Filter to get a good result.",
                 ),
                 specific_items=DefinitionsExplicit.TunableFactory(
-                    description="A list of specific items that will be purchasable through this dialog."
+                    description="A list of specific items that will be purchasable through this dialog.",
                 ),
                 inventory_items=InventoryItems.TunableFactory(
-                    description="Looks at the objects that are in the inventory of the desired participant and returns them based on some criteria."
+                    description="Looks at the objects that are in the inventory of the desired participant and returns them based on some criteria.",
                 ),
                 random_items=DefinitionsRandom.TunableFactory(
-                    description="Randomly selects items based on a weighted list."
+                    description="Randomly selects items based on a weighted list.",
                 ),
                 tested_items=DefinitionsTested.TunableFactory(
-                    description="Test items that are able to be displayed within the picker."
+                    description="Test items that are able to be displayed within the picker.",
                 ),
                 limited_items=LimitedItemList.TunableFactory(
-                    description="Items provided by the Purchase Picker Service."
+                    description="Items provided by the Purchase Picker Service.",
                 ),
                 default="all_items",
             ),
         ),
         "use_dropdown_filter_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=False)
+            tunable=Tunable(tunable_type=bool, default=False),
         ),
     }
 
     __slots__ = (
         "additional_picker_categories",
         "delivery_method_override",
+        "loots_on_purchase",
         "price_multiplier",
         "purchase_list_option",
-        "loots_on_purchase",
         "use_dropdown_filter_override",
     )
 
@@ -136,19 +136,19 @@ class TunablePurchaseInteractionInjection(HasTunableSingletonFactory, AutoFactor
 
         if len(self.additional_picker_categories):
             overrides.categories = merge_list(
-                affordance.picker_dialog.categories, self.additional_picker_categories
+                affordance.picker_dialog.categories, self.additional_picker_categories,
             )
 
         if len(overrides):
             cloned_dialog = clone_factory_wrapper_with_overrides(
-                affordance.picker_dialog, **overrides
+                affordance.picker_dialog, **overrides,
             )
-            setattr(affordance, "picker_dialog", cloned_dialog)
+            affordance.picker_dialog = cloned_dialog
 
     def inject_to_affordance(self, affordance):
         if affordance is None:
             logger.error(
-                "Failed to inject to purchase picker interaction, affordance not found"
+                "Failed to inject to purchase picker interaction, affordance not found",
             )
             return
 

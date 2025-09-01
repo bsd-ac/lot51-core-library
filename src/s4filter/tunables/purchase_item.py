@@ -1,28 +1,28 @@
 from event_testing.tests import TunableTestSet
 from interactions.utils.success_chance import SuccessChance
 from lot51_core.loot import LotFiftyOneCoreLootActionVariant
+from lot51_core.tunables.definition_query import DefinitionSearchMethodVariant
 from lot51_core.tunables.delivery_method import (
     FglDeliveryMethod,
-    InventoryDeliveryMethod,
-    MultipleInventoriesDeliveryMethod,
-    MailboxDeliveryMethod,
     HouseholdInventoryDeliveryMethod,
+    InventoryDeliveryMethod,
+    MailboxDeliveryMethod,
+    MultipleInventoriesDeliveryMethod,
 )
-from lot51_core.tunables.definition_query import DefinitionSearchMethodVariant
 from services import get_instance_manager
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableVariant,
-    TunableTuple,
-    TunableList,
-    Tunable,
+    HasTunableSingletonFactory,
     OptionalTunable,
-    TunableInterval,
+    Tunable,
     TunableEnumSet,
+    TunableInterval,
+    TunableList,
     TunableReference,
+    TunableTuple,
+    TunableVariant,
 )
 from tag import Tag
 from tunable_multiplier import TunableMultiplier
@@ -36,7 +36,7 @@ class TunablePurchaseItemSource(HasTunableSingletonFactory, AutoFactoryInit):
             tunable=TunableTuple(
                 definition_source=DefinitionSearchMethodVariant(),
                 quantity=TunableInterval(
-                    tunable_type=int, default_lower=1, default_upper=1
+                    tunable_type=int, default_lower=1, default_upper=1,
                 ),
                 chance=SuccessChance.TunableFactory(),
             ),
@@ -61,7 +61,7 @@ class TunablePurchaseItem(HasTunableSingletonFactory, AutoFactoryInit):
         ),
         "category_tags": TunableEnumSet(enum_type=Tag, invalid_enums=(Tag.INVALID,)),
         "chance": SuccessChance.TunableFactory(
-            description="Chance for each item source selection to be included"
+            description="Chance for each item source selection to be included",
         ),
         "custom_price": OptionalTunable(
             description="Overrides the default catalog price",
@@ -94,7 +94,7 @@ class TunablePurchaseItem(HasTunableSingletonFactory, AutoFactoryInit):
             tunable=TunableLocalizedStringFactory(),
         ),
         "enable_tests": TunableTestSet(
-            description="Tests to decide if row is not greyed out (not cached)"
+            description="Tests to decide if row is not greyed out (not cached)",
         ),
         "exclude_from_stock_management": Tunable(tunable_type=bool, default=False),
         "hide_if_sold_out": Tunable(
@@ -119,22 +119,22 @@ class TunablePurchaseItem(HasTunableSingletonFactory, AutoFactoryInit):
         ),
         "limited_stock": OptionalTunable(
             tunable=TunableInterval(
-                tunable_type=int, default_lower=1, default_upper=1, minimum=0
-            )
+                tunable_type=int, default_lower=1, default_upper=1, minimum=0,
+            ),
         ),
         "price_multiplier": TunableMultiplier.TunableFactory(
-            description="A multiplier only applied to this purchase item's price  (not cached)"
+            description="A multiplier only applied to this purchase item's price  (not cached)",
         ),
         "depreciation_multiplier": TunableMultiplier.TunableFactory(
-            description="A multiplier applied to the object value upon purchase (not cached)"
+            description="A multiplier applied to the object value upon purchase (not cached)",
         ),
         "quality_states": TunableList(
             description="An item from this list will be randomly selected to add additional value/quality to an object",
             tunable=TunableTuple(
                 states=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.OBJECT_STATE), pack_safe=True
-                    )
+                        manager=get_instance_manager(Types.OBJECT_STATE), pack_safe=True,
+                    ),
                 ),
                 static_price_multiplier=Tunable(tunable_type=float, default=1),
                 static_depreciation_multiplier=Tunable(tunable_type=float, default=1),
@@ -154,6 +154,6 @@ class TunablePurchaseItem(HasTunableSingletonFactory, AutoFactoryInit):
             description="Instead of using the purchase price, the original base cost will be set as the purchased object's value.",
         ),
         "visibility_tests": TunableTestSet(
-            description="Tests to decide if row is visible (not cached)"
+            description="Tests to decide if row is visible (not cached)",
         ),
     }

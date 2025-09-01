@@ -4,12 +4,12 @@ from lot51_core.utils.injection import inject_list
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
+    OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
     TunableList,
     TunableReference,
     TunableTuple,
-    Tunable,
-    OptionalTunable,
-    TunableEnumEntry,
 )
 from situations.situation_job import SituationJob
 from situations.situation_types import JobHolderNoShowAction
@@ -20,31 +20,31 @@ class TunableSituationJobInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "situation_jobs": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.SITUATION_JOB), pack_safe=True
+                manager=get_instance_manager(Types.SITUATION_JOB), pack_safe=True,
             ),
         ),
         "additional_location_based_filter_terms": TunableList(
-            tunable=TunableLocationBasedFilterTermsSnippet(pack_safe=True)
+            tunable=TunableLocationBasedFilterTermsSnippet(pack_safe=True),
         ),
         "additional_commodities": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.STATISTIC), pack_safe=True
-            )
+                manager=get_instance_manager(Types.STATISTIC), pack_safe=True,
+            ),
         ),
         "died_or_left_action_override": OptionalTunable(
             tunable=TunableEnumEntry(
-                JobHolderNoShowAction, default=JobHolderNoShowAction.DO_NOTHING
-            )
+                JobHolderNoShowAction, default=JobHolderNoShowAction.DO_NOTHING,
+            ),
         ),
         "filter_override": OptionalTunable(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.SIM_FILTER), pack_safe=True
+                manager=get_instance_manager(Types.SIM_FILTER), pack_safe=True,
             ),
         ),
         "no_show_action_override": OptionalTunable(
             tunable=TunableEnumEntry(
-                JobHolderNoShowAction, default=JobHolderNoShowAction.DO_NOTHING
-            )
+                JobHolderNoShowAction, default=JobHolderNoShowAction.DO_NOTHING,
+            ),
         ),
         "spawn_action_override": OptionalTunable(
             description="If enabled, this spawn action will be set as the default sim_spawn_action in the job tuning.",
@@ -60,14 +60,14 @@ class TunableSituationJobInjection(BaseTunableInjection):
     }
 
     __slots__ = (
-        "situation_jobs",
-        "additional_location_based_filter_terms",
         "additional_commodities",
+        "additional_location_based_filter_terms",
+        "alternative_spawn_behaviors",
         "died_or_left_action_override",
         "filter_override",
         "no_show_action_override",
+        "situation_jobs",
         "spawn_action_override",
-        "alternative_spawn_behaviors",
     )
 
     def inject(self):

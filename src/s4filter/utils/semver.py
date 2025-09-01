@@ -6,22 +6,21 @@
 
 import collections
 import re
-from functools import wraps
+import string
+from functools import partial, wraps
 from typing import (
     Any,
+    Callable,
+    Collection,
     Dict,
     Iterable,
     Optional,
     SupportsInt,
     Tuple,
+    TypeVar,
     Union,
     cast,
-    Callable,
-    Collection,
-    TypeVar,
 )
-
-from functools import partial
 
 VersionPart = Union[int, Optional[str]]
 VersionTuple = Tuple[int, int, int, Optional[str], Optional[str]]
@@ -61,8 +60,7 @@ def _cmp(a, b):  # TODO: type hints
 
 
 class Version:
-    """
-    A semver compatible version class.
+    """A semver compatible version class.
     :param major: version when you make incompatible API changes.
     :param minor: version when you add functionality in
                   a backwards-compatible manner.
@@ -71,7 +69,7 @@ class Version:
     :param build: an optional build string
     """
 
-    __slots__ = ("_major", "_minor", "_patch", "_prerelease", "_build")
+    __slots__ = ("_build", "_major", "_minor", "_patch", "_prerelease")
     #: Regex for number in a prerelease
     _LAST_NUMBER = re.compile(r"(?:[^\d]*(\d+)[^\d]*)+")
     #: Regex template for a semver version
@@ -121,7 +119,7 @@ class Version:
         for name, value in version_parts.items():
             if value < 0:
                 raise ValueError(
-                    "{!r} is negative. A version can only be positive.".format(name)
+                    f"{name!r} is negative. A version can only be positive.",
                 )
 
         self._major = version_parts["major"]
@@ -135,12 +133,11 @@ class Version:
         def cmp_prerelease_tag(a, b):
             if isinstance(a, int) and isinstance(b, int):
                 return _cmp(a, b)
-            elif isinstance(a, int):
+            if isinstance(a, int):
                 return -1
-            elif isinstance(b, int):
+            if isinstance(b, int):
                 return 1
-            else:
-                return _cmp(a, b)
+            return _cmp(a, b)
 
         a, b = a or "", b or ""
         a_parts, b_parts = a.split("."), b.split(".")
@@ -150,8 +147,7 @@ class Version:
             cmp_result = cmp_prerelease_tag(sub_a, sub_b)
             if cmp_result != 0:
                 return cmp_result
-        else:
-            return _cmp(len(a), len(b))
+        return _cmp(len(a), len(b))
 
     @property
     def major(self) -> int:
@@ -199,8 +195,7 @@ class Version:
         raise AttributeError("attribute 'build' is readonly")
 
     def to_tuple(self) -> VersionTuple:
-        """
-        Convert the Version object to a tuple.
+        """Convert the Version object to a tuple.
         .. versionadded:: 2.10.0
            Renamed ``VersionInfo._astuple`` to ``VersionInfo.to_tuple`` to
            make this function available in the public API.
@@ -211,8 +206,7 @@ class Version:
         return (self.major, self.minor, self.patch, self.prerelease, self.build)
 
     def to_dict(self) -> VersionDict:
-        """
-        Convert the Version object to an OrderedDict.
+        """Convert the Version object to an OrderedDict.
         .. versionadded:: 2.10.0
            Renamed ``VersionInfo._asdict`` to ``VersionInfo.to_dict`` to
            make this function available in the public API.
@@ -229,7 +223,7 @@ class Version:
                 ("patch", self.patch),
                 ("prerelease", self.prerelease),
                 ("build", self.build),
-            )
+            ),
         )
 
     def __iter__(self) -> VersionIterator:
@@ -237,8 +231,7 @@ class Version:
         yield from self.to_tuple()
 
     def compare(self, other: Comparable) -> int:
-        """
-        Compare self with other.
+        """Compare self with other.
         :param other: the second version
         :return: The return value is negative if ver1 < ver2,
              zero if ver1 == ver2 and strictly positive if ver1 > ver2
@@ -261,7 +254,7 @@ class Version:
         elif not isinstance(other, cls):
             raise TypeError(
                 f"Expected str, bytes, dict, tuple, list, or {cls.__name__} instance, "
-                f"but got {type(other)}"
+                f"but got {type(other)}",
             )
 
         v1 = self.to_tuple()[:3]
@@ -277,7 +270,7 @@ class Version:
             return 0
         if not rc1:
             return 1
-        elif not rc2:
+        if not rc2:
             return -1
 
         return rccmp
@@ -307,10 +300,9 @@ class Version:
         return self.compare(other) >= 0
 
     def __getitem__(
-        self, index: Union[int, slice]
+        self, index: Union[int, slice],
     ) -> Union[int, Optional[str], Tuple[Union[int, str], ...]]:
-        """
-        self.__getitem__(index) <==> self[index] Implement getitem.
+        """self.__getitem__(index) <==> self[index] Implement getitem.
         If the part  requested is undefined, or a part of the range requested
         is undefined, it will throw an index error.
         Negative indices are not supported.
@@ -324,22 +316,22 @@ class Version:
         """
         if isinstance(index, int):
             index = slice(index, index + 1)
-        index = cast(slice, index)
+        index = cast("slice", index)
 
         if (
-            isinstance(index, slice)
-            and (index.start is not None and index.start < 0)
+            (isinstance(index, slice)
+            and (index.start is not None and index.start < 0))
             or (index.stop is not None and index.stop < 0)
         ):
             raise IndexError("Version index cannot be negative")
 
         part = tuple(
-            filter(lambda p: p is not None, cast(Iterable, self.to_tuple()[index]))
+            filter(lambda p: p is not None, cast("Iterable", self.to_tuple()[index])),
         )
 
         if len(part) == 1:
             return part[0]
-        elif not part:
+        if not part:
             raise IndexError("Version part undefined")
         return part
 
@@ -359,8 +351,7 @@ class Version:
         return hash(self.to_tuple()[:4])
 
     def match(self, match_expr: str) -> bool:
-        """
-        Compare self to match a match expression.
+        """Compare self to match a match expression.
         :param match_expr: optional operator and version; valid operators are
               ``<```   smaller than
               ``>``   greater than
@@ -382,7 +373,7 @@ class Version:
         elif prefix and prefix[0] in (">", "<"):
             prefix = prefix[0]
             match_version = match_expr[1:]
-        elif match_expr and match_expr[0] in "0123456789":
+        elif match_expr and match_expr[0] in string.digits:
             prefix = "=="
             match_version = match_expr
         else:
@@ -390,7 +381,7 @@ class Version:
                 "match_expr parameter should be in format <op><ver>, "
                 "where <op> is one of "
                 "['<', '>', '==', '<=', '>=', '!=']. "
-                "You provided: %r" % match_expr
+                "You provided: %r" % match_expr,
             )
 
         possibilities_dict = {
@@ -409,10 +400,9 @@ class Version:
 
     @classmethod
     def parse(
-        cls, version: String, optional_minor_and_patch: bool = False
+        cls, version: String, optional_minor_and_patch: bool = False,
     ) -> "Version":
-        """
-        Parse version string to a Version instance.
+        """Parse version string to a Version instance.
         .. versionchanged:: 2.11.0
            Changed method from static to classmethod to
            allow subclasses.
@@ -453,8 +443,7 @@ prerelease='pre.2', build='build.4')
 
     @classmethod
     def isvalid(cls, version: str) -> bool:
-        """
-        Check if the string is a valid semver version.
+        """Check if the string is a valid semver version.
         .. versionadded:: 2.9.1
         :param version: the version string to check
         :return: True if the version string is a valid semver version, False

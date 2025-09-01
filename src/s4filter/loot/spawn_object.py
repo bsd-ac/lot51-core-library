@@ -1,4 +1,5 @@
 import random
+
 import services
 import sims4.math
 from interactions import ParticipantType
@@ -10,12 +11,12 @@ from objects.system import create_object
 from sims.sim_info import SimInfo
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableInterval,
-    TunableReference,
-    Tunable,
-    TunableList,
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
+    Tunable,
+    TunableInterval,
+    TunableList,
+    TunableReference,
     TunableVariant,
 )
 
@@ -37,26 +38,26 @@ class InheritOwnership(HasTunableSingletonFactory, AutoFactoryInit):
 class CreateObjectRingLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
         "definitions": TunableList(
-            tunable=TunableReference(manager=services.definition_manager())
+            tunable=TunableReference(manager=services.definition_manager()),
         ),
         "radius": Tunable(tunable_type=float, default=1),
         "count": TunableInterval(tunable_type=int, default_lower=5, default_upper=7),
         "initial_x_offset": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "initial_z_offset": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "x_jitter": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "z_jitter": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "states": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.OBJECT_STATE)
-            )
+                manager=services.get_instance_manager(Types.OBJECT_STATE),
+            ),
         ),
     }
 
@@ -89,10 +90,10 @@ class CreateObjectRingLoot(BaseLootOperation):
 
         count = random.randint(self._count.lower_bound, self._count.upper_bound)
         initial_x = random.uniform(
-            self._initial_x_offset.lower_bound, self._initial_x_offset.upper_bound
+            self._initial_x_offset.lower_bound, self._initial_x_offset.upper_bound,
         )
         initial_z = random.uniform(
-            self._initial_z_offset.lower_bound, self._initial_z_offset.upper_bound
+            self._initial_z_offset.lower_bound, self._initial_z_offset.upper_bound,
         )
 
         for x, z in circular_coordinates_by_count_gen(radius=self._radius, count=count):
@@ -102,14 +103,14 @@ class CreateObjectRingLoot(BaseLootOperation):
                 obj.opacity = 0
                 x_jitter = (
                     random.uniform(
-                        self._x_jitter.lower_bound, self._x_jitter.upper_bound
+                        self._x_jitter.lower_bound, self._x_jitter.upper_bound,
                     )
                     if self._x_jitter is not None
                     else 0
                 )
                 z_jitter = (
                     random.uniform(
-                        self._z_jitter.lower_bound, self._z_jitter.upper_bound
+                        self._z_jitter.lower_bound, self._z_jitter.upper_bound,
                     )
                     if self._z_jitter is not None
                     else 0
@@ -136,21 +137,21 @@ class SpawnObjectLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
         "definition": TunableReference(manager=services.definition_manager()),
         "initial_x_offset": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "initial_z_offset": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "x_jitter": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "z_jitter": TunableInterval(
-            tunable_type=float, default_lower=0, default_upper=0
+            tunable_type=float, default_lower=0, default_upper=0,
         ),
         "states": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.OBJECT_STATE)
-            )
+                manager=services.get_instance_manager(Types.OBJECT_STATE),
+            ),
         ),
         "owner": TunableVariant(
             active_household=ActiveHouseholdOwnership.TunableFactory(),
@@ -184,10 +185,10 @@ class SpawnObjectLoot(BaseLootOperation):
             source = source.get_sim_instance(allow_hidden_flags=ALL_HIDDEN_REASONS)
 
         initial_x = random.uniform(
-            self._initial_x_offset.lower_bound, self._initial_x_offset.upper_bound
+            self._initial_x_offset.lower_bound, self._initial_x_offset.upper_bound,
         )
         initial_z = random.uniform(
-            self._initial_z_offset.lower_bound, self._initial_z_offset.upper_bound
+            self._initial_z_offset.lower_bound, self._initial_z_offset.upper_bound,
         )
 
         obj = create_object(self._definition)

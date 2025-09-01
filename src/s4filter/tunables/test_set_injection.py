@@ -8,14 +8,14 @@ from sims4.tuning.tunable import TunableReference
 class TunableTestSetInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "test_set": TunableReference(
-            manager=services.get_instance_manager(Types.SNIPPET)
+            manager=services.get_instance_manager(Types.SNIPPET),
         ),
         "modify_test": TestInjectionVariant(),
     }
 
     __slots__ = (
-        "test_set",
         "modify_test",
+        "test_set",
     )
 
     def inject(self):

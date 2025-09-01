@@ -3,16 +3,15 @@ from event_testing.test_base import BaseTest
 from interactions import ParticipantTypeSingle
 from routing.walkstyle.walkstyle_tuning import TunableWalkstyle
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
     TunableList,
 )
 
 
 class WalkstyleTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject has any of the prohibited walkstyles in their current route node
+    """Tests if the subject has any of the prohibited walkstyles in their current route node
     """
 
     test_events = ()
@@ -26,8 +25,8 @@ class WalkstyleTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     }
 
     __slots__ = (
-        "subject",
         "prohibited_walkstyles",
+        "subject",
     )
 
     def get_expected_args(self):
@@ -39,7 +38,7 @@ class WalkstyleTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
             sim = subject.get_sim_instance()
             if sim is None or sim.routing_component is None:
                 return TestResult(
-                    False, "Sim unavailable, or does not support routing."
+                    False, "Sim unavailable, or does not support routing.",
                 )
 
             current_path = sim.routing_component.current_path

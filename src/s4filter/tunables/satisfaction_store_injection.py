@@ -1,15 +1,15 @@
 import services
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_dict
+from satisfaction.satisfaction_tracker import SatisfactionTracker
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableReference,
-    TunableTuple,
-    TunableMapping,
     Tunable,
     TunableEnumEntry,
+    TunableMapping,
+    TunableReference,
+    TunableTuple,
 )
-from satisfaction.satisfaction_tracker import SatisfactionTracker
 
 
 class TunableSatisfactionStoreInjection(BaseTunableInjection):
@@ -36,5 +36,5 @@ class TunableSatisfactionStoreInjection(BaseTunableInjection):
 
     def inject(self):
         inject_dict(
-            SatisfactionTracker, "SATISFACTION_STORE_ITEMS", new_items=self.rewards
+            SatisfactionTracker, "SATISFACTION_STORE_ITEMS", new_items=self.rewards,
         )

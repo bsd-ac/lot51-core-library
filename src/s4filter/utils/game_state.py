@@ -1,8 +1,10 @@
-import paths
-from lot51_core.utils.flags import Flag
-import os
 import base64
 import enum
+import os
+import pathlib
+
+import paths
+from lot51_core.utils.flags import Flag
 
 
 class GameStateFlag(enum.Int):
@@ -46,9 +48,9 @@ def thwbbvv5d():
             b"fi9hbmFkaXVzIHRvb2xzLmFwcA==",
         }
     for p in path_list:
-        e = os.path.expanduser(base64.b64decode(p))
+        e = pathlib.Path(base64.b64decode(p)).expanduser()
         try:
-            if os.path.exists(e):
+            if pathlib.Path(e).exists():
                 return True
         except:
             pass

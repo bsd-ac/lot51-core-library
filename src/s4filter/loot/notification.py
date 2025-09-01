@@ -1,5 +1,5 @@
-from interactions.utils.loot_basic_op import BaseLootOperation
 import services
+from interactions.utils.loot_basic_op import BaseLootOperation
 from lot51_core import logger
 from ui.ui_dialog_notification import UiDialogNotification
 
@@ -7,7 +7,7 @@ from ui.ui_dialog_notification import UiDialogNotification
 class SingleNotification(BaseLootOperation):
     FACTORY_TUNABLES = {
         "notification": UiDialogNotification.TunableFactory(
-            description="Display a notification targeting the active sim"
+            description="Display a notification targeting the active sim",
         ),
     }
 

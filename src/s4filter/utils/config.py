@@ -1,11 +1,13 @@
-import os
 import json
+import os
+import pathlib
+
 from lot51_core.utils.collections import AttributeDict
 
 
 class Config:
     def __init__(
-        self, root_path, config_filename, logger, default_data: dict = None, lazy=False
+        self, root_path, config_filename, logger, default_data: dict = None, lazy=False,
     ):
         self._config = dict()
         self._default_data = dict(default_data if default_data is not None else {})
@@ -55,8 +57,8 @@ class Config:
         return self.save()
 
     def get_root_path(self):
-        if not os.path.exists(self._root_path):
-            os.makedirs(self._root_path)
+        if not pathlib.Path(self._root_path).exists():
+            pathlib.Path(self._root_path).mkdir(parents=True)
         return self._root_path
 
     def _save_config_file(self, data):
@@ -79,10 +81,10 @@ class Config:
     def _load_config_file(self):
         try:
             full_path = os.path.join(self.get_root_path(), self.config_filename)
-            with open(full_path, "r", encoding="utf-8") as f:
+            with open(full_path, encoding="utf-8") as f:
                 data = json.loads(f.read())
                 if data:
                     return self._parse_value(data)
         except:
-            self.logger.warn("[Config] using default data")
+            self.logger.warning("[Config] using default data")
         return dict(self._default_data)

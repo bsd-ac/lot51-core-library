@@ -4,7 +4,7 @@ from lot51_core import logger
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_dict
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableMapping, Tunable
+from sims4.tuning.tunable import Tunable, TunableMapping, TunableReference
 
 
 class TunableBusinessTuningInjection(BaseTunableInjection):
@@ -14,7 +14,7 @@ class TunableBusinessTuningInjection(BaseTunableInjection):
             key_type=Tunable(tunable_type=int, default=-1),
             value_name="business",
             value_type=TunableReference(
-                manager=services.get_instance_manager(Types.BUSINESS), pack_safe=True
+                manager=services.get_instance_manager(Types.BUSINESS), pack_safe=True,
             ),
         ),
     }
@@ -26,15 +26,11 @@ class TunableBusinessTuningInjection(BaseTunableInjection):
             try:
                 if business_type in BusinessTuning.BUSINESS_TYPE_TO_BUSINESS_DATA_MAP:
                     logger.warn(
-                        "Business data for business type {} already exists.".format(
-                            business_type
-                        )
+                        f"Business data for business type {business_type} already exists.",
                     )
                     continue
                 logger.debug(
-                    "Adding business data to business type {} {}".format(
-                        business_type, business_data
-                    )
+                    f"Adding business data to business type {business_type} {business_data}",
                 )
                 inject_dict(
                     BusinessTuning,
@@ -43,7 +39,5 @@ class TunableBusinessTuningInjection(BaseTunableInjection):
                 )
             except:
                 logger.exception(
-                    "Failed adding business data for enum value {}".format(
-                        business_type
-                    )
+                    f"Failed adding business data for enum value {business_type}",
                 )

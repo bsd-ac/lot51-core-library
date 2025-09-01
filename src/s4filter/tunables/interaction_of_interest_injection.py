@@ -2,21 +2,21 @@ from lot51_core import logger
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableList,
     TunableReference,
 )
 
 
 class TunableInteractionOfInterestInjection(
-    HasTunableSingletonFactory, AutoFactoryInit
+    HasTunableSingletonFactory, AutoFactoryInit,
 ):
     FACTORY_TUNABLES = {
         "affordances": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.INTERACTION), pack_safe=True
-            )
+                manager=get_instance_manager(Types.INTERACTION), pack_safe=True,
+            ),
         ),
     }
 
@@ -30,9 +30,7 @@ class TunableInteractionOfInterestInjection(
         tunable = getattr(target, key, None)
         if tunable is None:
             logger.error(
-                "Failed to inject to interaction of interest, key {} on target is none".format(
-                    key
-                )
+                f"Failed to inject to interaction of interest, key {key} on target is none",
             )
             return
 

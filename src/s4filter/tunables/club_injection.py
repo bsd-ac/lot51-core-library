@@ -2,14 +2,14 @@ import services
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableList, TunableSet
+from sims4.tuning.tunable import TunableList, TunableReference, TunableSet
 from snippets import TunableAffordanceListReference
 
 
 class TunableClubInteractionGroupInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "query": TunableReference(
-            manager=services.get_instance_manager(Types.CLUB_INTERACTION_GROUP)
+            manager=services.get_instance_manager(Types.CLUB_INTERACTION_GROUP),
         ),
         "affordance_lists": TunableSet(
             description="A set of affordance lists associated with this interaction group.",
@@ -26,9 +26,9 @@ class TunableClubInteractionGroupInjection(BaseTunableInjection):
     }
 
     __slots__ = (
-        "query",
         "affordance_lists",
         "affordances",
+        "query",
     )
 
     def inject(self):

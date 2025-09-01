@@ -1,8 +1,9 @@
-import build_buy
 import enum
+
+import build_buy
 import services
-from lot51_core import logger
 from interactions import ParticipantType
+from lot51_core import logger
 from lot51_core.tunables.object_query import ObjectSearchMethodVariant
 from lot51_core.utils.placement import (
     get_location_near_location,
@@ -11,13 +12,13 @@ from lot51_core.utils.placement import (
 from objects.terrain import TerrainPoint
 from sims.sim_info import SimInfo
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
-    TunableList,
-    Tunable,
+    HasTunableSingletonFactory,
     OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
     TunableInterval,
+    TunableList,
 )
 
 
@@ -37,7 +38,7 @@ def attempt_fallback_delivery(resolver, obj, fallback_inventory):
         current_zone = services.current_zone()
         zone_household = current_zone.get_active_lot_owner_household()
         if zone_household and build_buy.is_household_inventory_available(
-            zone_household.id
+            zone_household.id,
         ):
             if build_buy.move_object_to_household_inventory(obj):
                 return True
@@ -47,28 +48,28 @@ def attempt_fallback_delivery(resolver, obj, fallback_inventory):
 class FglDeliveryMethod(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
         "participant_type": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Object
+            tunable_type=ParticipantType, default=ParticipantType.Object,
         ),
         "optimal_distance": Tunable(tunable_type=float, default=0),
         "radius_width": Tunable(tunable_type=float, default=8),
         "max_distance": Tunable(tunable_type=float, default=8),
         "x_random_offset": OptionalTunable(
             tunable=TunableInterval(
-                tunable_type=float, default_lower=0, default_upper=0
-            )
+                tunable_type=float, default_lower=0, default_upper=0,
+            ),
         ),
         "z_random_offset": OptionalTunable(
             tunable=TunableInterval(
-                tunable_type=float, default_lower=0, default_upper=0
-            )
+                tunable_type=float, default_lower=0, default_upper=0,
+            ),
         ),
     }
 
     __slots__ = (
-        "participant_type",
-        "optimal_distance",
-        "radius_width",
         "max_distance",
+        "optimal_distance",
+        "participant_type",
+        "radius_width",
         "x_random_offset",
         "z_random_offset",
     )
@@ -114,7 +115,7 @@ class FglDeliveryMethod(HasTunableSingletonFactory, AutoFactoryInit):
             routing_surface=routing_surface,
         )
         obj.fade_in()
-        logger.debug("delivering obj to participant {} {}".format(obj, participant))
+        logger.debug(f"delivering obj to participant {obj} {participant}")
         return True
 
 
@@ -172,8 +173,8 @@ class InventoryDeliveryMethod(HasTunableSingletonFactory, AutoFactoryInit):
     }
 
     __slots__ = (
-        "inventory_source",
         "fallback_inventory",
+        "inventory_source",
     )
 
     def __call__(self, resolver, obj, **kwargs):
@@ -204,8 +205,8 @@ class MultipleInventoriesDeliveryMethod(HasTunableSingletonFactory, AutoFactoryI
     }
 
     __slots__ = (
-        "inventory_sources",
         "fallback_inventory",
+        "inventory_sources",
     )
 
     def __call__(self, resolver, obj, **kwargs):

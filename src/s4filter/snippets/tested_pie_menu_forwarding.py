@@ -7,32 +7,32 @@ from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
 from sims4.tuning.tunable import (
-    TunableReference,
-    TunableList,
-    TunableTuple,
     OptionalTunable,
+    TunableList,
+    TunableReference,
+    TunableTuple,
 )
 
 
 class TestedPieMenuForwarding(
-    metaclass=HashedTunedInstanceMetaclass, manager=get_instance_manager(Types.SNIPPET)
+    metaclass=HashedTunedInstanceMetaclass, manager=get_instance_manager(Types.SNIPPET),
 ):
     INSTANCE_TUNABLES = {
         "forward_data": TunableList(
             tunable=TunableTuple(
                 affordances=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.INTERACTION), pack_safe=True
-                    )
+                        manager=get_instance_manager(Types.INTERACTION), pack_safe=True,
+                    ),
                 ),
                 pie_menu_category=OptionalTunable(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.PIE_MENU_CATEGORY)
-                    )
+                        manager=get_instance_manager(Types.PIE_MENU_CATEGORY),
+                    ),
                 ),
                 object_query=ObjectSearchMethodVariant(),
-            )
-        )
+            ),
+        ),
     }
 
     __slots__ = ("forward_data",)
@@ -40,7 +40,7 @@ class TestedPieMenuForwarding(
     @classmethod
     def all_snippets_gen(cls):
         yield from get_instance_manager(Types.SNIPPET).get_ordered_types(
-            only_subclasses_of=TestedPieMenuForwarding
+            only_subclasses_of=TestedPieMenuForwarding,
         )
 
     @classmethod
@@ -57,7 +57,7 @@ class TestedPieMenuForwarding(
 
 @inject_to(ChoiceMenu, "add_potential_aops")
 def _add_potential_aops(
-    original, self, target, context, potential_aops, *args, **kwargs
+    original, self, target, context, potential_aops, *args, **kwargs,
 ):
     original(self, target, context, potential_aops, *args, **kwargs)
     try:

@@ -20,7 +20,7 @@ class EndVacationLoot(BaseLootOperation):
 
     def _apply_to_subject_and_target(self, subject, target, resolver):
         sim_info = resolver.get_participant(self._participant)
-        logger.debug("ending vacation for participant {}".format(sim_info))
+        logger.debug(f"ending vacation for participant {sim_info}")
         travel_group_manager = services.travel_group_manager()
         travel_group = travel_group_manager.get_travel_group_by_sim_info(sim_info)
         if travel_group is not None:

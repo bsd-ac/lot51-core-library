@@ -1,18 +1,18 @@
 from drama_scheduler.drama_enums import DramaNodeScoringBucket, WeeklySchedulingGroup
-from drama_scheduler.drama_scheduler import NodeSelectionOption, DramaScheduleService
+from drama_scheduler.drama_scheduler import DramaScheduleService, NodeSelectionOption
 from lot51_core import logger
 from lot51_core.utils.injection import inject_to_enum
 from scheduler_utils import TunableDayAvailability
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     Tunable,
-    TunableVariant,
-    TunableTuple,
-    TunableRange,
-    TunableMapping,
     TunableEnumEntry,
     TunableEnumSet,
+    TunableMapping,
+    TunableRange,
+    TunableTuple,
+    TunableVariant,
 )
 
 
@@ -30,7 +30,7 @@ class TunableCustomDramaBucketRule(HasTunableSingletonFactory, AutoFactoryInit):
         "score_if_no_nodes_are_scheduled": Tunable(tunable_type=bool, default=False),
         "number_to_schedule": TunableVariant(
             based_on_household=TunableTuple(
-                locked_args={"option": NodeSelectionOption.BASED_ON_HOUSEHOLD}
+                locked_args={"option": NodeSelectionOption.BASED_ON_HOUSEHOLD},
             ),
             fixed_amount=TunableTuple(
                 number_of_nodes=TunableRange(tunable_type=int, default=1, minimum=0),
@@ -42,9 +42,9 @@ class TunableCustomDramaBucketRule(HasTunableSingletonFactory, AutoFactoryInit):
 
     __slots__ = (
         "days",
-        "score_if_no_nodes_are_scheduled",
         "number_to_schedule",
         "refresh_nodes_on_scheduling",
+        "score_if_no_nodes_are_scheduled",
     )
 
     def inject(self, bucket: DramaNodeScoringBucket):
@@ -54,14 +54,14 @@ class TunableCustomDramaBucketRule(HasTunableSingletonFactory, AutoFactoryInit):
 class TunableCustomWeeklySchedulingRule(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
         "weeks_to_schedule_in_advance": TunableRange(
-            tunable_type=int, default=1, minimum=1
+            tunable_type=int, default=1, minimum=1,
         ),
         "weeks_gap": TunableRange(tunable_type=int, default=1, minimum=1),
     }
 
     __slots__ = (
-        "weeks_to_schedule_in_advance",
         "weeks_gap",
+        "weeks_to_schedule_in_advance",
     )
 
     def inject(self, scheduling_group: WeeklySchedulingGroup):
@@ -89,8 +89,8 @@ class TunableDramaSchedulerInjection(HasTunableSingletonFactory, AutoFactoryInit
 
     __slots__ = (
         "bucket_rules",
-        "weekly_scheduling_rules",
         "startup_buckets",
+        "weekly_scheduling_rules",
     )
 
     def inject(self):

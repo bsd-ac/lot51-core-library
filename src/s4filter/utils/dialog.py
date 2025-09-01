@@ -1,12 +1,13 @@
 from collections import namedtuple
+
 import services
-from ui.ui_dialog import UiDialogResponse, ButtonType
-from ui.ui_dialog_notification import UiDialogNotification
-from sims4.tuning.tunable import AutoFactoryInit, HasTunableSingletonFactory
-from sims4.localization import LocalizationHelperTuning, _create_localized_string
-from ui.ui_dialog_generic import UiDialogTextInputOk, UiDialogOkCancel
-from ui.ui_text_input import UiTextInput
 from sims4.collections import AttributeDict
+from sims4.localization import LocalizationHelperTuning, _create_localized_string
+from sims4.tuning.tunable import AutoFactoryInit, HasTunableSingletonFactory
+from ui.ui_dialog import ButtonType, UiDialogResponse
+from ui.ui_dialog_generic import UiDialogOkCancel, UiDialogTextInputOk
+from ui.ui_dialog_notification import UiDialogNotification
+from ui.ui_text_input import UiTextInput
 
 
 class TextInputLength(HasTunableSingletonFactory, AutoFactoryInit):
@@ -16,17 +17,17 @@ class TextInputLength(HasTunableSingletonFactory, AutoFactoryInit):
         msg.max_length = 255
         msg.min_length = 0
         msg.input_too_short_tooltip = LocalizationHelperTuning.get_raw_text(
-            "Text is too short"
+            "Text is too short",
         )
 
 
 def create_input(title="", input_text="", restricted_characters=None, max_length=255):
     localized_title = lambda **_: LocalizationHelperTuning.get_raw_text(title)
     localized_text_placeholder = lambda **_: LocalizationHelperTuning.get_raw_text(
-        input_text
+        input_text,
     )
     text_input = UiTextInput(
-        sort_order=0, restricted_characters=restricted_characters, height=0
+        sort_order=0, restricted_characters=restricted_characters, height=0,
     )
     text_input.default_text = localized_text_placeholder
     text_input.title = localized_title
@@ -38,7 +39,7 @@ def create_input(title="", input_text="", restricted_characters=None, max_length
 
 
 def create_translated_input(
-    title=None, input_text=None, restricted_characters=None, max_length=255
+    title=None, input_text=None, restricted_characters=None, max_length=255,
 ):
     if title is None:
         title = _create_localized_string(0x0)
@@ -48,7 +49,7 @@ def create_translated_input(
     localized_title = lambda **_: title
     localized_text_placeholder = lambda **_: input_text
     text_input = UiTextInput(
-        sort_order=0, restricted_characters=restricted_characters, height=0
+        sort_order=0, restricted_characters=restricted_characters, height=0,
     )
     text_input.default_text = localized_text_placeholder
     text_input.title = localized_title

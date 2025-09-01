@@ -1,6 +1,5 @@
 import argparse
 import compileall
-import os
 import pathlib
 import shutil
 
@@ -23,7 +22,7 @@ def build():
 
     # create mod directory
     mod_dir = f"{MOD_CACHE}/{args.name}"
-    os.makedirs(mod_dir, exist_ok=True)
+    pathlib.Path(mod_dir).mkdir(exist_ok=True, parents=True)
 
     # copy all compiled files to mod directory with the directory structure but removing __pycache__
     for file in pathlib.Path(args.root).rglob("*.pyc"):
@@ -37,7 +36,7 @@ def build():
     # zip the files
     shutil.make_archive(f"{MOD_CACHE}/{args.name}", "zip", mod_dir)
     # move the zip to the final mods folder
-    os.makedirs(MOD_FINAL, exist_ok=True)
+    pathlib.Path(MOD_FINAL).mkdir(exist_ok=True, parents=True)
     shutil.move(f"{MOD_CACHE}/{args.name}.zip", f"{MOD_FINAL}/{args.name}.ts4script")
 
 

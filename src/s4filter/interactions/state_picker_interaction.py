@@ -45,9 +45,8 @@ class AdvancedStatePickerSuperInteraction(StatePickerSuperInteraction):
                 if target.state_value_active(state_value):
                     if cls._active_icon is not None:
                         aop.affordance.pie_menu_icon = cls._active_icon
-                else:
-                    if cls._inactive_icon is not None:
-                        aop.affordance.pie_menu_icon = cls._inactive_icon
+                elif cls._inactive_icon is not None:
+                    aop.affordance.pie_menu_icon = cls._inactive_icon
 
                 yield aop
         else:

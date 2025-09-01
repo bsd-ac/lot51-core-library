@@ -5,15 +5,15 @@ from interactions import ParticipantType
 from interactions.utils.loot_basic_op import BaseLootOperation
 from lot51_core import logger
 from sims.sim_info import SimInfo
-from sims4.tuning.geometric import TunableVector3
-from sims4.tuning.tunable import TunableList, TunableEnumEntry, Tunable, OptionalTunable
 from sims4.random import weighted_random_item
+from sims4.tuning.geometric import TunableVector3
+from sims4.tuning.tunable import OptionalTunable, Tunable, TunableEnumEntry, TunableList
 
 
 class BalloonLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
         "balloon_subject": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Actor
+            tunable_type=ParticipantType, default=ParticipantType.Actor,
         ),
         "balloon_choices": TunableList(tunable=BalloonVariant.TunableFactory()),
         "delay": Tunable(tunable_type=float, default=0),
@@ -60,10 +60,10 @@ class BalloonLoot(BaseLootOperation):
         category_icon = None
         if balloon.category_icon is not None:
             category_icon = balloon.category_icon(
-                resolver, balloon_target_override=None
+                resolver, balloon_target_override=None,
             )
             if icon_info[0] is None or icon_info[1] is None:
-                logger.debug("Icon info is none: {}".format(icon_info))
+                logger.debug(f"Icon info is none: {icon_info}")
                 # return
 
         balloon_type, priority = BALLOON_TYPE_LOOKUP[balloon.balloon_type]
@@ -82,7 +82,7 @@ class BalloonLoot(BaseLootOperation):
             self._offset,
         )
         request.distribute()
-        logger.debug("Sent balloon {} to target: {}".format(balloon, target))
+        logger.debug(f"Sent balloon {balloon} to target: {target}")
         return True
 
     def _apply_to_subject_and_target(self, subject, target, resolver):
@@ -96,8 +96,6 @@ class BalloonLoot(BaseLootOperation):
                     continue
             chosen_balloon = weighted_random_item(possible_balloons)
             logger.debug(
-                "Applying balloon {} to target: {} and resolver: {}".format(
-                    chosen_balloon, obj, resolver
-                )
+                f"Applying balloon {chosen_balloon} to target: {obj} and resolver: {resolver}",
             )
             self.send_balloon(chosen_balloon, obj, resolver)

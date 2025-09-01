@@ -1,8 +1,8 @@
 from interactions.utils.tunable_icon import TunableIconFactory
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     OptionalTunable,
 )
 
@@ -10,10 +10,10 @@ from sims4.tuning.tunable import (
 class TunableDisplayData(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
         "instance_display_name": OptionalTunable(
-            tunable=TunableLocalizedStringFactory()
+            tunable=TunableLocalizedStringFactory(),
         ),
         "instance_display_description": OptionalTunable(
-            tunable=TunableLocalizedStringFactory()
+            tunable=TunableLocalizedStringFactory(),
         ),
         "instance_display_icon": OptionalTunable(tunable=TunableIconFactory()),
     }

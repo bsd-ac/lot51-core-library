@@ -1,10 +1,10 @@
 from interactions.constraints import (
-    ZoneConstraintMixin,
+    Circle,
     FrontDoorOption,
     Nowhere,
-    Circle,
+    ZoneConstraintMixin,
 )
-from sims4.tuning.tunable import TunableSingletonFactory, Tunable, TunableEnumEntry
+from sims4.tuning.tunable import Tunable, TunableEnumEntry, TunableSingletonFactory
 from singletons import DEFAULT
 
 
@@ -17,7 +17,7 @@ class TunedDoorConstraint(ZoneConstraintMixin):
         self._front_door_position_option = front_door_position_option
 
     def create_zone_constraint(
-        self, sim, target=None, routing_surface=DEFAULT, **kwargs
+        self, sim, target=None, routing_surface=DEFAULT, **kwargs,
     ):
         front_door = target
         if front_door is not None and hasattr(front_door, "get_door_positions"):
@@ -29,7 +29,7 @@ class TunedDoorConstraint(ZoneConstraintMixin):
             routing_surface = front_door.routing_surface
         else:
             return Nowhere(
-                "Front Door Constraint: Could not find a door for this constraint."
+                "Front Door Constraint: Could not find a door for this constraint.",
             )
         los_factory = self._line_of_sight()
         los_factory.generate(position, routing_surface)
@@ -62,7 +62,7 @@ class TunableDoorConstraint(TunableSingletonFactory):
                 default=2,
             ),
             line_of_sight=TunableLineOfSightFactory(
-                description="Tuning to generate a light of sight constraint either inside or outside the front door in order to get the sims to move there."
+                description="Tuning to generate a light of sight constraint either inside or outside the front door in order to get the sims to move there.",
             ),
             front_door_position_option=TunableEnumEntry(
                 description="The option of whether to use the inside or outside side of the front door in order to generate the constraint.",

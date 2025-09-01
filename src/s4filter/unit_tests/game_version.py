@@ -1,4 +1,5 @@
 import unittest
+
 from lot51_core.lib.game_version import GameVersion
 
 

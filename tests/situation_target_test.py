@@ -6,8 +6,8 @@ from interactions import ParticipantTypeSingle
 from lot51_core import logger
 from sims.sim_info import SimInfo
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
     TunableEnumSet,
 )
@@ -16,10 +16,10 @@ from sims4.tuning.tunable import (
 class SituationTargetObjectTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     FACTORY_TUNABLES = {
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor,
         ),
         "target": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
         "situation_tags": TunableEnumSet(
             enum_type=tag.Tag,
@@ -29,9 +29,9 @@ class SituationTargetObjectTest(HasTunableSingletonFactory, AutoFactoryInit, Bas
     }
 
     __slots__ = (
+        "situation_tags",
         "subject",
         "target",
-        "situation_tags",
     )
 
     def get_expected_args(self):
@@ -51,22 +51,18 @@ class SituationTargetObjectTest(HasTunableSingletonFactory, AutoFactoryInit, Bas
             target = target.part_owner
 
         for situation in services.get_zone_situation_manager().get_situations_sim_is_in(
-            subject
+            subject,
         ):
             if self.situation_tags & situation.tags:
                 if hasattr(situation, "get_target_object"):
                     situation_target = situation.get_target_object()
                     if situation_target and situation_target == target:
                         logger.debug(
-                            "SITUATION TARGET TEST PASSED. {}: {} == {}".format(
-                                subject, target, situation_target
-                            )
+                            f"SITUATION TARGET TEST PASSED. {subject}: {target} == {situation_target}",
                         )
                         return TestResult.TRUE
                     logger.debug(
-                        "SITUATION TARGET TEST FAILED. DOES NOT MATCH TARGET. {}: {} != {}".format(
-                            subject, target, situation_target
-                        )
+                        f"SITUATION TARGET TEST FAILED. DOES NOT MATCH TARGET. {subject}: {target} != {situation_target}",
                     )
                     return TestResult(
                         False,
@@ -74,14 +70,10 @@ class SituationTargetObjectTest(HasTunableSingletonFactory, AutoFactoryInit, Bas
                         tooltip=self.tooltip,
                     )
         logger.debug(
-            "SITUATION TARGET TEST FAILED. SIM NOT IN SITUATION WITH TAGS. {} {}".format(
-                subject, self.situation_tags
-            )
+            f"SITUATION TARGET TEST FAILED. SIM NOT IN SITUATION WITH TAGS. {subject} {self.situation_tags}",
         )
         return TestResult(
             False,
-            "Sim is not in expected situation with tags: {}".format(
-                self.situation_tags
-            ),
+            f"Sim is not in expected situation with tags: {self.situation_tags}",
             tooltip=self.tooltip,
         )

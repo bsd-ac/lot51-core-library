@@ -1,13 +1,13 @@
 import services
 from lot51_core import logger
-from lot51_core.tunables.situation_actions import SituationActionVariant
 from lot51_core.tunables.bouncer_request import TunableBouncerRequest
+from lot51_core.tunables.situation_actions import SituationActionVariant
 from sims4.tuning.tunable import (
+    Tunable,
     TunableList,
     TunableMapping,
-    Tunable,
-    TunableTuple,
     TunableRange,
+    TunableTuple,
 )
 from situations.create_and_use_object_situation import TARGET_OBJECT_TOKEN
 from situations.custom_states.custom_states_situation import CustomStatesSituation
@@ -74,4 +74,4 @@ class AdvancedCustomStatesSituation(DefaultObjectCustomStatesSituation):
                 if action.is_valid(sim, job):
                     action.apply_to_sim(self, sim, job)
         except Exception as e:
-            logger.exception("failed to apply job_spawn_actions to sim {}".format(e))
+            logger.exception(f"failed to apply job_spawn_actions to sim {e}")

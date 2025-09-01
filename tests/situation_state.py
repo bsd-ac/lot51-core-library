@@ -5,31 +5,30 @@ from interactions import ParticipantTypeSingle
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
+    HasTunableSingletonFactory,
     Tunable,
+    TunableEnumEntry,
     TunableReference,
 )
 
 
 class CustomStateSituationTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject is in the provided CustomStatesSituation and in the provided situation state.
+    """Tests if the subject is in the provided CustomStatesSituation and in the provided situation state.
     """
 
     FACTORY_TUNABLES = {
         "situation": TunableReference(manager=get_instance_manager(Types.SITUATION)),
         "state_key": Tunable(tunable_type=str, default="Invalid"),
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor,
         ),
     }
 
     __slots__ = (
-        "subject",
         "situation",
         "state_key",
+        "subject",
     )
 
     def get_expected_args(self):

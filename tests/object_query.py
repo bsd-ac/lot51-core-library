@@ -3,11 +3,10 @@ from event_testing.resolver import RESOLVER_PARTICIPANT
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
 from event_testing.test_events import TestEvent
-from lot51_core import logger
 from lot51_core.tunables.object_query import ObjectSearchMethodVariant
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableThreshold,
 )
 
@@ -29,7 +28,7 @@ class ObjectQueryTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     FACTORY_TUNABLES = {
         "object_query": ObjectSearchMethodVariant(),
         "threshold": TunableThreshold(
-            description="The threshold that must be met based on the number of objects returned from the query"
+            description="The threshold that must be met based on the number of objects returned from the query",
         ),
     }
 
@@ -49,6 +48,6 @@ class ObjectQueryTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
         # logger.debug("object query test: {} {}, results: {}, total items {}, threshold met? {}".format(self, resolver, results, total_items, threshold_met))
         if not threshold_met:
             return TestResult(
-                False, "Object query does not meet threshold", tooltip=self.tooltip
+                False, "Object query does not meet threshold", tooltip=self.tooltip,
             )
         return TestResult.TRUE

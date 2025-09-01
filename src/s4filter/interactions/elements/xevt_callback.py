@@ -21,7 +21,7 @@ class CallbackXevtElement(ParentElement):
         def register_xevt(_):
             self._xevt_handle = (
                 self._interaction.animation_context.register_event_handler(
-                    lambda _: self._run_xevt(timeline), handler_id=self._xevt_id
+                    lambda _: self._run_xevt(timeline), handler_id=self._xevt_id,
                 )
             )
 

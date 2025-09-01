@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 from lot51_core import logger
 
 
@@ -16,8 +17,7 @@ class InjectionTracker:
         return False
 
     def inject(self, owner_tuning, tunable_key, safe=True):
-        """
-        Check if a tunable has been injected to previously. This function assumes an injection will perform if
+        """Check if a tunable has been injected to previously. This function assumes an injection will perform if
         it returns True and will track the change preventing future injections. A warning will be logged if a previous
         injection was detected. Use `can_inject` if you want to perform a simple test.
 
@@ -30,14 +30,11 @@ class InjectionTracker:
             if self.can_inject(owner_tuning, tunable_key):
                 self._cache[owner_tuning].add(tunable_key)
                 return True
-            else:
-                logger.warn(
-                    "Key {} on Tuning {} has already been previously overwritten. Skipping injection: {}".format(
-                        tunable_key, owner_tuning, safe
-                    )
-                )
-                if not safe:
-                    return True
+            logger.warn(
+                f"Key {tunable_key} on Tuning {owner_tuning} has already been previously overwritten. Skipping injection: {safe}",
+            )
+            if not safe:
+                return True
         return False
 
     def cleanup(self):

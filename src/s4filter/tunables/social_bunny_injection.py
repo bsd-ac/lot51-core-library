@@ -2,16 +2,16 @@ from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
 from services import get_instance_manager
 from sims4.common import Pack
+from sims4.localization import TunableLocalizedString
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableTuple,
+    OptionalTunable,
     TunableEnumEntry,
     TunableList,
-    OptionalTunable,
     TunableReference,
+    TunableTuple,
 )
-from social_media import SocialMediaPostType, SocialMediaNarrative, SocialMediaPolarity
-from sims4.localization import TunableLocalizedString
+from social_media import SocialMediaNarrative, SocialMediaPolarity, SocialMediaPostType
 from social_media.social_media_tuning import SocialMediaTunables
 
 
@@ -44,7 +44,7 @@ class TunableSocialBunnyInjection(BaseTunableInjection):
                 context_post=OptionalTunable(
                     description="The Buff that will allow for this contextual post to be made.",
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.BUFF), pack_safe=True
+                        manager=get_instance_manager(Types.BUFF), pack_safe=True,
                     ),
                 ),
                 loots_on_post=TunableList(
@@ -64,7 +64,7 @@ class TunableSocialBunnyInjection(BaseTunableInjection):
                     ),
                 ),
             ),
-        )
+        ),
     }
 
     __slots__ = ("types_of_posts",)

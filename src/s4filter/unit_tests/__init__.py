@@ -1,5 +1,6 @@
 import os
 import unittest
+
 import sims4.commands
 from lot51_core import get_mod_root, logger
 from lot51_core.unit_tests.game_version import TestGameVersion, TestShortGameVersion
@@ -31,13 +32,13 @@ def run_tests():
 
 
 @sims4.commands.Command(
-    "lot51_core.run_tests", command_type=sims4.commands.CommandType.Cheat
+    "lot51_core.run_tests", command_type=sims4.commands.CommandType.Cheat,
 )
 def _run_test_suites(_connection=None):
     try:
         results = run_tests()
         sims4.commands.Output(
-            "Unit test results available at {}".format(results["output_path"])
+            "Unit test results available at {}".format(results["output_path"]),
         )
     except:
         logger.exception("Failed running unit tests")

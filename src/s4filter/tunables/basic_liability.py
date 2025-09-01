@@ -15,6 +15,13 @@ from interactions.utils.teleport_liability import TeleportLiability
 from interactions.utils.temporary_state_change_liability import (
     TemporaryStateChangeLiability,
 )
+from interactions.utils.tunable import (
+    CriticalPriorityLiability,
+    GameSpeedLiability,
+    PushAffordanceOnRouteFailLiability,
+    SaveLockLiability,
+    TimeoutLiability,
+)
 from interactions.utils.user_cancelable_chain_liability import (
     UserCancelableChainLiability,
 )
@@ -24,21 +31,14 @@ from pets.missing_pets_liability import MissingPetLiability
 from postures.proxy_posture_owner_liability import ProxyPostureOwnerLiability
 from restaurants.restaurant_liabilities import RestaurantDeliverFoodLiability
 from sims.daycare import DaycareLiability
+from sims.outfits.outfit_change import ChangeOutfitLiability
 from sims4.tuning.tunable import TunableVariant
 from situations.situation_liabilities import (
     CreateSituationLiability,
     RunningSituationLiability,
 )
-from interactions.utils.tunable import (
-    TimeoutLiability,
-    SaveLockLiability,
-    CriticalPriorityLiability,
-    GameSpeedLiability,
-    PushAffordanceOnRouteFailLiability,
-)
 from teleport.teleport_type_liability import TeleportStyleLiability
 from whims.whims_tracker import HideWhimsLiability
-from sims.outfits.outfit_change import ChangeOutfitLiability
 
 
 class BasicLiabilityVariant(TunableVariant):

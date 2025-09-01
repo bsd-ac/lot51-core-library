@@ -5,15 +5,14 @@ from interactions import ParticipantTypeSingle
 from sims.sim_info import SimInfo
 from sims4.tuning.tunable import (
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     Tunable,
     TunableEnumEntry,
-    HasTunableSingletonFactory,
 )
 
 
 class IdentityComparisonTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    An alternative to the Maxis `identity` test that only works within an Interaction context.
+    """An alternative to the Maxis `identity` test that only works within an Interaction context.
 
     Also fixes a potential bug when using `use_part_owner` in combination with `use_definition`
     """
@@ -51,9 +50,9 @@ class IdentityComparisonTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTe
     __slots__ = (
         "subject_a",
         "subject_b",
-        "use_part_owner",
-        "use_definition",
         "subjects_match",
+        "use_definition",
+        "use_part_owner",
     )
 
     def get_expected_args(self):

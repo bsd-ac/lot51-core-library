@@ -1,8 +1,8 @@
 import build_buy
-from sims4.service_manager import Service
-from lot51_core.services.events import event_service, CoreEvent
+from lot51_core.services.events import CoreEvent, event_service
 from lot51_core.services.service_manager import service_manager
 from lot51_core.utils.context import Context
+from sims4.service_manager import Service
 
 
 class GlobalService(Service):
@@ -53,7 +53,7 @@ class GlobalService(Service):
     def on_all_households_and_sim_infos_loaded(self, *args, **kwargs):
         context = Context.get_current_context()
         event_service.process_event(
-            CoreEvent.HOUSEHOLDS_AND_SIMS_LOADED, context=context
+            CoreEvent.HOUSEHOLDS_AND_SIMS_LOADED, context=context,
         )
 
     def on_build_buy_enter(self, *args, **kwargs):

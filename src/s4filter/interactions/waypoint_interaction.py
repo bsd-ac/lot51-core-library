@@ -10,7 +10,7 @@ from routing.waypoints.waypoint_generator_object_mixin import (
 
 
 class WaypointGeneratorMultipleObjectByObjectSource(
-    _WaypointGeneratorMultipleObjectMixin
+    _WaypointGeneratorMultipleObjectMixin,
 ):
     FACTORY_TUNABLES = {
         "object_source": ObjectSearchMethodVariant(),
@@ -20,7 +20,7 @@ class WaypointGeneratorMultipleObjectByObjectSource(
         _WaypointGeneratorBase.__init__(self, *args, **kwargs)
         self._sim = self._context.sim
         self._valid_objects = self._get_objects()
-        logger.debug("Waypoint targets: {}".format(self._valid_objects))
+        logger.debug(f"Waypoint targets: {self._valid_objects}")
         if not self._valid_objects:
             self._start_constraint = Circle(
                 self._sim.position,
@@ -37,7 +37,7 @@ class WaypointGeneratorMultipleObjectByObjectSource(
             los_reference_point=None,
         )
         self._start_constraint = self._start_constraint.intersect(
-            self.get_water_constraint()
+            self.get_water_constraint(),
         )
 
     def _get_objects(self):
@@ -47,5 +47,5 @@ class WaypointGeneratorMultipleObjectByObjectSource(
 
 class ObjectSourceWaypointInteraction(WaypointInteraction):
     INSTANCE_TUNABLES = {
-        "waypoint_constraint": WaypointGeneratorMultipleObjectByObjectSource.TunableFactory()
+        "waypoint_constraint": WaypointGeneratorMultipleObjectByObjectSource.TunableFactory(),
     }

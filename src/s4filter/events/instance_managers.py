@@ -1,4 +1,4 @@
-from lot51_core.services.events import event_service, CoreEvent
+from lot51_core.services.events import CoreEvent, event_service
 from lot51_core.utils.injection import on_load_complete
 from sims4.resources import Types
 

@@ -1,15 +1,14 @@
-"""
-This file was written by Frankk (https://frankkmods.com).
+"""This file was written by Frankk (https://frankkmods.com).
 Do not use or distribute this file without proper attribution.
 """
 
 from event_testing.resolver import SingleSimResolver
 from event_testing.tests import TunableTestSet
+from interactions import ParticipantTypeSim
+from interactions.base.picker_interaction import PickerSuperInteraction
 from lot51_core import logger
 from services import get_instance_manager
 from sims4.resources import Types
-from interactions import ParticipantTypeSim
-from interactions.base.picker_interaction import PickerSuperInteraction
 from sims4.tuning.tunable import (
     Tunable,
     TunableEnumEntry,
@@ -23,8 +22,7 @@ from ui.ui_dialog_picker import ObjectPickerRow
 
 
 class SpecificTraitPickerSuperInteraction(PickerSuperInteraction):
-    """
-    A picker that lets you choose specific traits rather than filtering by tag.
+    """A picker that lets you choose specific traits rather than filtering by tag.
     """
 
     INSTANCE_TUNABLES = {
@@ -48,8 +46,8 @@ class SpecificTraitPickerSuperInteraction(PickerSuperInteraction):
             tunable=TunableTuple(
                 traits=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.TRAIT), pack_safe=True
-                    )
+                        manager=get_instance_manager(Types.TRAIT), pack_safe=True,
+                    ),
                 ),
                 tests=TunableTestSet(),
             ),
@@ -84,7 +82,7 @@ class SpecificTraitPickerSuperInteraction(PickerSuperInteraction):
         if cls.is_add:
             for trait in cls._get_trait_choices(target):
                 if (not trait.sim_info_fixup_actions) and trait_tracker.can_add_trait(
-                    trait
+                    trait,
                 ):
                     yield trait
         else:
@@ -96,7 +94,7 @@ class SpecificTraitPickerSuperInteraction(PickerSuperInteraction):
     def picker_rows_gen(cls, inst, target, context, **kwargs):
         inst_or_cls = inst if inst is not None else cls
         target_sim = inst_or_cls.get_participant(
-            inst_or_cls.picker_target, target=target, context=context, **kwargs
+            inst_or_cls.picker_target, target=target, context=context, **kwargs,
         )
         for trait in cls._trait_selection_gen(target_sim):
             row_description = (
@@ -124,4 +122,4 @@ class SpecificTraitPickerSuperInteraction(PickerSuperInteraction):
                 else:
                     sim_info.remove_trait(trait_to_change)
         except:
-            logger.exception("[{}] Failed on picker response".format(self))
+            logger.exception(f"[{self}] Failed on picker response")

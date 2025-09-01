@@ -9,7 +9,7 @@ from whims.whim import TunableWeightedWhimCollection
 class TunableWhimSetInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "whim_set": TunableReference(
-            manager=services.get_instance_manager(Types.ASPIRATION)
+            manager=services.get_instance_manager(Types.ASPIRATION),
         ),
         "whims": TunableWeightedWhimCollection(description=""),
     }

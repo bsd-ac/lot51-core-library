@@ -1,7 +1,7 @@
 from event_testing.tests import TunableTestSet
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     Tunable,
     TunableList,
     TunableTuple,
@@ -20,9 +20,9 @@ class LotFiftyOneTunableModifiers(HasTunableSingletonFactory, AutoFactoryInit):
                     allow_empty=True,
                 ),
                 tests=TunableTestSet(
-                    description="Tests that must pass for this modifier to be applied"
+                    description="Tests that must pass for this modifier to be applied",
                 ),
-            )
+            ),
         ),
     }
 

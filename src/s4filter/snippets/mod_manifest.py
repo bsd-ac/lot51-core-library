@@ -1,8 +1,9 @@
 import importlib
 import json
+
 import services
 from lot51_core import logger
-from lot51_core.services.events import event_handler, CoreEvent
+from lot51_core.services.events import CoreEvent, event_handler
 from lot51_core.utils.dialog import DialogHelper
 from lot51_core.utils.semver import Version
 from sims4.common import Pack, are_packs_available
@@ -10,11 +11,11 @@ from sims4.localization import TunableLocalizedStringFactory
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
 from sims4.tuning.tunable import (
-    Tunable,
-    TunableMapping,
     OptionalTunable,
-    TunableTuple,
+    Tunable,
     TunableEnumSet,
+    TunableMapping,
+    TunableTuple,
 )
 from ui.ui_dialog import CommandArgType
 
@@ -27,10 +28,10 @@ class ModManifest(
 
     INSTANCE_TUNABLES = {
         "creator_name": Tunable(
-            tunable_type=str, default="N/A", description="Creator name of this mod"
+            tunable_type=str, default="N/A", description="Creator name of this mod",
         ),
         "mod_name": Tunable(
-            tunable_type=str, default="N/A", description="Name of this mod"
+            tunable_type=str, default="N/A", description="Name of this mod",
         ),
         "version": Tunable(
             tunable_type=str,
@@ -42,15 +43,15 @@ class ModManifest(
             tunable=Tunable(tunable_type=str, default=None, allow_empty=True),
         ),
         "required_packs": TunableEnumSet(
-            enum_type=Pack, default_enum_list=(Pack.BASE_GAME,)
+            enum_type=Pack, default_enum_list=(Pack.BASE_GAME,),
         ),
         "version_mismatch_notification": OptionalTunable(
             tunable=TunableTuple(
                 title=TunableLocalizedStringFactory(
-                    description="The title displayed in the notification. Use {0.String} to include the mod name, {1.String} for the creator name."
+                    description="The title displayed in the notification. Use {0.String} to include the mod name, {1.String} for the creator name.",
                 ),
                 text=TunableLocalizedStringFactory(
-                    description="The text displayed in the notification. Use {0.String} to include the script version, {1.String} for the package version, {2.String} for the mod name, {3.String} for the creator name."
+                    description="The text displayed in the notification. Use {0.String} to include the script version, {1.String} for the package version, {2.String} for the mod name, {3.String} for the creator name.",
                 ),
                 http=OptionalTunable(
                     description="Enable to display a button that links to your website with optional query params appended.",
@@ -68,33 +69,31 @@ class ModManifest(
                         button_text=TunableLocalizedStringFactory(),
                     ),
                 ),
-            )
+            ),
         ),
     }
 
     __slots__ = (
         "creator_name",
         "mod_name",
-        "version",
-        "version_mismatch_notification",
         "module_path",
         "required_packs",
+        "version",
+        "version_mismatch_notification",
     )
 
     @classmethod
     def to_str(cls):
-        return "<ModManifest {} by {} ({}); version {}>".format(
-            cls.mod_name, cls.creator_name, cls.__name__, cls.version
-        )
+        return f"<ModManifest {cls.mod_name} by {cls.creator_name} ({cls.__name__}); version {cls.version}>"
 
     @classmethod
     def _tuning_loaded_callback(cls):
-        logger.info("[tuning_loaded_callback] {}".format(cls.to_str()))
+        logger.info(f"[tuning_loaded_callback] {cls.to_str()}")
 
     @classmethod
     def all_snippets_gen(cls):
         yield from services.get_instance_manager(Types.SNIPPET).get_ordered_types(
-            only_subclasses_of=ModManifest
+            only_subclasses_of=ModManifest,
         )
 
     @classmethod
@@ -106,9 +105,7 @@ class ModManifest(
                     return mod
         except:
             logger.debug(
-                "Could not import module: {} for manifest: {}".format(
-                    cls.module_path, cls.__name__
-                )
+                f"Could not import module: {cls.module_path} for manifest: {cls.__name__}",
             )
             return None
 
@@ -141,7 +138,7 @@ class ModManifest(
     def _build_version_tns(cls, script_ver, package_ver):
         title = cls.version_mismatch_notification.title(cls.mod_name, cls.creator_name)
         text = cls.version_mismatch_notification.text(
-            str(script_ver), str(package_ver), cls.mod_name, cls.creator_name
+            str(script_ver), str(package_ver), cls.mod_name, cls.creator_name,
         )
 
         ui_responses = list()
@@ -156,7 +153,7 @@ class ModManifest(
                 json.dumps(dict(cls.version_mismatch_notification.http.params)),
             )
             response_command = DialogHelper.create_command(
-                "lot51_core.open_url", arg0, arg1
+                "lot51_core.open_url", arg0, arg1,
             )
             ui_responses.append(
                 DialogHelper.build_ui_response(
@@ -164,7 +161,7 @@ class ModManifest(
                     text=ui_button_text,
                     ui_request=DialogHelper.UiDialogUiRequest.SEND_COMMAND,
                     response_command=response_command,
-                )
+                ),
             )
 
         dialog = DialogHelper.create_notification(
@@ -183,4 +180,4 @@ def _process_mod_manifests(*args, **kwargs):
         try:
             snippet.check_version_and_notify()
         except:
-            logger.exception("Failed processing mod manifest: {}".format(snippet))
+            logger.exception(f"Failed processing mod manifest: {snippet}")

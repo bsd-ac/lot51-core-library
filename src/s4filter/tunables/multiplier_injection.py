@@ -2,13 +2,13 @@ from _sims4_collections import frozendict
 from lot51_core.utils.injection import merge_list
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.tuning.tunable import (
-    Tunable,
-    OptionalTunable,
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
+    OptionalTunable,
+    Tunable,
     TunableFactory,
 )
-from tunable_multiplier import _get_tunable_multiplier_list_entry, TunableMultiplier
+from tunable_multiplier import TunableMultiplier, _get_tunable_multiplier_list_entry
 
 
 class TunableMultiplierInjection(HasTunableSingletonFactory, AutoFactoryInit):
@@ -20,8 +20,8 @@ class TunableMultiplierInjection(HasTunableSingletonFactory, AutoFactoryInit):
     }
 
     __slots__ = (
-        "base_value_override",
         "additional_multipliers",
+        "base_value_override",
     )
 
     @TunableFactory.factory_option
@@ -36,8 +36,8 @@ class TunableMultiplierInjection(HasTunableSingletonFactory, AutoFactoryInit):
             tuple_elements["locked_args"] = {"tooltip": frozendict()}
         return {
             "additional_multipliers": _get_tunable_multiplier_list_entry(
-                **tuple_elements
-            )
+                **tuple_elements,
+            ),
         }
 
     def create_multiplier(self, base_value, multipliers):

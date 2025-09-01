@@ -1,7 +1,7 @@
 from clock import ServerClock
-from lot51_core.utils.injection import inject_to
+from lot51_core.services.events import CoreEvent, event_service
 from lot51_core.utils.context import Context
-from lot51_core.services.events import event_service, CoreEvent
+from lot51_core.utils.injection import inject_to
 
 
 @inject_to(ServerClock, "tick_server_clock")

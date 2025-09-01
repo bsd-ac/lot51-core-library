@@ -1,5 +1,5 @@
 import services
-from event_testing.tests import TunableTestVariant, TunableGlobalTestSet
+from event_testing.tests import TunableGlobalTestSet, TunableTestVariant
 from interactions import ParticipantType
 from interactions.base.basic import TunableBasicExtras
 from interactions.utils.display_name import (
@@ -24,18 +24,18 @@ from lot51_core.tunables.purchase_interaction_injection import (
 )
 from lot51_core.tunables.test_injection import TestInjectionVariant
 from lot51_core.utils.injection import (
-    inject_list,
-    merge_list,
     inject_affordance_filter,
+    inject_list,
     merge_dict,
+    merge_list,
 )
 from lot51_core.utils.tunables import (
     clone_factory_with_overrides,
 )
 from sims.household_utilities.utility_types import Utilities
 from sims.outfits.outfit_change import (
-    TunableOutfitChange,
     InteractionOnRouteOutfitChange,
+    TunableOutfitChange,
 )
 from sims.outfits.outfit_generator import TunableOutfitGeneratorSnippet
 from sims.template_affordance_provider.tunable_provided_template_affordance import (
@@ -44,76 +44,76 @@ from sims.template_affordance_provider.tunable_provided_template_affordance impo
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.resources import Types, get_resource_key
 from sims4.tuning.tunable import (
-    TunableReference,
+    OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
     TunableList,
     TunableMapping,
+    TunableReference,
+    TunableSet,
     TunableTuple,
     TunableVariant,
-    OptionalTunable,
-    TunableEnumEntry,
-    Tunable,
-    TunableSet,
 )
-from snippets import TunableAffordanceListReference, TunableAffordanceFilterSnippet
+from snippets import TunableAffordanceFilterSnippet, TunableAffordanceListReference
 from tag import Tag
 
 
 class BaseTunableAffordanceInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "allow_user_directed_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "allow_autonomous_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "allow_forward_from_object_inventory_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "allow_from_portrait_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "allow_from_sim_inventory_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "allow_from_world_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "basic_content": OptionalTunable(
-            tunable=TunableBasicContentInjection.TunableFactory()
+            tunable=TunableBasicContentInjection.TunableFactory(),
         ),
         "basic_extras": TunableBasicExtras(),
         "basic_liabilities": TunableList(tunable=BasicLiabilityVariant()),
         "cheat_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "debug_override": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=True)
+            tunable=Tunable(tunable_type=bool, default=True),
         ),
         "category_override": OptionalTunable(
             tunable=TunableTuple(
                 pie_menu_category=TunableReference(
-                    manager=services.get_instance_manager(Types.PIE_MENU_CATEGORY)
-                )
+                    manager=services.get_instance_manager(Types.PIE_MENU_CATEGORY),
+                ),
             ),
         ),
         "display_name_overrides": TunableDisplayNameVariant(
-            description="Set name modifiers or random names."
+            description="Set name modifiers or random names.",
         ),
         "display_name_wrappers": OptionalTunable(
             description="If enabled, the first wrapper within the list to pass tests will be applied to the display name.",
             tunable=TunableDisplayNameWrapper.TunableFactory(),
         ),
         "false_advertisements": OptionalTunable(
-            tunable=TunableStatisticAdvertisements()
+            tunable=TunableStatisticAdvertisements(),
         ),
         "inject_to_purchase_interaction": OptionalTunable(
-            tunable=TunablePurchaseInteractionInjection.TunableFactory()
+            tunable=TunablePurchaseInteractionInjection.TunableFactory(),
         ),
         "inject_to_crafting_interaction": OptionalTunable(
-            tunable=TunableCraftingInteractionInjection.TunableFactory()
+            tunable=TunableCraftingInteractionInjection.TunableFactory(),
         ),
         "inject_to_map_view_picker_interaction": OptionalTunable(
-            tunable=TunableMapViewPickerInteractionInjection.TunableFactory()
+            tunable=TunableMapViewPickerInteractionInjection.TunableFactory(),
         ),
         "interaction_category_tags": TunableSet(
             description="This attribute is used to tag an interaction to allow for searching, testing, and categorization. An example would be using a tag to selectively test certain interactions. On each of the interactions you want to test together you would add the same tag, then the test routine would only test interactions with that tag. Interactions can have multiple tags. This attribute has no effect on gameplay.",
@@ -125,19 +125,19 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
             ),
         ),
         "modify_autonomous_tests": TestInjectionVariant(
-            description="Lists of tests to replace/append to the affordance's `test_autonomous` compound list."
+            description="Lists of tests to replace/append to the affordance's `test_autonomous` compound list.",
         ),
         "modify_global_tests": TestInjectionVariant(
             description="Lists of tests to replace/append to the affordance's `test_globals` list",
             global_tests=True,
         ),
         "modify_tests": TestInjectionVariant(
-            description="Lists of tests to replace/append to the affordance's `tests` compound list."
+            description="Lists of tests to replace/append to the affordance's `tests` compound list.",
         ),
         "outfit_change_on_exit": TunableMapping(
             description="Append an outfit change to an existing posture",
             key_type=TunableReference(
-                manager=services.get_instance_manager(Types.POSTURE)
+                manager=services.get_instance_manager(Types.POSTURE),
             ),
             value_type=TunableTuple(
                 description="A tuple of clothing changes and tests for whether they should happen or not. ",
@@ -150,7 +150,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
                 ),
                 generator=TunableOutfitGeneratorSnippet(),
                 tests=TunableGlobalTestSet(
-                    description=" Tests to run when deciding which clothing change entry to use. All of the tests must pass in order for the item to pass."
+                    description=" Tests to run when deciding which clothing change entry to use. All of the tests must pass in order for the item to pass.",
                 ),
             ),
         ),
@@ -158,7 +158,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
             tunable=TunableTuple(
                 description="A structure of outfit change tunables.",
                 on_route_change=InteractionOnRouteOutfitChange(
-                    description="An outfit change to execute on the first mobile node of the transition to this interaction."
+                    description="An outfit change to execute on the first mobile node of the transition to this interaction.",
                 ),
                 posture_outfit_change_overrides=OptionalTunable(
                     tunable=TunableMapping(
@@ -168,14 +168,14 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
                             manager=services.get_instance_manager(Types.POSTURE),
                         ),
                         value_type=TunableOutfitChange(
-                            description="Define what outfits the Sim is supposed to wear when entering or exiting this posture."
+                            description="Define what outfits the Sim is supposed to wear when entering or exiting this posture.",
                         ),
-                    )
+                    ),
                 ),
-            )
+            ),
         ),
         "pie_menu_priority": OptionalTunable(
-            tunable=Tunable(tunable_type=int, default=0)
+            tunable=Tunable(tunable_type=int, default=0),
         ),
         "provided_affordances": TunableProvidedAffordances(
             target_default=ParticipantType.Actor,
@@ -183,7 +183,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
             class_restrictions=("SuperInteraction",),
         ),
         "provided_template_affordances": OptionalTunable(
-            tunable=TunableProvidedTemplateAffordance()
+            tunable=TunableProvidedTemplateAffordance(),
         ),
         "static_commodities": OptionalTunable(
             tunable=TunableList(
@@ -195,13 +195,13 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
                     ),
                     desire=Tunable(tunable_type=float, default=1),
                 ),
-            )
+            ),
         ),
         "super_affordance_compatibility": OptionalTunable(
-            tunable=TunableAffordanceFilterSnippet()
+            tunable=TunableAffordanceFilterSnippet(),
         ),
         "super_affordance_klobberers": OptionalTunable(
-            tunable=TunableAffordanceFilterSnippet()
+            tunable=TunableAffordanceFilterSnippet(),
         ),
         "tests": TunableList(
             description="These are 'additional tests' added to the affordance (not an injection). They must all pass separately from test_autonomous, test_globals, tests",
@@ -223,33 +223,33 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
     }
 
     __slots__ = (
-        "allow_user_directed_override",
         "allow_autonomous_override",
         "allow_forward_from_object_inventory_override",
         "allow_from_portrait_override",
         "allow_from_sim_inventory_override",
         "allow_from_world_override",
+        "allow_user_directed_override",
         "basic_content",
         "basic_extras",
         "basic_liabilities",
-        "cheat_override",
         "category_override",
+        "cheat_override",
         "debug_override",
         "display_name_overrides",
         "display_name_wrappers",
         "false_advertisements",
-        "inject_to_purchase_interaction",
         "inject_to_crafting_interaction",
         "inject_to_map_view_picker_interaction",
+        "inject_to_purchase_interaction",
         "interaction_category_tags",
-        "modify_tests",
         "modify_autonomous_tests",
         "modify_global_tests",
+        "modify_tests",
         "outfit_change",
         "outfit_change_on_exit",
+        "pie_menu_priority",
         "provided_affordances",
         "provided_template_affordances",
-        "pie_menu_priority",
         "static_commodities",
         "super_affordance_compatibility",
         "super_affordance_klobberers",
@@ -318,7 +318,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
 
             if self.basic_extras is not None:
                 inject_list(
-                    affordance, "basic_extras", self.basic_extras, unique_entries=False
+                    affordance, "basic_extras", self.basic_extras, unique_entries=False,
                 )
 
             if self.basic_liabilities is not None:
@@ -414,7 +414,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
             if self.provided_template_affordances is not None:
                 if affordance.provided_template_affordances is None:
                     affordance.provided_template_affordances = merge_dict(
-                        self.provided_template_affordances
+                        self.provided_template_affordances,
                     )
                 else:
                     merged_template_affordances = merge_list(
@@ -448,7 +448,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
 
             if self.inject_to_map_view_picker_interaction is not None:
                 self.inject_to_map_view_picker_interaction.inject_to_affordance(
-                    affordance
+                    affordance,
                 )
 
             if self.utility_info is not None:
@@ -462,7 +462,7 @@ class BaseTunableAffordanceInjection(BaseTunableInjection):
                         del new_utility_info[utility]
                     else:
                         new_utility_info[utility] = utility_info
-                setattr(affordance, "utility_info", new_utility_info)
+                affordance.utility_info = new_utility_info
 
 
 class TunableAffordanceInjectionByAffordances(BaseTunableAffordanceInjection):
@@ -491,7 +491,7 @@ class TunableAffordanceInjectionByAffordanceList(BaseTunableAffordanceInjection)
         ),
         "exclude_affordances": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
     }
@@ -512,17 +512,17 @@ class TunableAffordanceInjectionByUtility(BaseTunableAffordanceInjection):
     FACTORY_TUNABLES = {
         "exclude_affordances": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
         "utility": OptionalTunable(
-            tunable=TunableEnumEntry(tunable_type=Utilities, default=None)
+            tunable=TunableEnumEntry(tunable_type=Utilities, default=None),
         ),
     }
 
     __slots__ = (
-        "utility",
         "exclude_affordances",
+        "utility",
     )
 
     @property
@@ -532,7 +532,7 @@ class TunableAffordanceInjectionByUtility(BaseTunableAffordanceInjection):
     def get_affordances_gen(self):
         if self.utility is not None:
             for affordance in services.get_instance_manager(
-                Types.INTERACTION
+                Types.INTERACTION,
             ).get_ordered_types():
                 if affordance.utility_info is not None:
                     if (
@@ -546,7 +546,7 @@ class TunableAffordanceInjectionByCategory(BaseTunableAffordanceInjection):
     FACTORY_TUNABLES = {
         "exclude_affordances": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
         "pie_menu_categories": TunableSet(
@@ -558,8 +558,8 @@ class TunableAffordanceInjectionByCategory(BaseTunableAffordanceInjection):
     }
 
     __slots__ = (
-        "pie_menu_categories",
         "exclude_affordances",
+        "pie_menu_categories",
     )
 
     @property
@@ -569,7 +569,7 @@ class TunableAffordanceInjectionByCategory(BaseTunableAffordanceInjection):
     def get_affordances_gen(self):
         _yield_cache = set()
         for affordance in services.get_instance_manager(
-            Types.INTERACTION
+            Types.INTERACTION,
         ).get_ordered_types():
             if (
                 affordance not in _yield_cache
@@ -593,7 +593,7 @@ class TunableAffordanceInjectionByCategoryTags(BaseTunableAffordanceInjection):
         ),
         "exclude_affordances": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
     }
@@ -610,12 +610,12 @@ class TunableAffordanceInjectionByCategoryTags(BaseTunableAffordanceInjection):
     def get_affordances_gen(self):
         _yield_cache = set()
         for affordance in services.get_instance_manager(
-            Types.INTERACTION
+            Types.INTERACTION,
         ).get_ordered_types():
             if (
                 affordance not in _yield_cache
                 and affordance.interaction_category_tags.intersection(
-                    self.category_tags
+                    self.category_tags,
                 )
                 and affordance not in self.exclude_affordances
             ):
@@ -627,7 +627,7 @@ class TunableAffordanceInjectionToAllPhoneAffordances(BaseTunableAffordanceInjec
     FACTORY_TUNABLES = {
         "exclude_affordances": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
     }
@@ -640,7 +640,7 @@ class TunableAffordanceInjectionToAllPhoneAffordances(BaseTunableAffordanceInjec
 
     def get_affordances_gen(self):
         sim_obj = services.get_instance_manager(Types.OBJECT).types.get(
-            get_resource_key(SIM_OBJECT_ID, Types.OBJECT)
+            get_resource_key(SIM_OBJECT_ID, Types.OBJECT),
         )
         for affordance in sim_obj._phone_affordances:
             if affordance not in self.exclude_affordances:

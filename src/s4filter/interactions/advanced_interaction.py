@@ -4,7 +4,7 @@ from interactions.base.super_interaction import SuperInteraction
 from interactions.constraint_variants import TunableConstraintVariant
 from lot51_core.interactions.door_constraint import TunableDoorConstraint
 from lot51_core.interactions.elements.xevt_callback import CallbackXevtElement
-from sims4.tuning.tunable import TunableList, TunableTuple, TunableEnumEntry, Tunable
+from sims4.tuning.tunable import Tunable, TunableEnumEntry, TunableList, TunableTuple
 
 
 class AdvancedSuperInteraction(SuperInteraction):
@@ -19,12 +19,12 @@ class AdvancedSuperInteraction(SuperInteraction):
                     tunable=TunableTuple(
                         value=TunableConstraintVariant(
                             door_target=TunableDoorConstraint(
-                                description="An alternative to the front_door constraint that allows you to target a specific door."
-                            )
-                        )
-                    )
+                                description="An alternative to the front_door constraint that allows you to target a specific door.",
+                            ),
+                        ),
+                    ),
                 ),
-            )
+            ),
         ),
         "_xevt_callback_id": Tunable(tunable_type=int, default=100),
         "basic_content": TunableBasicContentSet(
@@ -48,6 +48,6 @@ class AdvancedSuperInteraction(SuperInteraction):
             self._xevt_callback(self)
 
         change_element = CallbackXevtElement(
-            self, sequence, self._xevt_callback_id, callback=handle_callback
+            self, sequence, self._xevt_callback_id, callback=handle_callback,
         )
         return change_element

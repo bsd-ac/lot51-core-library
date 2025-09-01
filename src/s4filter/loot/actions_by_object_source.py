@@ -4,13 +4,13 @@ from interactions.utils.loot import LootActionVariant
 from interactions.utils.loot_basic_op import BaseLootOperation
 from lot51_core import logger
 from lot51_core.tunables.object_query import ObjectSearchMethodVariant
-from sims4.tuning.tunable import TunableList, TunableEnumEntry
+from sims4.tuning.tunable import TunableEnumEntry, TunableList
 
 
 class DoActionsByObjectSource(BaseLootOperation):
     FACTORY_TUNABLES = {
         "actor_participant": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
         "loot_actions": TunableList(tunable=LootActionVariant()),
         "object_source": ObjectSearchMethodVariant(),
@@ -36,7 +36,7 @@ class DoActionsByObjectSource(BaseLootOperation):
 
     def _apply_to_subject_and_target(self, subject, target, resolver):
         try:
-            logger.debug("doing actions by object source: {}".format(self))
+            logger.debug(f"doing actions by object source: {self}")
             if (
                 isinstance(resolver, SingleSimResolver)
                 and self._actor_participant == ParticipantTypeSingle.Object
@@ -51,9 +51,7 @@ class DoActionsByObjectSource(BaseLootOperation):
                 resolver = DoubleObjectResolver(actor, obj)
                 for action in self._loot_actions:
                     logger.debug(
-                        "apply loot to obj: {} -> actor: {} target: {}".format(
-                            action, actor, obj
-                        )
+                        f"apply loot to obj: {action} -> actor: {actor} target: {obj}",
                     )
                     action.apply_to_resolver(resolver)
                     did_apply_action = True

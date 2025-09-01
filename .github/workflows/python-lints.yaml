@@ -40,6 +40,14 @@ jobs:
         run: |
           unzip -o sims4_scripts.zip -d ../sims4_scripts
 
+      - name: Add sims4 scripts to conda search paths
+        run: |
+          sim4path=$(readlink -f ../sims4_scripts)
+          conda develop ${sims4path}/base
+          conda develop ${sims4path}/core
+          conda develop ${sims4path}/generated
+          conda develop ${sims4path}/simulation
+
       - name: Run ruff formatter
         run: |
           ruff format --check .

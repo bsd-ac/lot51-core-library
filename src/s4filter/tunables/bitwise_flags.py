@@ -1,5 +1,5 @@
 from lot51_core.utils.flags import Flag
-from sims4.tuning.tunable import TunableFactory, TunableEnumSet
+from sims4.tuning.tunable import TunableEnumSet, TunableFactory
 
 
 class TunableFlags(TunableFactory):
@@ -13,7 +13,7 @@ class TunableFlags(TunableFactory):
     FACTORY_TYPE = factory
 
     def __init__(
-        self, enum_type, enum_default=None, default_enum_list=frozenset(), **kwargs
+        self, enum_type, enum_default=None, default_enum_list=frozenset(), **kwargs,
     ):
         super().__init__(
             enum_set=TunableEnumSet(

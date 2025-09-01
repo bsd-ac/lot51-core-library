@@ -44,10 +44,9 @@ class PortalTraversalTypeVariant(TunableVariant):
 
 
 class AdvancedPortalData(
-    metaclass=HashedTunedInstanceMetaclass, manager=get_instance_manager(Types.SNIPPET)
+    metaclass=HashedTunedInstanceMetaclass, manager=get_instance_manager(Types.SNIPPET),
 ):
-    """
-    Refer to simulation/portals/portal_data.py for original class
+    """Refer to simulation/portals/portal_data.py for original class
     """
 
     INSTANCE_TUNABLES = {
@@ -57,7 +56,7 @@ class AdvancedPortalData(
     }
 
     for key, value in _Portal.FACTORY_TUNABLES.items():
-        if key not in INSTANCE_TUNABLES and key not in ("verify_tunable_callback",):
+        if key not in INSTANCE_TUNABLES and key != "verify_tunable_callback":
             INSTANCE_TUNABLES[key] = value
 
     _PortalInstance = _Portal._PortalInstance

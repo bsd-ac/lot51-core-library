@@ -1,5 +1,5 @@
+from lot51_core.services.events import CoreEvent, event_service
 from lot51_core.utils.injection import inject_to
-from lot51_core.services.events import event_service, CoreEvent
 from objects.game_object import GameObject
 
 

@@ -4,8 +4,8 @@ from lot51_core import logger
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableReference,
 )
 
@@ -23,25 +23,23 @@ class ValidPickerChoiceTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTes
     def __call__(self, **kwargs):
         if self.affordance is None or not hasattr(self.affordance, "has_valid_choice"):
             return TestResult(
-                False, "Invalid picker interaction: {}".format(self.affordance)
+                False, f"Invalid picker interaction: {self.affordance}",
             )
 
         if not self.affordance.has_valid_choice():
             return TestResult(
                 False,
-                "Picker interaction does not have any valid choices: {}".format(
-                    self.affordance
-                ),
+                f"Picker interaction does not have any valid choices: {self.affordance}",
                 tooltip=self.tooltip,
             )
 
-        logger.debug("Affordance has valid picker choices {}".format(self.affordance))
+        logger.debug(f"Affordance has valid picker choices {self.affordance}")
 
         return TestResult.TRUE
 
 
 class ValidPurchasePickerChoiceTest(
-    HasTunableSingletonFactory, AutoFactoryInit, BaseTest
+    HasTunableSingletonFactory, AutoFactoryInit, BaseTest,
 ):
     FACTORY_TUNABLES = {
         "snippet": TunableReference(manager=get_instance_manager(Types.SNIPPET)),
@@ -54,15 +52,15 @@ class ValidPurchasePickerChoiceTest(
 
     def __call__(self, **kwargs):
         if self.snippet is None or not hasattr(self.snippet, "has_valid_choice"):
-            return TestResult(False, "Invalid picker snippet: {}".format(self.snippet))
+            return TestResult(False, f"Invalid picker snippet: {self.snippet}")
 
         if not self.snippet.has_valid_choice():
             return TestResult(
                 False,
-                "Picker does not have any valid choices: {}".format(self.snippet),
+                f"Picker does not have any valid choices: {self.snippet}",
                 tooltip=self.tooltip,
             )
 
-        logger.debug("Snippet has valid picker choices {}".format(self.snippet))
+        logger.debug(f"Snippet has valid picker choices {self.snippet}")
 
         return TestResult.TRUE

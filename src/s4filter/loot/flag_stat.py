@@ -1,4 +1,5 @@
 import enum
+
 import services
 from interactions import ParticipantTypeSingle
 from interactions.utils.loot_basic_op import BaseLootOperation
@@ -6,10 +7,10 @@ from lot51_core.utils.flags import Flag
 from sims4.math import MAX_INT32
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableEnumEntry,
-    TunableReference,
     Tunable,
+    TunableEnumEntry,
     TunableRange,
+    TunableReference,
 )
 
 
@@ -23,16 +24,16 @@ class FlagStatLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
         "add_stat": Tunable(tunable_type=bool, default=True),
         "stat_type": TunableReference(
-            manager=services.get_instance_manager(Types.STATISTIC)
+            manager=services.get_instance_manager(Types.STATISTIC),
         ),
         "participant": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
         "flag_value": TunableRange(
-            tunable_type=int, default=1, minimum=0, maximum=MAX_INT32
+            tunable_type=int, default=1, minimum=0, maximum=MAX_INT32,
         ),
         "flag_action": TunableEnumEntry(
-            tunable_type=FlagAction, default=FlagAction.INVALID
+            tunable_type=FlagAction, default=FlagAction.INVALID,
         ),
     }
 
@@ -62,7 +63,7 @@ class FlagStatLoot(BaseLootOperation):
             return
 
         stat = obj.get_tracker(self._stat_type).get_statistic(
-            self._stat_type, add=self._add_stat
+            self._stat_type, add=self._add_stat,
         )
         if stat is None:
             return

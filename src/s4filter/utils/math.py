@@ -1,15 +1,14 @@
-import random
 import math
+import random
 
 
 def range_by(start, stop, step=1):
     n = int(round((stop - start) / float(step)))
     if n > 1:
         return [start + step * i for i in range(n + 1)]
-    elif n == 1:
+    if n == 1:
         return [start]
-    else:
-        return []
+    return []
 
 
 def chance_succeeded(chance):
@@ -44,7 +43,7 @@ def flatten_weighted_list(pairs, flipped=False):
 def weighted_sort(pairs, flipped=False, flatten=True, descending=True):
     weight_index = 1 if flipped else 0
     sorted_pairs = sorted(
-        pairs, key=lambda item: random.random() * item[weight_index], reverse=descending
+        pairs, key=lambda item: random.random() * item[weight_index], reverse=descending,
     )
     if not flatten:
         return sorted_pairs

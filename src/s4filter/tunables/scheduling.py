@@ -1,19 +1,20 @@
 import random
+
 import alarms
 import clock
 import services
-from date_and_time import create_time_span, DateAndTime, TimeSpan, create_date_and_time
+from date_and_time import DateAndTime, TimeSpan, create_date_and_time, create_time_span
 from lot51_core import logger
 from lot51_core.constants import DayOfWeek
 from sims4.tuning.tunable import (
-    TunableVariant,
-    TunableRange,
-    HasTunableFactory,
     AutoFactoryInit,
-    TunableTuple,
+    HasTunableFactory,
     OptionalTunable,
     TunableEnumSet,
     TunableInterval,
+    TunableRange,
+    TunableTuple,
+    TunableVariant,
 )
 
 
@@ -58,13 +59,10 @@ class BaseTunableAlarm(HasTunableFactory, AutoFactoryInit):
         time_span = self.get_time_span(on_reschedule=on_reschedule)
         if time_span <= TimeSpan.ONE:
             logger.warn(
-                "[{}] Alarm is a performance risk. Preventing schedule from continuing.".format(
-                    self
-                )
+                f"[{self}] Alarm is a performance risk. Preventing schedule from continuing.",
             )
-            return
-        if time_span < self.MINIMUM_INTERVAL:
-            time_span = self.MINIMUM_INTERVAL
+            return None
+        time_span = max(time_span, self.MINIMUM_INTERVAL)
 
         self._last_span = time_span
         self._alarm_handle = alarms.add_alarm(self, time_span, self._alarm_callback)
@@ -91,9 +89,9 @@ class TunableIntervalAlarm(BaseTunableAlarm):
             tunable=TunableTuple(
                 hour=TunableRange(tunable_type=int, minimum=0, maximum=23, default=8),
                 minutes=TunableRange(
-                    tunable_type=int, minimum=0, maximum=59, default=0
+                    tunable_type=int, minimum=0, maximum=59, default=0,
                 ),
-            )
+            ),
         ),
         "random_offset": OptionalTunable(
             tunable=TunableInterval(
@@ -118,8 +116,8 @@ class TunableIntervalAlarm(BaseTunableAlarm):
         if self.random_offset is not None:
             random_offset = create_time_span(
                 minutes=random.randint(
-                    self.random_offset.lower_bound, self.random_offset.upper_bound
-                )
+                    self.random_offset.lower_bound, self.random_offset.upper_bound,
+                ),
             )
         else:
             random_offset = TimeSpan(0)

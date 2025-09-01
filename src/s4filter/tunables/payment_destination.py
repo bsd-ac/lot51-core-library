@@ -1,10 +1,10 @@
 from interactions.payment.payment_dest import (
-    PaymentDestNone,
     PaymentDestActiveHousehold,
-    PaymentDestParticipantHousehold,
     PaymentDestBusiness,
-    PaymentDestStatistic,
+    PaymentDestNone,
+    PaymentDestParticipantHousehold,
     PaymentDestRentalUnitPropertyOwners,
+    PaymentDestStatistic,
 )
 from sims4.tuning.tunable import TunableVariant
 

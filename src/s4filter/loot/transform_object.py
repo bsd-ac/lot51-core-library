@@ -1,4 +1,5 @@
 import random
+
 import sims4.math
 from interactions.utils.loot_basic_op import BaseLootOperation
 from lot51_core import logger
@@ -38,8 +39,8 @@ class TransformObjectLoot(BaseLootOperation):
             try:
                 if self._orientation is not None:
                     chosen_angle = random.randint(
-                        self._orientation.lower_bound, self._orientation.upper_bound
+                        self._orientation.lower_bound, self._orientation.upper_bound,
                     )
                     self._apply_orientation(obj, angle=chosen_angle)
             except:
-                logger.exception("Failed to transform object: {}".format(obj))
+                logger.exception(f"Failed to transform object: {obj}")

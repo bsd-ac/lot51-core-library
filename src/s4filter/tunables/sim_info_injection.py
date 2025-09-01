@@ -1,9 +1,9 @@
 import services
 from lot51_core.tunables.base_injection import BaseTunableInjection
-from lot51_core.utils.injection import inject_mapping_lists, inject_dict
+from lot51_core.utils.injection import inject_dict, inject_mapping_lists
 from sims.sim_info import SimInfo
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableList, TunableReference, TunableMapping
+from sims4.tuning.tunable import TunableList, TunableMapping, TunableReference
 
 
 class TunableSimInfoInjection(BaseTunableInjection):

@@ -16,16 +16,16 @@ class TunableUniversityInjection(BaseTunableInjection):
             description="Additional prestige degrees. This does not update the SimData.",
             tunable=TunableTuple(
                 elective=TunableReference(
-                    manager=get_instance_manager(Types.UNIVERSITY_MAJOR)
-                )
+                    manager=get_instance_manager(Types.UNIVERSITY_MAJOR),
+                ),
             ),
             unique_entries=True,
         ),
     }
 
     __slots__ = (
-        "university",
         "prestige_degrees",
+        "university",
     )
 
     @property

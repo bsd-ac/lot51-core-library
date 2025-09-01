@@ -6,13 +6,13 @@ from lot51_core.utils.injection import inject_list
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableList,
-    TunableReference,
+    HasTunableSingletonFactory,
     OptionalTunable,
-    TunableMapping,
     TunableEnumEntry,
+    TunableList,
+    TunableMapping,
+    TunableReference,
 )
 
 
@@ -20,12 +20,12 @@ class TunableCraftingInteractionInjection(HasTunableSingletonFactory, AutoFactor
     FACTORY_TUNABLES = {
         "recipes": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.RECIPE), pack_safe=True
-            )
+                manager=get_instance_manager(Types.RECIPE), pack_safe=True,
+            ),
         ),
         "bucks_price_multipliers": TunableMapping(
             key_type=TunableEnumEntry(
-                tunable_type=BucksType, default=BucksType.INVALID
+                tunable_type=BucksType, default=BucksType.INVALID,
             ),
             value_type=TunableMultiplierInjection.TunableFactory(),
         ),
@@ -43,7 +43,7 @@ class TunableCraftingInteractionInjection(HasTunableSingletonFactory, AutoFactor
     def inject_to_affordance(self, affordance):
         if affordance is None:
             logger.error(
-                "Failed to inject to crafting interaction, affordance not found"
+                "Failed to inject to crafting interaction, affordance not found",
             )
             return
 
@@ -57,7 +57,7 @@ class TunableCraftingInteractionInjection(HasTunableSingletonFactory, AutoFactor
             self.price_multiplier.inject(affordance, "price_multiplier")
 
         if hasattr(affordance, "bucks_price_multipliers") and len(
-            self.bucks_price_multipliers
+            self.bucks_price_multipliers,
         ):
             bucks_price_multipliers = dict(affordance.bucks_price_multipliers)
             for (

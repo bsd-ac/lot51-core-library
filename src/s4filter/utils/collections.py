@@ -14,8 +14,7 @@ class AttributeDict(dict):
 
 
 def dict2attr(old_dict: dict):
-    """
-    Recursively converts a default dict object to an AttributeDict
+    """Recursively converts a default dict object to an AttributeDict
 
     :param old_dict: dict
     :return: AttributeDict
@@ -28,8 +27,7 @@ def dict2attr(old_dict: dict):
 
 
 def kw2dict(**kwargs):
-    """
-    Converts keyword args to AttributeDict
+    """Converts keyword args to AttributeDict
 
     :param kwargs:
     :return: AttributeDict

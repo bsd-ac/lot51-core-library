@@ -4,27 +4,26 @@ from event_testing.test_base import BaseTest
 from event_testing.tests import TunableTestSet
 from interactions import ParticipantTypeSingle
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
 )
 
 
 class InventoryOwnerTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject is in an inventory, and runs additional tests against the inventory owner
+    """Tests if the subject is in an inventory, and runs additional tests against the inventory owner
     """
 
     test_events = ()
 
     FACTORY_TUNABLES = {
         "target": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
         "inventory_tests": TunableTestSet(),
     }
 
-    __slots__ = ("target", "inventory_tests")
+    __slots__ = ("inventory_tests", "target")
 
     def get_expected_args(self):
         return {"targets": self.target}
@@ -33,7 +32,7 @@ class InventoryOwnerTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
         target = next(iter(targets))
         if target is None or not target.is_in_inventory():
             return TestResult(
-                False, "Object not found, or not in inventory", tooltip=self.tooltip
+                False, "Object not found, or not in inventory", tooltip=self.tooltip,
             )
 
         inventory_owner = target.inventoryitem_component.get_inventory().owner
@@ -41,7 +40,7 @@ class InventoryOwnerTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
         result = self.inventory_tests.run_tests(resolver)
         if not result:
             return TestResult(
-                False, "Inventory tests failed: {}".format(result), tooltip=self.tooltip
+                False, f"Inventory tests failed: {result}", tooltip=self.tooltip,
             )
 
         return TestResult.TRUE

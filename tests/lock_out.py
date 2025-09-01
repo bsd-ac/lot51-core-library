@@ -2,12 +2,12 @@ from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
 from interactions import ParticipantType, ParticipantTypeSingle
 from lot51_core import logger
-from lot51_core.services.events import event_handler, CoreEvent
-from lot51_core.snippets.lock_out import AffordanceLockOutSnippet
+from lot51_core.services.events import CoreEvent, event_handler
 from lot51_core.services.lock_out_registry import lock_out_registry
+from lot51_core.snippets.lock_out import AffordanceLockOutSnippet
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
 )
 
@@ -50,7 +50,7 @@ class AffordanceLockOutTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTes
 @event_handler(CoreEvent.TUNING_LOADED)
 def _inject_lock_out(*args, **kwargs):
     test = AffordanceLockOutTest(
-        subject=ParticipantType.Actor, target=ParticipantType.Object
+        subject=ParticipantType.Actor, target=ParticipantType.Object,
     )
     for snippet in AffordanceLockOutSnippet.all_snippets_gen():
         for row in snippet.lock_out:
@@ -58,13 +58,9 @@ def _inject_lock_out(*args, **kwargs):
                 if affordance is not None:
                     affordance.add_additional_test(test)
                     logger.debug(
-                        "[AffordanceLockOutSnippet] added test to affordance {} in snippet: {}".format(
-                            affordance, snippet
-                        )
+                        f"[AffordanceLockOutSnippet] added test to affordance {affordance} in snippet: {snippet}",
                     )
                 else:
                     logger.debug(
-                        "[AffordanceLockOutSnippet] an affordance was None in snippet: {}".format(
-                            snippet
-                        )
+                        f"[AffordanceLockOutSnippet] an affordance was None in snippet: {snippet}",
                     )

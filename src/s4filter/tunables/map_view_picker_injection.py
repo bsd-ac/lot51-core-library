@@ -4,18 +4,18 @@ from lot51_core.utils.injection import merge_dict, merge_list
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
+    OptionalTunable,
     TunableList,
     TunableReference,
-    OptionalTunable,
     TunableTuple,
 )
 from snippets import TunableVenueListReference
 
 
 class TunableMapViewPickerInteractionInjection(
-    HasTunableSingletonFactory, AutoFactoryInit
+    HasTunableSingletonFactory, AutoFactoryInit,
 ):
     FACTORY_TUNABLES = {
         "additional_venue_inclusion": OptionalTunable(
@@ -23,7 +23,7 @@ class TunableMapViewPickerInteractionInjection(
             tunable=TunableTuple(
                 exclude_venues=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.VENUE), pack_safe=True
+                        manager=get_instance_manager(Types.VENUE), pack_safe=True,
                     ),
                 ),
                 exclude_lists=TunableList(
@@ -31,7 +31,7 @@ class TunableMapViewPickerInteractionInjection(
                 ),
                 include_venues=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.VENUE), pack_safe=True
+                        manager=get_instance_manager(Types.VENUE), pack_safe=True,
                     ),
                 ),
                 include_lists=TunableList(
@@ -46,7 +46,7 @@ class TunableMapViewPickerInteractionInjection(
     def inject_to_affordance(self, affordance):
         if affordance is None:
             logger.error(
-                "Failed to inject to map view picker interaction, affordance not found"
+                "Failed to inject to map view picker interaction, affordance not found",
             )
             return
 
@@ -55,9 +55,7 @@ class TunableMapViewPickerInteractionInjection(
             default_inclusion = getattr(affordance, "default_inclusion", None)
             if default_inclusion is None:
                 logger.warn(
-                    "Affordance ({}) is not a valid map view picker interaction.".format(
-                        affordance
-                    )
+                    f"Affordance ({affordance}) is not a valid map view picker interaction.",
                 )
             else:
                 overrides = AttributeDict()
@@ -68,7 +66,7 @@ class TunableMapViewPickerInteractionInjection(
                     )
                 if hasattr(default_inclusion, "exclude_lists"):
                     overrides.exclude_lists = merge_list(
-                        default_inclusion.exclude_lists, custom_inclusion.exclude_lists
+                        default_inclusion.exclude_lists, custom_inclusion.exclude_lists,
                     )
                 if hasattr(default_inclusion, "include_venues"):
                     overrides.include_venues = merge_list(
@@ -77,11 +75,11 @@ class TunableMapViewPickerInteractionInjection(
                     )
                 if hasattr(default_inclusion, "include_lists"):
                     overrides.include_lists = merge_list(
-                        default_inclusion.include_lists, custom_inclusion.include_lists
+                        default_inclusion.include_lists, custom_inclusion.include_lists,
                     )
                 # logger.info("Overrides: {}".format(overrides))
                 if overrides is not None:
                     new_default_inclusion = merge_dict(
-                        default_inclusion, new_items=overrides
+                        default_inclusion, new_items=overrides,
                     )
-                    setattr(affordance, "default_inclusion", new_default_inclusion)
+                    affordance.default_inclusion = new_default_inclusion

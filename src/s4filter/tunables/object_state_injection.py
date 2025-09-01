@@ -2,19 +2,19 @@ import services
 from lot51_core import logger
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
-from objects.components.state import ObjectStateValue, StateChangeOperation, ObjectState
+from objects.components.state import ObjectState, ObjectStateValue, StateChangeOperation
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableList, OptionalTunable
+from sims4.tuning.tunable import OptionalTunable, TunableList, TunableReference
 from singletons import UNSET
 
 
 class TunableObjectStateInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "object_state": TunableReference(
-            manager=services.get_instance_manager(Types.OBJECT_STATE)
+            manager=services.get_instance_manager(Types.OBJECT_STATE),
         ),
         "state_values": TunableList(
-            tunable=TunableReference(services.get_instance_manager(Types.OBJECT_STATE))
+            tunable=TunableReference(services.get_instance_manager(Types.OBJECT_STATE)),
         ),
     }
 
@@ -26,11 +26,9 @@ class TunableObjectStateInjection(BaseTunableInjection):
     def inject(self):
         if self.object_state is None:
             return
-        elif not isinstance(self.object_state, ObjectState):
+        if not isinstance(self.object_state, ObjectState):
             logger.warn(
-                "Skipping object state injection. Expecting ObjectState but {} is invalid".format(
-                    self.object_state
-                )
+                f"Skipping object state injection. Expecting ObjectState but {self.object_state} is invalid",
             )
             return
 
@@ -41,9 +39,7 @@ class TunableObjectStateInjection(BaseTunableInjection):
                 # as of game version 1.105 and core version 1.16
                 if not isinstance(obj_state_value, ObjectStateValue):
                     logger.warn(
-                        "Skipping `state_values` item in object state injection to {}. {} is not an ObjectStateValue.".format(
-                            self.object_state, obj_state_value
-                        )
+                        f"Skipping `state_values` item in object state injection to {self.object_state}. {obj_state_value} is not an ObjectStateValue.",
                     )
                     continue
                 obj_state_value.state = self.object_state
@@ -55,33 +51,31 @@ class TunableObjectStateInjection(BaseTunableInjection):
 class TunableObjectStateValueInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "object_state_value": TunableReference(
-            manager=services.get_instance_manager(Types.OBJECT_STATE)
+            manager=services.get_instance_manager(Types.OBJECT_STATE),
         ),
         "affordances": TunableList(
             description="Inject to super_affordances",
             tunable=TunableReference(
-                services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
         "new_client_state": OptionalTunable(
-            tunable=StateChangeOperation.TunableFactory()
+            tunable=StateChangeOperation.TunableFactory(),
         ),
     }
 
     __slots__ = (
-        "object_state_value",
         "affordances",
         "new_client_state",
+        "object_state_value",
     )
 
     def inject(self):
         if self.object_state_value is None:
             return
-        elif not isinstance(self.object_state_value, ObjectStateValue):
+        if not isinstance(self.object_state_value, ObjectStateValue):
             logger.warn(
-                "Skipping object state value injection. Expecting ObjectStateValue but {} is invalid".format(
-                    self.object_state_value
-                )
+                f"Skipping object state value injection. Expecting ObjectStateValue but {self.object_state_value} is invalid",
             )
             return
 

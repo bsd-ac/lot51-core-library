@@ -8,12 +8,12 @@ from lot51_core.utils.flags import Flag
 from sims4.math import MAX_INT32
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
+    HasTunableSingletonFactory,
     Tunable,
-    TunableReference,
+    TunableEnumEntry,
     TunableRange,
+    TunableReference,
 )
 
 
@@ -26,21 +26,21 @@ class FlagStatTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
             default=ParticipantTypeSingle.Object,
         ),
         "stat_type": TunableReference(
-            manager=services.get_instance_manager(Types.STATISTIC)
+            manager=services.get_instance_manager(Types.STATISTIC),
         ),
         "flag_value": TunableRange(
-            tunable_type=int, default=1, minimum=0, maximum=MAX_INT32
+            tunable_type=int, default=1, minimum=0, maximum=MAX_INT32,
         ),
         "has_value": Tunable(tunable_type=bool, default=True),
         "pass_if_flag_null": Tunable(tunable_type=bool, default=False),
     }
 
     __slots__ = (
-        "subject",
-        "stat_type",
         "flag_value",
         "has_value",
         "pass_if_flag_null",
+        "stat_type",
+        "subject",
     )
 
     def get_expected_args(self):
@@ -57,14 +57,10 @@ class FlagStatTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
                     return TestResult.TRUE
                 if flag.get() == 0 and self.pass_if_flag_null:
                     return TestResult.TRUE
-            elif not self.has_value:
-                return TestResult.TRUE
-            elif self.pass_if_flag_null:
+            elif not self.has_value or self.pass_if_flag_null:
                 return TestResult.TRUE
 
         return TestResult(
             False,
-            "Flag value ({}) failed, expected to have? {}".format(
-                self.flag_value, self.has_value
-            ),
+            f"Flag value ({self.flag_value}) failed, expected to have? {self.has_value}",
         )

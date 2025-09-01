@@ -1,13 +1,13 @@
 import services
-from sims4.tuning.tunable import (
-    TunableThreshold,
-    HasTunableSingletonFactory,
-    AutoFactoryInit,
-)
-from event_testing.test_events import TestEvent
-from event_testing.test_base import BaseTest
-from event_testing.results import TestResult
 from caches import cached_test
+from event_testing.results import TestResult
+from event_testing.test_base import BaseTest
+from event_testing.test_events import TestEvent
+from sims4.tuning.tunable import (
+    AutoFactoryInit,
+    HasTunableSingletonFactory,
+    TunableThreshold,
+)
 
 
 class LotSizeTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
@@ -17,8 +17,8 @@ class LotSizeTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
     )
     FACTORY_TUNABLES = {
         "threshold": TunableThreshold(
-            description="The lot size threshold the current lot must meet"
-        )
+            description="The lot size threshold the current lot must meet",
+        ),
     }
 
     __slots__ = ("threshold",)
@@ -32,6 +32,6 @@ class LotSizeTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
         total_size = lot.size_x * lot.size_z
         if not self.threshold.compare(total_size):
             return TestResult(
-                False, "Lot size does not meet threshold", tooltip=self.tooltip
+                False, "Lot size does not meet threshold", tooltip=self.tooltip,
             )
         return TestResult.TRUE

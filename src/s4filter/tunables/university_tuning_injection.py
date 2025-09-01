@@ -1,10 +1,10 @@
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.collections import AttributeDict
 from lot51_core.utils.injection import (
-    inject_list,
-    merge_list,
     inject_dict,
+    inject_list,
     inject_mapping_lists,
+    merge_list,
 )
 from services import get_instance_manager
 from sims.university.university_commands import UniversityCommandTuning
@@ -12,13 +12,13 @@ from sims.university.university_tuning import University
 from sims4.common import Pack
 from sims4.resources import Types
 from sims4.tuning.tunable import (
+    OptionalTunable,
+    Tunable,
+    TunableInterval,
     TunableList,
+    TunableMapping,
     TunableReference,
     TunableTuple,
-    TunableMapping,
-    Tunable,
-    OptionalTunable,
-    TunableInterval,
 )
 from tunable_multiplier import TunableMultiplier
 
@@ -28,17 +28,17 @@ class TunableUniversityTuningInjection(BaseTunableInjection):
         "additional_majors": TunableList(
             description="Injects to ALL_DEGREES",
             tunable=TunableReference(
-                manager=get_instance_manager(Types.UNIVERSITY_MAJOR)
+                manager=get_instance_manager(Types.UNIVERSITY_MAJOR),
             ),
         ),
         "additional_electives": TunableList(
             description="Injects to COURSE_ELECTIVES.electives",
             tunable=TunableTuple(
                 elective=TunableReference(
-                    manager=get_instance_manager(Types.UNIVERSITY_COURSE_DATA)
+                    manager=get_instance_manager(Types.UNIVERSITY_COURSE_DATA),
                 ),
                 weight=TunableMultiplier.TunableFactory(
-                    description="The weight of this elective relative to other electives in this list."
+                    description="The weight of this elective relative to other electives in this list.",
                 ),
             ),
         ),
@@ -94,11 +94,11 @@ class TunableUniversityTuningInjection(BaseTunableInjection):
     }
 
     __slots__ = (
-        "additional_majors",
-        "additional_electives",
         "additional_degree_traits",
-        "skill_to_majors",
+        "additional_electives",
+        "additional_majors",
         "elective_count",
+        "skill_to_majors",
     )
 
     @property
@@ -113,7 +113,7 @@ class TunableUniversityTuningInjection(BaseTunableInjection):
         elective_overrides = AttributeDict()
         if len(self.additional_electives):
             elective_overrides.electives = merge_list(
-                University.COURSE_ELECTIVES.electives, self.additional_electives
+                University.COURSE_ELECTIVES.electives, self.additional_electives,
             )
         if self.elective_count is not None:
             elective_overrides.elective_count = self.elective_count
@@ -123,7 +123,7 @@ class TunableUniversityTuningInjection(BaseTunableInjection):
 
         # Add additional_degree_traits
         inject_list(
-            UniversityCommandTuning, "DEGREE_TRAITS", self.additional_degree_traits
+            UniversityCommandTuning, "DEGREE_TRAITS", self.additional_degree_traits,
         )
 
         # Add skill_to_major

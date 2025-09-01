@@ -1,4 +1,5 @@
 from interactions.utils.loot import LootActions, LootActionVariant, RandomWeightedLoot
+from interactions.utils.loot_ops import DoNothingLootOp
 from interactions.utils.success_chance import SuccessChance
 from lot51_core import logger
 from lot51_core.loot.actions_by_object_source import DoActionsByObjectSource
@@ -15,8 +16,7 @@ from lot51_core.loot.spawn_object import CreateObjectRingLoot, SpawnObjectLoot
 from lot51_core.loot.stolen_object import ReturnStolenObjectLoot
 from lot51_core.loot.transform_object import TransformObjectLoot
 from lot51_core.utils.math import chance_succeeded
-from interactions.utils.loot_ops import DoNothingLootOp
-from sims4.tuning.tunable import TunableList, OptionalTunable, TunableTuple
+from sims4.tuning.tunable import OptionalTunable, TunableList, TunableTuple
 from sims4.utils import blueprintmethod
 from tunable_multiplier import TunableMultiplier
 
@@ -41,7 +41,7 @@ class LotFiftyOneCoreLootActionVariant(LootActionVariant):
 
     def __init__(self, *args, **kwargs):
         super().__init__(
-            *args, statistic_pack_safe=True, **kwargs, **self.LOOT_VARIANTS
+            *args, statistic_pack_safe=True, **kwargs, **self.LOOT_VARIANTS,
         )
 
 
@@ -50,11 +50,11 @@ class LotFiftyOneCoreRandomWeightedLoot(RandomWeightedLoot):
         "random_loot_actions": TunableList(
             tunable=TunableTuple(
                 action=LotFiftyOneCoreLootActionVariant(
-                    do_nothing=DoNothingLootOp.TunableFactory()
+                    do_nothing=DoNothingLootOp.TunableFactory(),
                 ),
                 weight=TunableMultiplier.TunableFactory(),
-            )
-        )
+            ),
+        ),
     }
 
 
@@ -72,10 +72,10 @@ class LotFiftyOneCoreLootActions(LootActions):
     FACTORY_TUNABLES = INSTANCE_TUNABLES
 
     def __repr__(self):
-        return "<LotFiftyOneCoreLootActions:({})>".format(self.tuning_name)
+        return f"<LotFiftyOneCoreLootActions:({self.tuning_name})>"
 
     def __str__(self):
-        return "{}".format(self.tuning_name)
+        return f"{self.tuning_name}"
 
     @blueprintmethod
     def get_loot_ops_gen(self, resolver=None, **kwargs):
@@ -91,5 +91,5 @@ class LotFiftyOneCoreLootActions(LootActions):
                 if not chance_succeeded(chance):
                     return
         except Exception:
-            logger.error("Error while running loot: {}".format(self))
+            logger.error(f"Error while running loot: {self}")
         yield from super().get_loot_ops_gen(resolver=resolver, **kwargs)

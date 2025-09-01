@@ -1,15 +1,15 @@
 import io
-
-import lot51_core
 import pickle
 import weakref
+
+import lot51_core
 import services
 import sims4.reload
 from lot51_core.lib.sims import get_sim_name
 from lot51_core.utils.injection import inject_to
 from sims.sim_info import SimInfo
 from sims.sim_info_lod import SimInfoLODLevel
-from sims.sim_spawner import SimSpawner, SimCreator
+from sims.sim_spawner import SimCreator, SimSpawner
 from sims4 import hash_util
 from sims4.callback_utils import CallableList
 from story_progression.story_progression_enums import CullingReasons
@@ -76,7 +76,7 @@ class SaveBasedConfig:
 
     def _create_household(self):
         (sim_info_list, new_household) = SimSpawner.create_sim_infos(
-            (SimCreator(),), zone_id=0
+            (SimCreator(),), zone_id=0,
         )
         sim_info_list[0].request_lod(SimInfoLODLevel.MINIMUM)
         new_household.set_to_hidden()
@@ -88,17 +88,13 @@ class SaveBasedConfig:
         household = self._find_household()
         if household:
             self.logger.debug(
-                "[SaveBasedConfig] Found save based config household: {}".format(
-                    household
-                )
+                "[SaveBasedConfig] Found save based config household: %s", household,
             )
             return household
         household = self._create_household()
         if household:
             self.logger.debug(
-                "[SaveBasedConfig] Created new save based config household: {}".format(
-                    household
-                )
+                "[SaveBasedConfig] Created new save based config household: %s", household,
             )
             return household
         raise Exception("[SaveBasedConfig] Failed to create household")
@@ -126,13 +122,11 @@ class SaveBasedConfig:
 
 @inject_to(SimInfo, "get_culling_immunity_reasons")
 def lot51_save_based_config_get_culling_immunity_reasons(
-    original, self, *args, **kwargs
+    original, self, *args, **kwargs,
 ):
     global instanced_configs
     lot51_core.logger.debug(
-        "[SavedBasedConfig] getting culling immunity reasons for sim {}".format(
-            get_sim_name(self)
-        )
+        f"[SavedBasedConfig] getting culling immunity reasons for sim {get_sim_name(self)}",
     )
     reasons = original(self, *args, **kwargs)
     if len(reasons) or self.household is None:
@@ -141,10 +135,8 @@ def lot51_save_based_config_get_culling_immunity_reasons(
     for config in instanced_configs:
         if config.household_name == household_name:
             reasons.append(CullingReasons.TRAIT_IMMUNE)
-            config.logger.warn(
-                "[SavedBasedConfig] Sim in config storage household '{}' was attempted to be culled!".format(
-                    config.config_name
-                )
+            config.logger.warning(
+                f"[SavedBasedConfig] Sim in config storage household '{config.config_name}' was attempted to be culled!",
             )
             break
     return reasons

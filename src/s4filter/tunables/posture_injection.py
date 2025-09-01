@@ -7,10 +7,10 @@ from postures.posture_cost import _PostureCostCustom
 from sims.outfits.outfit_change import TunableOutfitChange
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    Tunable,
-    TunableReference,
-    TunableList,
     OptionalTunable,
+    Tunable,
+    TunableList,
+    TunableReference,
     TunableTuple,
 )
 
@@ -19,8 +19,8 @@ class TunablePostureInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "postures": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.POSTURE), pack_safe=True
-            )
+                manager=services.get_instance_manager(Types.POSTURE), pack_safe=True,
+            ),
         ),
         "cost": OptionalTunable(
             description="This is mainly used for a fix to prevent Sims from dancing near Stereos/TVs when they should be using a different posture.",
@@ -31,15 +31,15 @@ class TunablePostureInjection(BaseTunableInjection):
             tunable=TunableTuple(
                 outfit_change=TunableOutfitChange(),
                 tests=TunableGlobalTestSet(
-                    description="Tests to determine if this override should be applied."
+                    description="Tests to determine if this override should be applied.",
                 ),
             ),
         ),
     }
 
     __slots__ = (
-        "postures",
         "cost",
+        "postures",
         "prepend_override_outfit_changes",
     )
 
@@ -47,9 +47,9 @@ class TunablePostureInjection(BaseTunableInjection):
         if self.cost is not None:
             for (source, dest), transition_data in Posture._posture_transitions.items():
                 if dest is not None and dest in self.postures:
-                    Posture._posture_transitions[(source, dest)] = (
+                    Posture._posture_transitions[source, dest] = (
                         transition_data._replace(
-                            transition_cost=_PostureCostCustom(cost=self.cost)
+                            transition_cost=_PostureCostCustom(cost=self.cost),
                         )
                     )
 

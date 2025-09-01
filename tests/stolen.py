@@ -4,28 +4,27 @@ from event_testing.test_base import BaseTest
 from interactions import ParticipantTypeSingle
 from objects.components.types import STOLEN_COMPONENT
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
+    HasTunableSingletonFactory,
     Tunable,
+    TunableEnumEntry,
 )
 
 
 class ObjectStolenTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject has a stolen component
+    """Tests if the subject has a stolen component
     """
 
     FACTORY_TUNABLES = {
         "is_stolen": Tunable(tunable_type=bool, default=True),
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
     }
 
     __slots__ = (
-        "subject",
         "is_stolen",
+        "subject",
     )
 
     def get_expected_args(self):
@@ -40,6 +39,6 @@ class ObjectStolenTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
 
         return TestResult(
             False,
-            "Subject does not match required stolen value: {}".format(is_stolen),
+            f"Subject does not match required stolen value: {is_stolen}",
             tooltip=self.tooltip,
         )

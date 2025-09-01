@@ -1,14 +1,13 @@
-from event_testing.tests import TunableTestSet, TunableTestVariant, TunableGlobalTestSet
+from event_testing.tests import TunableGlobalTestSet, TunableTestSet, TunableTestVariant
 from lot51_core import logger
 from lot51_core.utils.injection import clone_test_set
 from sims4.tuning.tunable import (
-    TunableVariant,
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableList,
+    HasTunableSingletonFactory,
     Tunable,
+    TunableList,
+    TunableVariant,
 )
-
 
 # class TunableTestReplaceOneInjection(HasTunableSingletonFactory, AutoFactoryInit):
 #     FACTORY_TUNABLES = {
@@ -34,13 +33,13 @@ from sims4.tuning.tunable import (
 class TestReplaceMixin:
     def inject(self, target, key):
         logger.debug(
-            "replacing {} with {}".format(getattr(target, key, None), self.tests)
+            f"replacing {getattr(target, key, None)} with {self.tests}",
         )
         setattr(target, key, self.tests)
 
 
 class TunableTestReplaceInjection(
-    TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit
+    TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit,
 ):
     FACTORY_TUNABLES = {
         "tests": TunableTestSet(),
@@ -48,7 +47,7 @@ class TunableTestReplaceInjection(
 
 
 class TunableTestReplaceGlobalsInjection(
-    TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit
+    TestReplaceMixin, HasTunableSingletonFactory, AutoFactoryInit,
 ):
     FACTORY_TUNABLES = {
         "tests": TunableGlobalTestSet(),
@@ -72,7 +71,7 @@ class TunableTestMergeInjection(HasTunableSingletonFactory, AutoFactoryInit):
             description="Additional tests added to each original OR list. Warning: this does not affect the lists defined in this injector's `OR`",
         ),
         "OR": TunableTestSet(
-            description="Additional AND lists added to the compound test list. Note: This does not apply to injections to test_globals."
+            description="Additional AND lists added to the compound test list. Note: This does not apply to injections to test_globals.",
         ),
     }
 
@@ -88,7 +87,7 @@ class TunableTestMergeInjection(HasTunableSingletonFactory, AutoFactoryInit):
         setattr(target, key, new_list)
         logger.debug("tuned_values {}".format(getattr(target, "_tuned_values", None)))
         logger.debug(
-            "original {}: final {}".format(original_list, getattr(target, key, None))
+            f"original {original_list}: final {getattr(target, key, None)}",
         )
 
 

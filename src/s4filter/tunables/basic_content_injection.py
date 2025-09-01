@@ -1,21 +1,21 @@
 from interactions.base.basic import FlexibleLengthContent
 from interactions.utils.statistic_element import (
-    TunableExitConditionSnippet,
     PeriodicStatisticChangeElement,
+    TunableExitConditionSnippet,
 )
 from lot51_core import logger
 from lot51_core.utils.collections import AttributeDict
 from lot51_core.utils.injection import merge_dict, merge_list
 from lot51_core.utils.tunables import (
-    clone_factory_wrapper_with_overrides,
     clone_factory_with_overrides,
+    clone_factory_wrapper_with_overrides,
 )
 from sims4.tuning.tunable import (
-    TunableList,
-    OptionalTunable,
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
+    OptionalTunable,
     Tunable,
+    TunableList,
 )
 
 
@@ -28,7 +28,7 @@ class TunableBasicContentInjection(HasTunableSingletonFactory, AutoFactoryInit):
         "periodic_stat_change": OptionalTunable(
             description="Only used for interactions with a flexible_length basic_content.",
             tunable=PeriodicStatisticChangeElement.TunableFactory(
-                locked_args={"show_while_routing": False}
+                locked_args={"show_while_routing": False},
             ),
         ),
         "start_autonomous_inertial_override": OptionalTunable(
@@ -42,8 +42,8 @@ class TunableBasicContentInjection(HasTunableSingletonFactory, AutoFactoryInit):
     }
 
     __slots__ = (
-        "periodic_stat_change",
         "conditional_actions",
+        "periodic_stat_change",
         "start_autonomous_inertial_override",
         "start_user_directed_inertial_override",
     )
@@ -74,15 +74,11 @@ class TunableBasicContentInjection(HasTunableSingletonFactory, AutoFactoryInit):
                     )
                 else:
                     logger.warn(
-                        "Cannot inject periodic_stat_change to {}. This affordance does not have existing periodic_stat_change content.".format(
-                            affordance
-                        )
+                        f"Cannot inject periodic_stat_change to {affordance}. This affordance does not have existing periodic_stat_change content.",
                     )
             else:
                 logger.warn(
-                    "Cannot inject periodic_stat_change to {}. This affordance does not use flexible_content basic_content.".format(
-                        affordance
-                    )
+                    f"Cannot inject periodic_stat_change to {affordance}. This affordance does not use flexible_content basic_content.",
                 )
 
         # Conditional Actions
@@ -94,9 +90,7 @@ class TunableBasicContentInjection(HasTunableSingletonFactory, AutoFactoryInit):
                 )
             else:
                 logger.warn(
-                    "Cannot inject conditional_actions to {}. This affordance does not use flexible_content basic_content.".format(
-                        affordance
-                    )
+                    f"Cannot inject conditional_actions to {affordance}. This affordance does not use flexible_content basic_content.",
                 )
 
         if self.start_autonomous_inertial_override is not None:
@@ -106,9 +100,7 @@ class TunableBasicContentInjection(HasTunableSingletonFactory, AutoFactoryInit):
                 )
             else:
                 logger.warn(
-                    "Cannot inject start_autonomous_inertial to {}. This affordance does not use flexible_content basic_content.".format(
-                        affordance
-                    )
+                    f"Cannot inject start_autonomous_inertial to {affordance}. This affordance does not use flexible_content basic_content.",
                 )
 
         if self.start_user_directed_inertial_override is not None:
@@ -118,13 +110,11 @@ class TunableBasicContentInjection(HasTunableSingletonFactory, AutoFactoryInit):
                 )
             else:
                 logger.warn(
-                    "Cannot inject start_user_directed_inertial to {}. This affordance does not use flexible_content basic_content.".format(
-                        affordance
-                    )
+                    f"Cannot inject start_user_directed_inertial to {affordance}. This affordance does not use flexible_content basic_content.",
                 )
 
         # Apply overrides
         if len(overrides):
             affordance.basic_content = clone_factory_with_overrides(
-                affordance.basic_content, **overrides
+                affordance.basic_content, **overrides,
             )

@@ -5,11 +5,11 @@ from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableReference,
-    TunableList,
     OptionalTunable,
-    TunableVariant,
+    TunableList,
+    TunableReference,
     TunableTuple,
+    TunableVariant,
 )
 from singletons import DEFAULT
 
@@ -18,7 +18,7 @@ class TunableSimFilterInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "sim_filters": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.SIM_FILTER), pack_safe=True
+                manager=services.get_instance_manager(Types.SIM_FILTER), pack_safe=True,
             ),
         ),
         "additional_conform_terms": TunableList(
@@ -34,7 +34,7 @@ class TunableSimFilterInjection(BaseTunableInjection):
                     tunable=TunableReference(
                         manager=services.get_instance_manager(Types.SIM_TEMPLATE),
                         class_restrictions=("HouseholdTemplate",),
-                    )
+                    ),
                 ),
             ),
             merge=TunableTuple(
@@ -42,7 +42,7 @@ class TunableSimFilterInjection(BaseTunableInjection):
                     tunable=TunableReference(
                         manager=services.get_instance_manager(Types.SIM_TEMPLATE),
                         class_restrictions=("HouseholdTemplate",),
-                    )
+                    ),
                 ),
             ),
         ),
@@ -50,7 +50,7 @@ class TunableSimFilterInjection(BaseTunableInjection):
             tunable=TunableTuple(
                 repurpose_terms=TunableVariant(
                     use_specific_sims=TunableReference(
-                        manager=services.get_instance_manager(Types.SIM_FILTER)
+                        manager=services.get_instance_manager(Types.SIM_FILTER),
                     ),
                     locked_args={
                         "use_constrained_sims": TunableSimFilter.USE_CONSTRAINED_SIMS,
@@ -59,30 +59,30 @@ class TunableSimFilterInjection(BaseTunableInjection):
                     },
                     default="dont_repurpose",
                 ),
-            )
+            ),
         ),
         "template_chooser_override": OptionalTunable(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.SIM_FILTER), pack_safe=True
+                manager=services.get_instance_manager(Types.SIM_FILTER), pack_safe=True,
             ),
         ),
     }
 
     __slots__ = (
-        "sim_filters",
         "additional_conform_terms",
         "filter_terms",
-        "repurpose_terms_override",
-        "template_chooser_override",
         "household_templates_override",
+        "repurpose_terms_override",
+        "sim_filters",
+        "template_chooser_override",
     )
 
     def inject(self):
         for sim_filter in self.sim_filters:
-            logger.info("Injecting to Sim Filter {}".format(sim_filter))
+            logger.info(f"Injecting to Sim Filter {sim_filter}")
 
             inject_list(
-                sim_filter, "additional_conform_terms", self.additional_conform_terms
+                sim_filter, "additional_conform_terms", self.additional_conform_terms,
             )
             inject_list(sim_filter, "_filter_terms", self.filter_terms)
 
@@ -96,11 +96,7 @@ class TunableSimFilterInjection(BaseTunableInjection):
 
             if self.household_templates_override is not None:
                 if hasattr(self.household_templates_override, "templates_to_replace"):
-                    setattr(
-                        sim_filter,
-                        "_household_templates_override",
-                        tuple(self.household_templates_override.templates_to_replace),
-                    )
+                    sim_filter._household_templates_override = tuple(self.household_templates_override.templates_to_replace)
                 elif hasattr(self.household_templates_override, "templates_to_merge"):
                     inject_list(
                         sim_filter,

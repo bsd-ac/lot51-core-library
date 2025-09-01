@@ -1,26 +1,26 @@
 import element_utils
 import sims4.random
+from event_testing.results import TestResult
 from interactions import ParticipantType
 from interactions.aop import AffordanceObjectPair
-from interactions.context import InteractionSource, InteractionContext
+from interactions.base.super_interaction import SuperInteraction
+from interactions.context import InteractionContext, InteractionSource
 from interactions.interaction_finisher import FinishingType
 from lot51_core import logger
 from lot51_core.tunables.object_query import ObjectSearchMethodVariant
 from services import get_instance_manager
 from sims4.localization import TunableLocalizedStringFactory
 from sims4.resources import Types
+from sims4.tuning.tunable import (
+    OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
+    TunableList,
+    TunableReference,
+    TunableTuple,
+)
 from sims4.utils import flexmethod
 from singletons import DEFAULT
-from event_testing.results import TestResult
-from sims4.tuning.tunable import (
-    TunableTuple,
-    TunableReference,
-    TunableList,
-    OptionalTunable,
-    TunableEnumEntry,
-    Tunable,
-)
-from interactions.base.super_interaction import SuperInteraction
 
 
 class ParameterizedRequestContinuationMixin:
@@ -29,34 +29,34 @@ class ParameterizedRequestContinuationMixin:
             tunable=TunableTuple(
                 commodities=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.STATISTIC)
-                    )
+                        manager=get_instance_manager(Types.STATISTIC),
+                    ),
                 ),
                 static_commodities=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.STATIC_COMMODITY)
-                    )
+                        manager=get_instance_manager(Types.STATIC_COMMODITY),
+                    ),
                 ),
                 exclude_static_commodities=TunableList(
                     tunable=TunableReference(
-                        manager=get_instance_manager(Types.STATIC_COMMODITY)
-                    )
+                        manager=get_instance_manager(Types.STATIC_COMMODITY),
+                    ),
                 ),
                 loot_on_success=TunableList(
-                    tunable=TunableReference(manager=get_instance_manager(Types.ACTION))
+                    tunable=TunableReference(manager=get_instance_manager(Types.ACTION)),
                 ),
                 loot_on_failure=TunableList(
-                    tunable=TunableReference(manager=get_instance_manager(Types.ACTION))
+                    tunable=TunableReference(manager=get_instance_manager(Types.ACTION)),
                 ),
                 context_source_override=OptionalTunable(
                     tunable=TunableEnumEntry(
                         tunable_type=InteractionSource,
                         default=InteractionSource.AUTONOMY,
-                    )
+                    ),
                 ),
                 test_autonomous_availability=Tunable(tunable_type=bool, default=False),
-            )
-        )
+            ),
+        ),
     }
 
     def _handle_success(self, resolver):
@@ -67,7 +67,7 @@ class ParameterizedRequestContinuationMixin:
         for loot in self.paramaterized_autonomy_continuation.loot_on_failure:
             loot.apply_to_resolver(resolver)
         self.cancel(
-            FinishingType.FAILED_TESTS, cancel_reason_msg="No available continuation"
+            FinishingType.FAILED_TESTS, cancel_reason_msg="No available continuation",
         )
 
     def _run_paramaterized_request(self, obj):
@@ -82,7 +82,7 @@ class ParameterizedRequestContinuationMixin:
         obj_available = (
             parameters.test_autonomous_availability is None
             or actor.autonomy_component.get_autonomous_availability_of_object(
-                obj, autonomy_rule, reference_object=actor
+                obj, autonomy_rule, reference_object=actor,
             )
         )
 
@@ -128,20 +128,20 @@ class ParameterizedRequestContinuationMixin:
 
                     if len(parameters.commodities):
                         for stat_op_list in interaction.autonomy_ads_gen(
-                            target=obj, include_hidden_false_ads=False
+                            target=obj, include_hidden_false_ads=False,
                         ):
                             if stat_op_list.is_valid(interaction):
                                 stat = actor.get_tracker(
-                                    stat_op_list.stat
+                                    stat_op_list.stat,
                                 ).get_statistic(stat_op_list.stat, False)
                                 if stat is not None:
                                     logger.debug(
-                                        "Testing stat {}".format(stat.stat_type)
+                                        f"Testing stat {stat.stat_type}",
                                     )
                                     if stat.stat_type in parameters.commodities:
                                         fulfillment_rate = (
                                             stat_op_list.get_fulfillment_rate(
-                                                interaction
+                                                interaction,
                                             )
                                         )
                                         scored_value = (
@@ -151,16 +151,14 @@ class ParameterizedRequestContinuationMixin:
                                             * fulfillment_rate
                                         )
                                         logger.debug(
-                                            "Scored value {}".format(scored_value)
+                                            f"Scored value {scored_value}",
                                         )
                                         total_desire += scored_value
 
                     if total_desire > 0:
                         test_result = aop.test(ctx)
                         logger.debug(
-                            "[{}] affordance {}, desire {}, result {}".format(
-                                self, interaction, total_desire, test_result
-                            )
+                            f"[{self}] affordance {interaction}, desire {total_desire}, result {test_result}",
                         )
                         if test_result:
                             potential_aops.append((total_desire, aop))
@@ -168,21 +166,21 @@ class ParameterizedRequestContinuationMixin:
                     pass
                     # logger.exception("Failed scoring aop for request: {} -> {}".format(self, aop))
 
-            if len(potential_aops):
+            if potential_aops:
                 aop_select = sims4.random.weighted_random_item(potential_aops)
                 if aop_select is not None:
                     if aop_select.execute(ctx):
-                        logger.debug("executed aop {}".format(aop_select))
+                        logger.debug(f"executed aop {aop_select}")
                         return True
-                    logger.debug("failed to execute aop {}".format(aop_select))
-        logger.debug("no aops found for obj {}".format(obj))
+                    logger.debug(f"failed to execute aop {aop_select}")
+        logger.debug(f"no aops found for obj {obj}")
         return False
 
 
 class SpecificInteractionContinuationMixin:
     INSTANCE_TUNABLES = {
         "affordance_continuation": OptionalTunable(
-            tunable=TunableReference(manager=get_instance_manager(Types.INTERACTION))
+            tunable=TunableReference(manager=get_instance_manager(Types.INTERACTION)),
         ),
         "continuation_si_override": OptionalTunable(
             tunable=TunableReference(manager=get_instance_manager(Types.INTERACTION)),
@@ -194,13 +192,13 @@ class SpecificInteractionContinuationMixin:
 
     def _handle_failure(self, resolver):
         self.cancel(
-            FinishingType.FAILED_TESTS, cancel_reason_msg="No available continuation"
+            FinishingType.FAILED_TESTS, cancel_reason_msg="No available continuation",
         )
 
     def _run_paramaterized_request(self, obj):
         if self.affordance_continuation is None:
             logger.error(
-                "Affordance continuation was None in {} targeting {}".format(self, obj)
+                f"Affordance continuation was None in {self} targeting {obj}",
             )
             return False
         ctx = self.context.clone_for_continuation(self, carry_target=self.carry_target)
@@ -213,7 +211,7 @@ class SpecificInteractionContinuationMixin:
             saved_participants=self._saved_participants,
         )
         (test_result, execute_result) = aop.test_and_execute(ctx)
-        logger.debug("specific aop result: {}, {}".format(test_result, execute_result))
+        logger.debug(f"specific aop result: {test_result}, {execute_result}")
         return bool(test_result)
 
 
@@ -236,7 +234,7 @@ class BaseParameterizedSuperInteraction(SuperInteraction):
             # logger.debug("Testing interaction {}".format(inst_or_cls))
             resolver = inst_or_cls.get_resolver(context=context, **kwargs)
             for obj in inst_or_cls.object_source.get_objects_gen(
-                resolver=resolver, log_results=False
+                resolver=resolver, log_results=False,
             ):
                 return TestResult.TRUE
             return TestResult(
@@ -252,7 +250,7 @@ class BaseParameterizedSuperInteraction(SuperInteraction):
         resolver = self.get_resolver()
         # logger.debug("Running interaction {}".format(self))
         for chosen_obj in self.object_source.get_objects_gen(
-            resolver=resolver, log_results=False
+            resolver=resolver, log_results=False,
         ):
             if self._run_paramaterized_request(chosen_obj):
                 self._handle_success(resolver)
@@ -264,17 +262,17 @@ class BaseParameterizedSuperInteraction(SuperInteraction):
     def _build_outcome_sequence(self, *args, **kwargs):
         sequence = super()._build_outcome_sequence(*args, **kwargs)
         return element_utils.build_critical_section(
-            sequence, self._perform_paramaterized_request_gen
+            sequence, self._perform_paramaterized_request_gen,
         )
 
 
 class ParameterizedSpecificSuperInteraction(
-    BaseParameterizedSuperInteraction, SpecificInteractionContinuationMixin
+    BaseParameterizedSuperInteraction, SpecificInteractionContinuationMixin,
 ):
     pass
 
 
 class ParameterizedSuperInteraction(
-    BaseParameterizedSuperInteraction, ParameterizedRequestContinuationMixin
+    BaseParameterizedSuperInteraction, ParameterizedRequestContinuationMixin,
 ):
     pass

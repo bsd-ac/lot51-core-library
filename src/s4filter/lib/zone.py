@@ -1,7 +1,7 @@
 import build_buy
 import services
 from distributor.system import Distributor
-from lot51_core.lib.game_version import is_game_version
+from s4filter.lib.game_version import is_game_version
 from plex.plex_enums import PlexBuildingType, INVALID_PLEX_ID
 from protocolbuffers import InteractionOps_pb2, Consts_pb2, Business_pb2
 from protocolbuffers.FileSerialization_pb2 import HouseholdAccountPair

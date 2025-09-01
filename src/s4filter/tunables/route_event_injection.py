@@ -1,21 +1,21 @@
 import services
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.tunables.test_injection import TestInjectionVariant
+from lot51_core.utils.injection import inject_to_enum
 from routing.route_enums import RouteEventPriority
 from sims4.resources import Types
 from sims4.tuning.tunable import (
+    OptionalTunable,
     Tunable,
     TunableReference,
-    OptionalTunable,
     TunableTuple,
 )
-from lot51_core.utils.injection import inject_to_enum
 
 
 class TunableRouteEventInjection(BaseTunableInjection):
     FACTORY_TUNABLES = {
         "route_event": TunableReference(
-            manager=services.get_instance_manager(Types.SNIPPET)
+            manager=services.get_instance_manager(Types.SNIPPET),
         ),
         "priority": OptionalTunable(
             tunable=TunableTuple(
@@ -27,9 +27,9 @@ class TunableRouteEventInjection(BaseTunableInjection):
     }
 
     __slots__ = (
-        "route_event",
-        "priority",
         "modify_tests",
+        "priority",
+        "route_event",
     )
 
     def inject(self):

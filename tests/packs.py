@@ -1,10 +1,10 @@
-from sims4.common import Pack, are_packs_available
+from caches import cached_test
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
-from caches import cached_test
+from sims4.common import Pack, are_packs_available
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
 )
 
@@ -15,7 +15,7 @@ class PackTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
             description="Pack required for this test to pass.",
             tunable_type=Pack,
             default=Pack.BASE_GAME,
-        )
+        ),
     }
 
     __slots__ = ("pack",)

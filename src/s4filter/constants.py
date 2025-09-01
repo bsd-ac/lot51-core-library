@@ -1,6 +1,5 @@
 import enum
 
-
 SIM_OBJECT_ID = 14965
 
 

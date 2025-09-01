@@ -11,7 +11,7 @@ class ReapplyJobUniformLoot(BaseLootOperation):
         "situation": OptionalTunable(
             description="Require target sims to be in a specific situation",
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.SITUATION)
+                manager=services.get_instance_manager(Types.SITUATION),
             ),
         ),
         "object_source": ObjectSearchMethodVariant(),
@@ -26,9 +26,9 @@ class ReapplyJobUniformLoot(BaseLootOperation):
         for sim in self._object_source.get_objects_gen(resolver=resolver):
             if not sim.is_sim or sim.is_hidden():
                 continue
-            logger.debug("applying situation uniform for sim {}".format(sim))
+            logger.debug(f"applying situation uniform for sim {sim}")
             situations = services.get_zone_situation_manager().get_situations_sim_is_in(
-                sim
+                sim,
             )
             for situation in situations:
                 if (
@@ -36,9 +36,9 @@ class ReapplyJobUniformLoot(BaseLootOperation):
                     and self._situation.guid64 != situation.guid64
                 ):
                     continue
-                logger.debug("found situation {}".format(situation))
+                logger.debug(f"found situation {situation}")
                 job_type = situation.get_current_job_for_sim(sim)
                 if job_type and job_type.job_uniform is not None:
-                    logger.debug("found job {}".format(job_type))
+                    logger.debug(f"found job {job_type}")
                     situation.set_job_uniform(sim, job_type)
                     break

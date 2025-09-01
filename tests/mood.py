@@ -1,18 +1,18 @@
-from event_testing.test_events import TestEvent
-from lot51_core import logger
-from services import get_instance_manager
+from caches import cached_test
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
-from caches import cached_test
+from event_testing.test_events import TestEvent
 from interactions import ParticipantTypeSingle
+from lot51_core import logger
+from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
-    TunableThreshold,
-    TunableReference,
+    HasTunableSingletonFactory,
     OptionalTunable,
+    TunableEnumEntry,
+    TunableReference,
+    TunableThreshold,
 )
 
 
@@ -26,15 +26,15 @@ class MoodIntensityTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
             default=ParticipantTypeSingle.Actor,
         ),
         "mood": OptionalTunable(
-            tunable=TunableReference(manager=get_instance_manager(Types.MOOD))
+            tunable=TunableReference(manager=get_instance_manager(Types.MOOD)),
         ),
         "threshold": TunableThreshold(),
     }
 
     __slots__ = (
+        "mood",
         "subject",
         "threshold",
-        "mood",
     )
 
     def get_expected_args(self):
@@ -58,7 +58,7 @@ class MoodIntensityTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
                 return TestResult.TRUE
 
         return TestResult(
-            False, "Mood intensity does not meet threshold", tooltip=self.tooltip
+            False, "Mood intensity does not meet threshold", tooltip=self.tooltip,
         )
 
 
@@ -72,15 +72,15 @@ class MoodWeightTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
             default=ParticipantTypeSingle.Actor,
         ),
         "mood": OptionalTunable(
-            tunable=TunableReference(manager=get_instance_manager(Types.MOOD))
+            tunable=TunableReference(manager=get_instance_manager(Types.MOOD)),
         ),
         "threshold": TunableThreshold(),
     }
 
     __slots__ = (
+        "mood",
         "subject",
         "threshold",
-        "mood",
     )
 
     def get_expected_args(self):
@@ -106,10 +106,10 @@ class MoodWeightTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
                 if self.threshold.compare(total_weight):
                     return TestResult.TRUE
             return TestResult(
-                False, "Mood weight does not meet threshold", tooltip=self.tooltip
+                False, "Mood weight does not meet threshold", tooltip=self.tooltip,
             )
         except:
             logger.exception("Failed during mood weight test")
             return TestResult(
-                False, "Mood weight does not meet threshold", tooltip=self.tooltip
+                False, "Mood weight does not meet threshold", tooltip=self.tooltip,
             )

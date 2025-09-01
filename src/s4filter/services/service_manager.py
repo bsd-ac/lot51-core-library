@@ -1,6 +1,6 @@
 from game_services import GameServiceManager
 from lot51_core import logger
-from lot51_core.services.events import event_service, CoreEvent
+from lot51_core.services.events import CoreEvent, event_service
 from lot51_core.utils.injection import inject_to
 from sims4.service_manager import Service
 
@@ -37,7 +37,7 @@ class ServiceManager:
             return service
         except:
             logger.exception(
-                "[ServiceManager] failed registering service: {}".format(factory)
+                f"[ServiceManager] failed registering service: {factory}",
             )
 
     def get_services_gen(self):
@@ -69,9 +69,7 @@ def _start_game_services(original, self, *args, **kwargs):
                     self.register_service(service, is_init_critical=True)
             except:
                 logger.exception(
-                    "[_start_game_services] failed registering critical service: {}".format(
-                        key
-                    )
+                    f"[_start_game_services] failed registering critical service: {key}",
                 )
 
         for key, service_tuple in service_manager.get_services_gen():
@@ -83,7 +81,7 @@ def _start_game_services(original, self, *args, **kwargs):
                     self.register_service(service, is_init_critical=False)
             except:
                 logger.exception(
-                    "[_start_game_services] failed registering service: {}".format(key)
+                    f"[_start_game_services] failed registering service: {key}",
                 )
 
         event_service.process_event(CoreEvent.GAME_SERVICES_STARTED)

@@ -1,10 +1,10 @@
 import services
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableFactory,
-    TunableReference,
     TunableEnumEntry,
     TunableEnumSet,
+    TunableFactory,
+    TunableReference,
 )
 from situations.base_situation import _RequestUserData
 from situations.bouncer.bouncer_request import BouncerRequest
@@ -41,14 +41,14 @@ class TunableBouncerRequest(TunableFactory):
     def __init__(self, **kwargs):
         super().__init__(
             job_type=TunableReference(
-                manager=services.get_instance_manager(Types.SITUATION_JOB)
+                manager=services.get_instance_manager(Types.SITUATION_JOB),
             ),
             request_priority=TunableEnumEntry(
                 tunable_type=BouncerRequestPriority,
                 default=BouncerRequestPriority.EVENT_DEFAULT_JOB,
             ),
             common_blacklist_categories=TunableEnumSet(
-                enum_type=SituationCommonBlacklistCategory
+                enum_type=SituationCommonBlacklistCategory,
             ),
             spawning_option=TunableEnumEntry(
                 tunable_type=RequestSpawningOption,

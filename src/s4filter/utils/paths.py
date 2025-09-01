@@ -1,10 +1,10 @@
 import os
+import pathlib
 import re
 
 
 def get_mod_root(file, depth=2):
-    """
-    Get the path to the directory a ts4script is located. By default, assumes the file
+    """Get the path to the directory a ts4script is located. By default, assumes the file
     is located at a depth of 2 (in the root of a package inside a compiled ts4script).
 
     Increase the depth if you are fetching the mod root from another level deep
@@ -25,23 +25,22 @@ def get_mod_root(file, depth=2):
         depth += 1
 
     for depth in range(depth):
-        root = os.path.dirname(root)
+        root = pathlib.Path(root).parent
 
     return root
 
 
 def get_game_dir():
-    """
-    Get the path to the Game documents directory that includes Mods, localthumbcache, and other files.
+    """Get the path to the Game documents directory that includes Mods, localthumbcache, and other files.
     :return: str
     """
     root = get_mod_root(__file__, depth=3)
     attempt = 0
 
     while (
-        not re.search("(?:The|De|Die|Los|Les) Sims 4[/|\\\]Mods$", root)
+        not re.search("(?:The|De|Die|Los|Les) Sims 4[/|\\\\]Mods$", root)
         and attempt < 10
     ):
         attempt += 1
-        root = os.path.dirname(root)
-    return os.path.dirname(root)
+        root = pathlib.Path(root).parent
+    return pathlib.Path(root).parent

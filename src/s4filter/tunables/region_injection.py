@@ -6,9 +6,9 @@ from sims4.resources import Types
 from sims4.tuning.tunable import (
     OptionalTunable,
     Tunable,
-    TunableVariant,
     TunableList,
     TunableReference,
+    TunableVariant,
 )
 
 
@@ -25,15 +25,15 @@ class TunableRegionInjection(BaseTunableInjection):
         ),
         "compatible_venues": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.VENUE), pack_safe=True
-            )
+                manager=get_instance_manager(Types.VENUE), pack_safe=True,
+            ),
         ),
     }
 
     __slots__ = (
-        "region_source",
-        "is_persistable",
         "compatible_venues",
+        "is_persistable",
+        "region_source",
     )
 
     def inject(self):
@@ -43,5 +43,5 @@ class TunableRegionInjection(BaseTunableInjection):
                     region.is_persistable = self.is_persistable
 
                 inject_list(
-                    region, "compatible_venues", new_items=self.compatible_venues
+                    region, "compatible_venues", new_items=self.compatible_venues,
                 )

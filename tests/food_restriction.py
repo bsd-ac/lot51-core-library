@@ -1,22 +1,21 @@
+from caches import cached_test
 from crafting.food_restrictions_utils import FoodRestrictionUtils
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
-from caches import cached_test
-from interactions import ParticipantTypeSingleSim, ParticipantTypeSingle
+from interactions import ParticipantTypeSingle, ParticipantTypeSingleSim
 from objects.components.types import CRAFTING_COMPONENT
 from sims4.tuning.tunable import (
-    TunableVariant,
-    HasTunableSingletonFactory,
-    TunableEnumEntry,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     OptionalTunable,
     Tunable,
+    TunableEnumEntry,
+    TunableVariant,
 )
 
 
 class CustomFoodRestrictionTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    An alternative ot the EA food restriction test that lets you test against any custom food restrictions provided by traits.
+    """An alternative ot the EA food restriction test that lets you test against any custom food restrictions provided by traits.
     """
 
     NO_RESTRICTIONS = 1
@@ -41,7 +40,7 @@ class CustomFoodRestrictionTest(HasTunableSingletonFactory, AutoFactoryInit, Bas
             default="no_restrictions",
         ),
         "specific_restriction": OptionalTunable(
-            tunable=Tunable(tunable_type=str, default="")
+            tunable=Tunable(tunable_type=str, default=""),
         ),
     }
 
@@ -94,7 +93,7 @@ class CustomFoodRestrictionTest(HasTunableSingletonFactory, AutoFactoryInit, Bas
             restriction_type = None
 
         has_restriction = self.recipe_has_restriction(
-            tracker, recipe, restriction=restriction_type
+            tracker, recipe, restriction=restriction_type,
         )
         if self.test == self.NO_RESTRICTIONS and has_restriction:
             return TestResult(

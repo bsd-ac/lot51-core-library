@@ -1,5 +1,6 @@
 # Learn how to create your own tests following Frankk's guide
 # at https://frankkmods.medium.com/custom-tuning-tests-sims-4-script-modding-3837e214fb68
+from event_testing.tests import TestSetInstance, TunableTestVariant, _TunableTestSetBase
 from lot51_core.tests.daytime import DaytimeTest
 from lot51_core.tests.distance_2d import Distance2dTest
 from lot51_core.tests.flag_stat_test import FlagStatTest
@@ -13,6 +14,7 @@ from lot51_core.tests.mood import MoodIntensityTest, MoodWeightTest
 from lot51_core.tests.object_query import ObjectQueryTest
 from lot51_core.tests.object_tuning import ObjectTuningTest
 from lot51_core.tests.packs import PackTest
+from lot51_core.tests.resource_test import ResourceExistenceTest
 from lot51_core.tests.room import ObjectInRoomTest
 from lot51_core.tests.situation_state import CustomStateSituationTest
 from lot51_core.tests.situation_target_test import SituationTargetObjectTest
@@ -21,13 +23,11 @@ from lot51_core.tests.statistics import StatisticLockedTest
 from lot51_core.tests.stolen import ObjectStolenTest
 from lot51_core.tests.stored_sim_component import StoredSimComponentTest
 from lot51_core.tests.terrain import TerrainTest
-from lot51_core.tests.resource_test import ResourceExistenceTest
 from lot51_core.tests.valid_picker_choice import (
     ValidPickerChoiceTest,
     ValidPurchasePickerChoiceTest,
 )
 from lot51_core.tests.walkstyle import WalkstyleTest
-from event_testing.tests import TestSetInstance, TunableTestVariant, _TunableTestSetBase
 
 
 class LotFiftyOneCoreTestSet(_TunableTestSetBase, is_fragment=True):

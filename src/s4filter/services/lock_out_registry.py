@@ -1,12 +1,12 @@
 import alarms
 import services
-from event_testing.test_events import TestEvent
-from lot51_core.services.events import event_handler, CoreEvent
-from lot51_core.snippets.lock_out import AffordanceLockOutSnippet, LockCompatibilityType
-from sims4.commands import Command, CommandType
-from lot51_core import logger
 from date_and_time import create_time_span
 from event_testing.register_test_event_mixin import RegisterTestEventMixin
+from event_testing.test_events import TestEvent
+from lot51_core import logger
+from lot51_core.services.events import CoreEvent, event_handler
+from lot51_core.snippets.lock_out import AffordanceLockOutSnippet, LockCompatibilityType
+from sims4.commands import Command, CommandType
 
 
 class AffordanceLockOutRegistry(RegisterTestEventMixin):
@@ -54,20 +54,18 @@ class AffordanceLockOutRegistry(RegisterTestEventMixin):
                 lock_out_time = now + create_time_span(minutes=duration)
                 actor = interaction.sim.sim_info
                 key = self.get_key(
-                    actor, interaction.get_interaction_type(), target=interaction.target
+                    actor, interaction.get_interaction_type(), target=interaction.target,
                 )
                 self._registry[key] = lock_out_time
                 logger.debug(
-                    "[AffordanceLockOutRegistry] interaction is now locked: {} for {} minutes".format(
-                        key, duration
-                    )
+                    f"[AffordanceLockOutRegistry] interaction is now locked: {key} for {duration} minutes",
                 )
 
     def _setup_cleanup_alarm(self):
         if self._cleanup_alarm is None:
             time_span = create_time_span(hours=3)
             self._cleanup_alarm = alarms.add_alarm(
-                self, time_span, self._handle_cleanup_alarm
+                self, time_span, self._handle_cleanup_alarm,
             )
 
     def _handle_cleanup_alarm(self, _):
@@ -115,7 +113,7 @@ def _lockout_on_zone_unload(*args, **kwargs):
 @Command("lock_out.print_keys", command_type=CommandType.Live)
 def _print_lock_out_keys(_connection=None):
     logger.info("#### LOCKOUT KEYS ####")
-    logger.info("Current Time: {}".format(services.time_service().sim_now))
+    logger.info(f"Current Time: {services.time_service().sim_now}")
     for key, value in lock_out_registry._registry.items():
-        logger.info("Key: {}".format(key))
-        logger.info("Value: {}".format(value))
+        logger.info(f"Key: {key}")
+        logger.info(f"Value: {value}")

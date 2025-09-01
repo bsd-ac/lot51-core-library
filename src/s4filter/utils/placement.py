@@ -1,31 +1,32 @@
+import random
+
 import services
 import sims4
-import random
 from placement import (
     ScoringFunctionRadial,
-    create_starting_location,
     create_fgl_context_for_object,
+    create_starting_location,
 )
-from routing import SurfaceType, SurfaceIdentifier
+from routing import SurfaceIdentifier, SurfaceType
 
 
 def _get_position_with_offset(
-    starting_transform, starting_orientation, x_range=None, z_range=None
+    starting_transform, starting_orientation, x_range=None, z_range=None,
 ):
     default_offset = sims4.math.Vector3(0, 0, 0)
     if x_range is not None:
         x_axis = starting_orientation.transform_vector(sims4.math.Vector3.X_AXIS())
         default_offset += x_axis * random.uniform(
-            x_range.lower_bound, x_range.upper_bound
+            x_range.lower_bound, x_range.upper_bound,
         )
     if z_range is not None:
         z_axis = starting_orientation.transform_vector(sims4.math.Vector3.Z_AXIS())
         default_offset += z_axis * random.uniform(
-            z_range.lower_bound, z_range.upper_bound
+            z_range.lower_bound, z_range.upper_bound,
         )
     offset = sims4.math.Transform(default_offset, sims4.math.Quaternion.IDENTITY())
     return sims4.math.Transform.concatenate(
-        offset, starting_transform
+        offset, starting_transform,
     ).translation, starting_orientation
 
 
@@ -47,10 +48,10 @@ def get_location_near_location(
     _routing_surface = target_location.routing_surface
     if _routing_surface is None:
         _routing_surface = SurfaceIdentifier(
-            services.current_zone_id(), 0, SurfaceType.SURFACETYPE_WORLD
+            services.current_zone_id(), 0, SurfaceType.SURFACETYPE_WORLD,
         )
     start_position, start_orientation = _get_position_with_offset(
-        target_location.transform, _orientation, x_range=x_range, z_range=z_range
+        target_location.transform, _orientation, x_range=x_range, z_range=z_range,
     )
     scoring_function = ScoringFunctionRadial(
         target_location.transform.translation,
@@ -91,7 +92,7 @@ def get_location_near_object(
         _orientation = target_obj.orientation
     _routing_surface = target_obj.routing_surface
     start_position, start_orientation = _get_position_with_offset(
-        target_obj.location.transform, _orientation, x_range=x_range, z_range=z_range
+        target_obj.location.transform, _orientation, x_range=x_range, z_range=z_range,
     )
     scoring_function = ScoringFunctionRadial(
         target_obj.location.transform.translation,

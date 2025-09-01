@@ -5,13 +5,13 @@ from sims.pregnancy.pregnancy_enums import PregnancyOrigin
 from sims.pregnancy.pregnancy_tracker import PregnancyTracker
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableList,
-    TunableReference,
-    TunableTuple,
-    TunableMapping,
     Tunable,
     TunableEnumEntry,
+    TunableList,
+    TunableMapping,
     TunablePercent,
+    TunableReference,
+    TunableTuple,
 )
 
 
@@ -35,10 +35,10 @@ class TunablePregnancyTrackerInjection(BaseTunableInjection):
                                     manager=get_instance_manager(Types.TRAIT),
                                     pack_safe=True,
                                 ),
-                            )
+                            ),
                         ),
-                    )
-                )
+                    ),
+                ),
             ),
         ),
     }

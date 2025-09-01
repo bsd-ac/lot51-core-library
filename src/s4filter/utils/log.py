@@ -1,5 +1,6 @@
 import logging
 import os
+
 import lot51_core
 from lot51_core.lib.game_version import get_game_version
 from lot51_core.lib.time import get_wallclock_now
@@ -37,27 +38,17 @@ def Logger(
     state = f"{int(flag):#0{10}x}"
 
     logger.info(
-        "{prefix}[{name}] Version: {version}; Mode: {mode}; Core Library Version: {lib}; Game Version: {game_version}; Generated: {timestamp} UTC; State: {state}".format(
-            prefix=prefix,
-            name=name,
-            version=version,
-            mode=mode,
-            lib=lot51_core.__version__,
-            game_version=get_game_version(),
-            timestamp=timestamp,
-            state=state,
-        )
+        f"{prefix}[{name}] Version: {version}; Mode: {mode}; Core Library Version: {lot51_core.__version__}; Game Version: {get_game_version()}; Generated: {timestamp} UTC; State: {state}",
     )
     if is_first_party:
         logger.info(
-            "If you are experiencing any issues with this mod, please join my Discord at https://lot51.cc/discord and report your error in #mod-support with this log."
+            "If you are experiencing any issues with this mod, please join my Discord at https://lot51.cc/discord and report your error in #mod-support with this log.",
         )
     return logger
 
 
 def stringify_sim_info(sim_info):
-    """
-    DEPRECATED. Use lot51_core.lib.sim.get_sim_name instead.
+    """DEPRECATED. Use lot51_core.lib.sim.get_sim_name instead.
     """
     from lot51_core.lib.sims import get_sim_name
 
@@ -65,8 +56,7 @@ def stringify_sim_info(sim_info):
 
 
 def stringify_sim(sim):
-    """
-    DEPRECATED. Use lot51_core.lib.sim.get_sim_name instead.
+    """DEPRECATED. Use lot51_core.lib.sim.get_sim_name instead.
     """
     from lot51_core.lib.sims import get_sim_name
 

@@ -1,9 +1,10 @@
 import uuid
+
 import services
 from lot51_core.tunables.purchase_item import TunablePurchaseItem
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
-from sims4.tuning.tunable import TunableReference, TunableList
+from sims4.tuning.tunable import TunableList, TunableReference
 
 
 class PurchasePickerModifier(

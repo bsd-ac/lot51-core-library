@@ -1,14 +1,13 @@
 import services
+from interactions.utils.loot_ops import DoNothingLootOp
 from lot51_core import logger
 from lot51_core.loot import LotFiftyOneCoreLootActionVariant
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.tunables.test_injection import TestInjectionVariant
 from lot51_core.utils.injection import inject_list
 from sims4.resources import Types
-from interactions.utils.loot_ops import DoNothingLootOp
-from sims4.tuning.tunable import TunableReference, TunableList, TunableTuple
+from sims4.tuning.tunable import TunableList, TunableReference, TunableTuple
 from tunable_multiplier import TunableMultiplier
-
 
 # 1.116 Backwards compatibility
 try:
@@ -28,8 +27,8 @@ class TunableLootInjection(BaseTunableInjection):
 
     __slots__ = (
         "loot",
-        "ops",
         "modify_tests",
+        "ops",
     )
 
     def inject(self):
@@ -49,11 +48,11 @@ class TunableRandomWeightedLootInjection(BaseTunableInjection):
         "random_loot_actions": TunableList(
             tunable=TunableTuple(
                 action=LotFiftyOneCoreLootActionVariant(
-                    do_nothing=DoNothingLootOp.TunableFactory()
+                    do_nothing=DoNothingLootOp.TunableFactory(),
                 ),
                 weight=TunableMultiplier.TunableFactory(),
                 luck_option_config=TunableLuckOptionData(),
-            )
+            ),
         ),
     }
 

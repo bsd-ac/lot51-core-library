@@ -1,5 +1,6 @@
 import random
 from collections import namedtuple
+
 import alarms
 from date_and_time import create_time_span
 from interactions.utils.loot_basic_op import BaseLootOperation
@@ -15,7 +16,7 @@ class ScheduleSituationWithDelayLoot(BaseLootOperation):
     FACTORY_TUNABLES = {
         "create_situation": TunableSituationStart(),
         "time_delay": TunableInterval(
-            default_lower=0, default_upper=0, tunable_type=int
+            default_lower=0, default_upper=0, tunable_type=int,
         ),
     }
 
@@ -36,10 +37,10 @@ class ScheduleSituationWithDelayLoot(BaseLootOperation):
 
     def _apply_to_subject_and_target(self, subject, target, resolver):
         situation_handle = self.create_situation_handle(
-            self._create_situation(resolver)
+            self._create_situation(resolver),
         )
         delay = random.randint(
-            self._time_delay.lower_bound, self._time_delay.upper_bound
+            self._time_delay.lower_bound, self._time_delay.upper_bound,
         )
         time_span = create_time_span(minutes=delay)
 

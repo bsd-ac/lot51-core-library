@@ -2,20 +2,19 @@ from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
 from interactions import ParticipantTypeSingle
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
 )
 
 
 class ObjectSlotInUseTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject has any object slotted into it
+    """Tests if the subject has any object slotted into it
     """
 
     FACTORY_TUNABLES = {
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
     }
 
@@ -31,5 +30,5 @@ class ObjectSlotInUseTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest)
                 return TestResult.TRUE
 
         return TestResult(
-            False, "Subject does not have a slot in use", tooltip=self.tooltip
+            False, "Subject does not have a slot in use", tooltip=self.tooltip,
         )

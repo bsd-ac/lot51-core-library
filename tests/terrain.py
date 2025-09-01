@@ -1,35 +1,34 @@
 from build_buy import FloorFeatureType, find_floor_feature
-from terrain import is_terrain_tag_at_position
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
 from interactions import ParticipantTypeSingle
 from sims.sim_info import SimInfo
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
-    Tunable,
+    HasTunableSingletonFactory,
     OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
     TunableEnumSet,
 )
+from terrain import is_terrain_tag_at_position
 from world.terrain_enums import TerrainTag
 
 
 class TerrainTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests against terrain features/tags at the location of the subject
+    """Tests against terrain features/tags at the location of the subject
     """
 
     test_events = ()
 
     FACTORY_TUNABLES = {
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor,
         ),
         "terrain_feature": OptionalTunable(
             description="Tune this if you want to require a floor feature to be present",
             tunable=TunableEnumEntry(
-                tunable_type=FloorFeatureType, default=FloorFeatureType.BURNT
+                tunable_type=FloorFeatureType, default=FloorFeatureType.BURNT,
             ),
         ),
         "terrain_feature_radius": Tunable(
@@ -47,7 +46,7 @@ class TerrainTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
         ),
     }
 
-    __slots__ = ("subject", "terrain_feature", "terrain_tags", "terrain_feature_radius")
+    __slots__ = ("subject", "terrain_feature", "terrain_feature_radius", "terrain_tags")
 
     def get_expected_args(self):
         return {"subjects": self.subject}
@@ -67,7 +66,7 @@ class TerrainTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
                 self.terrain_feature_radius,
             ):
                 return TestResult(
-                    False, "Floor feature not found near subject", tooltip=self.tooltip
+                    False, "Floor feature not found near subject", tooltip=self.tooltip,
                 )
 
         if self.terrain_tags is not None:
@@ -78,7 +77,7 @@ class TerrainTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
                 level=subject.level,
             ):
                 return TestResult(
-                    False, "Terrain tag not found near subject", tooltip=self.tooltip
+                    False, "Terrain tag not found near subject", tooltip=self.tooltip,
                 )
 
         return TestResult.TRUE

@@ -1,5 +1,6 @@
-from lot51_core import logger
 from typing import AnyStr, Callable
+
+from lot51_core import logger
 
 
 class EventEmitter:
@@ -7,7 +8,7 @@ class EventEmitter:
         self._listeners = list()
 
     def _on_event_processed(
-        self, event_name: str, result=None, event_args=None, event_kwargs=None
+        self, event_name: str, result=None, event_args=None, event_kwargs=None,
     ):
         pass
 
@@ -21,7 +22,7 @@ class EventEmitter:
             try:
                 result = callback(*args, **kwargs)
                 self._on_event_processed(
-                    event_name, result=result, event_args=args, event_kwargs=kwargs
+                    event_name, result=result, event_args=args, event_kwargs=kwargs,
                 )
             except:
                 logger.exception("Failed processing event")
@@ -32,7 +33,7 @@ class EventEmitter:
                 event_name,
                 callback,
                 weight,
-            )
+            ),
         )
 
     def remove_listener(self, event_name: AnyStr, callback: Callable, weight=1):
@@ -41,5 +42,5 @@ class EventEmitter:
                 event_name,
                 callback,
                 weight,
-            )
+            ),
         )

@@ -4,7 +4,7 @@ from lot51_core import logger
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableList
+from sims4.tuning.tunable import TunableList, TunableReference
 from snippets import TunableAffordanceListReference
 
 
@@ -18,7 +18,7 @@ class TunableMixerListInjection(BaseTunableInjection):
         "mixers": TunableList(
             description="The mixers to inject to the lists",
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
     }
@@ -42,9 +42,7 @@ class TunableMixerListInjection(BaseTunableInjection):
             if mixer is not None:
                 if not issubclass(mixer, MixerInteraction):
                     logger.warn(
-                        "Class does not extend MixerInteraction: {}, skipping in mixer list injection to {}".format(
-                            mixer, self.mixer_list
-                        )
+                        f"Class does not extend MixerInteraction: {mixer}, skipping in mixer list injection to {self.mixer_list}",
                     )
                     continue
                 mixers_to_add.add(mixer)

@@ -1,7 +1,7 @@
 import services
 from game_effect_modifier.game_effect_modifiers import (
-    TunableGameEffectVariant,
     GameEffectModifiers,
+    TunableGameEffectVariant,
 )
 from interactions import ParticipantType
 from interactions.base.mixer_interaction import MixerInteraction
@@ -10,29 +10,29 @@ from interactions.utils.tunable_provided_affordances import TunableProvidedAffor
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.tunables.test_injection import TestInjectionVariant
 from lot51_core.utils.injection import (
-    inject_mapping_lists,
-    inject_list,
-    merge_list,
-    inject_dict,
     get_tuned_value,
+    inject_dict,
+    inject_list,
+    inject_mapping_lists,
+    merge_list,
 )
 from lot51_core.utils.tunables import (
-    create_factory_wrapper,
     clone_factory_wrapper_with_overrides,
+    create_factory_wrapper,
 )
 from sims.template_affordance_provider.tunable_provided_template_affordance import (
     TunableProvidedTemplateAffordance,
 )
+from sims4.collections import make_immutable_slots_class
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableReference,
-    TunableList,
-    TunableMapping,
-    TunableSet,
     OptionalTunable,
     Tunable,
+    TunableList,
+    TunableMapping,
+    TunableReference,
+    TunableSet,
 )
-from sims4.collections import make_immutable_slots_class
 
 
 class TunableBuffInjection(BaseTunableInjection):
@@ -40,28 +40,28 @@ class TunableBuffInjection(BaseTunableInjection):
         "buff": TunableReference(manager=services.get_instance_manager(Types.BUFF)),
         "loot_on_addition": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.ACTION), pack_safe=True
-            )
+                manager=services.get_instance_manager(Types.ACTION), pack_safe=True,
+            ),
         ),
         "loot_on_instance": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.ACTION), pack_safe=True
-            )
+                manager=services.get_instance_manager(Types.ACTION), pack_safe=True,
+            ),
         ),
         "loot_on_removal": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.ACTION), pack_safe=True
-            )
+                manager=services.get_instance_manager(Types.ACTION), pack_safe=True,
+            ),
         ),
         "actor_mixers": TunableMapping(
             key_type=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
             value_type=TunableSet(
                 tunable=TunableReference(
                     manager=services.get_instance_manager(Types.INTERACTION),
                     pack_safe=True,
-                )
+                ),
             ),
         ),
         "game_effect_modifiers": TunableList(
@@ -69,22 +69,22 @@ class TunableBuffInjection(BaseTunableInjection):
             tunable=TunableGameEffectVariant(),
         ),
         "interaction_items": TunableAffordanceLinkList(
-            class_restrictions=(MixerInteraction,)
+            class_restrictions=(MixerInteraction,),
         ),
         "modify_add_test_set": TestInjectionVariant(),
         "provided_mixers": TunableMapping(
             key_type=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
             value_type=TunableSet(
                 tunable=TunableReference(
                     manager=services.get_instance_manager(Types.INTERACTION),
                     pack_safe=True,
-                )
+                ),
             ),
         ),
         "provided_template_affordances": OptionalTunable(
-            tunable=TunableProvidedTemplateAffordance()
+            tunable=TunableProvidedTemplateAffordance(),
         ),
         "refresh_lock": OptionalTunable(
             description="If True, all portals on the lot will refresh their locks when this buff is added or removed from a sim. Note: This is not a tunable and will not appear in the buff tdesc.",
@@ -92,8 +92,8 @@ class TunableBuffInjection(BaseTunableInjection):
         ),
         "super_affordances": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
-            )
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
+            ),
         ),
         "target_super_affordances": TunableProvidedAffordances(
             locked_args={
@@ -101,28 +101,28 @@ class TunableBuffInjection(BaseTunableInjection):
                 "carry_target": ParticipantType.Invalid,
                 "is_linked": False,
                 "unlink_if_running": False,
-            }
+            },
         ),
     }
 
     __slots__ = (
-        "buff",
         "actor_mixers",
+        "buff",
+        "game_effect_modifiers",
         "interaction_items",
         "loot_on_addition",
         "loot_on_instance",
         "loot_on_removal",
-        "game_effect_modifiers",
         "modify_add_test_set",
         "provided_mixers",
         "provided_template_affordances",
+        "refresh_lock",
         "super_affordances",
         "target_super_affordances",
-        "refresh_lock",
     )
 
     _create_interaction_items = make_immutable_slots_class(
-        {"interaction_items", "scored_commodity", "weight"}
+        {"interaction_items", "scored_commodity", "weight"},
     )
 
     def inject(self):
@@ -138,15 +138,15 @@ class TunableBuffInjection(BaseTunableInjection):
 
             if len(self.game_effect_modifiers):
                 original_modifiers = get_tuned_value(
-                    buff_type.game_effect_modifier, "_game_effect_modifiers"
+                    buff_type.game_effect_modifier, "_game_effect_modifiers",
                 )
 
                 game_effect_modifier = create_factory_wrapper(
                     GameEffectModifiers,
                     locked_args={
                         "_game_effect_modifiers": merge_list(
-                            original_modifiers, self.game_effect_modifiers
-                        )
+                            original_modifiers, self.game_effect_modifiers,
+                        ),
                     },
                 )
                 buff_type.game_effect_modifier = game_effect_modifier
@@ -163,7 +163,7 @@ class TunableBuffInjection(BaseTunableInjection):
                 if buff_type.provided_template_affordances is None:
                     buff_type.provided_template_affordances = (
                         clone_factory_wrapper_with_overrides(
-                            self.provided_template_affordances
+                            self.provided_template_affordances,
                         )
                     )
                 else:
@@ -180,7 +180,7 @@ class TunableBuffInjection(BaseTunableInjection):
 
             if self.target_super_affordances is not None:
                 inject_list(
-                    buff_type, "target_super_affordances", self.target_super_affordances
+                    buff_type, "target_super_affordances", self.target_super_affordances,
                 )
 
             if self.interaction_items is not None:
@@ -200,5 +200,5 @@ class TunableBuffInjection(BaseTunableInjection):
                             "interaction_items": self.actor_mixers,
                             "scored_commodity": None,
                             "weight": 1,
-                        }
+                        },
                     )

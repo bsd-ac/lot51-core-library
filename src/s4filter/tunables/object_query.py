@@ -1,13 +1,14 @@
-import services
 import random
+
+import services
 from build_buy import get_room_id
-from event_testing.tests import TunableTestSet
 from event_testing.resolver import (
-    SingleObjectResolver,
     DoubleObjectResolver,
-    SingleSimResolver,
     GlobalResolver,
+    SingleObjectResolver,
+    SingleSimResolver,
 )
+from event_testing.tests import TunableTestSet
 from interactions import ParticipantType, ParticipantTypeSingle
 from lot51_core import logger
 from lot51_core.utils.math import weighted_sort
@@ -17,16 +18,16 @@ from objects.prop_object import PropObject
 from sims.sim_info import SimInfo
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableInterval,
-    Tunable,
-    TunableVariant,
-    TunableEnumSet,
-    TunableEnumEntry,
-    TunableReference,
-    TunableList,
+    HasTunableSingletonFactory,
     OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
+    TunableEnumSet,
+    TunableInterval,
+    TunableList,
+    TunableReference,
+    TunableVariant,
 )
 from tag import Tag
 from tunable_multiplier import TunableMultiplier
@@ -71,8 +72,8 @@ class ObjectFilterRandomSingleChoice(HasTunableSingletonFactory, AutoFactoryInit
 class ObjectFilterRandomMultipleChoice(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
         "limit": TunableInterval(
-            tunable_type=int, default_lower=1, default_upper=1, minimum=0
-        )
+            tunable_type=int, default_lower=1, default_upper=1, minimum=0,
+        ),
     }
 
     __slots__ = ("limit",)
@@ -93,13 +94,13 @@ class ObjectFilterAmountPerRoom(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
         "include_outdoors": Tunable(tunable_type=bool, default=True),
         "limit": TunableInterval(
-            tunable_type=int, default_lower=1, default_upper=1, minimum=0
+            tunable_type=int, default_lower=1, default_upper=1, minimum=0,
         ),
     }
 
     __slots__ = (
-        "limit",
         "include_outdoors",
+        "limit",
     )
 
     def filter_objects_gen(self, obj_list=()):
@@ -151,7 +152,7 @@ class ObjectFilterVariant(TunableVariant):
 class BaseObjectSort(HasTunableSingletonFactory, AutoFactoryInit):
     FACTORY_TUNABLES = {
         "distance_actor": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor,
         ),
     }
 
@@ -197,14 +198,14 @@ class BaseObjectSort(HasTunableSingletonFactory, AutoFactoryInit):
 class ObjectSortClosest(BaseObjectSort):
     def sort_objects_gen(self, obj_list=(), resolver=None):
         yield from self._sort_objects_gen(
-            obj_list=obj_list, resolver=resolver, reverse=False
+            obj_list=obj_list, resolver=resolver, reverse=False,
         )
 
 
 class ObjectSortFarthest(BaseObjectSort):
     def sort_objects_gen(self, obj_list=(), resolver=None):
         yield from self._sort_objects_gen(
-            obj_list=obj_list, resolver=resolver, reverse=True
+            obj_list=obj_list, resolver=resolver, reverse=True,
         )
 
 
@@ -246,15 +247,15 @@ class _GetObjectsBase(HasTunableSingletonFactory, AutoFactoryInit):
         "tests": TunableTestSet(),
         "additional_tests": TunableTestSet(),
         "additional_tests_actor": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
         "exclude_tags": TunableEnumSet(
-            Tag, enum_default=Tag.INVALID, invalid_enums=(Tag.INVALID,)
+            Tag, enum_default=Tag.INVALID, invalid_enums=(Tag.INVALID,),
         ),
         "filter": ObjectFilterVariant(),
         "sort": ObjectSortVariant(),
         "test_in_use": OptionalTunable(
-            tunable=Tunable(tunable_type=bool, default=False)
+            tunable=Tunable(tunable_type=bool, default=False),
         ),
     }
 
@@ -264,8 +265,8 @@ class _GetObjectsBase(HasTunableSingletonFactory, AutoFactoryInit):
         "exclude_tags",
         "filter",
         "sort",
-        "tests",
         "test_in_use",
+        "tests",
     )
 
     def get_test_resolver(self, original_resolver, target):
@@ -273,7 +274,7 @@ class _GetObjectsBase(HasTunableSingletonFactory, AutoFactoryInit):
             return SingleObjectResolver(target)
         # get original loot subject as actor
         if isinstance(
-            original_resolver, SingleSimResolver
+            original_resolver, SingleSimResolver,
         ) and self.additional_tests_actor in (
             ParticipantTypeSingle.Object,
             ParticipantTypeSingle.TargetSim,
@@ -293,9 +294,7 @@ class _GetObjectsBase(HasTunableSingletonFactory, AutoFactoryInit):
         result = tests_result and additional_tests_result
         if log_results:
             logger.info(
-                "test result for resolver {}: tests: {}; additional tests: {}; result: {};".format(
-                    resolver, tests_result, additional_tests_result, result
-                )
+                f"test result for resolver {resolver}: tests: {tests_result}; additional tests: {additional_tests_result}; result: {result};",
             )
         return result
 
@@ -354,33 +353,33 @@ class _GetObjectsBase(HasTunableSingletonFactory, AutoFactoryInit):
         all_objects = self._get_objects_gen(resolver)
         if log_results:
             all_objects = tuple(all_objects)
-            logger.info("all objects: {}".format(all_objects))
+            logger.info(f"all objects: {all_objects}")
         reservation_filtered_objects = self._filter_reservation_gen(all_objects)
         tag_filtered_objects = self._filter_exclude_tags_gen(
-            reservation_filtered_objects
+            reservation_filtered_objects,
         )
         tested_objects = self._get_tested_objects_gen(
-            tag_filtered_objects, resolver, log_results=log_results
+            tag_filtered_objects, resolver, log_results=log_results,
         )
         sorted_objects = self._get_sorted_objects_gen(tested_objects, resolver=resolver)
         filtered_objects = self._get_filtered_objects_gen(sorted_objects)
         if log_results:
             filtered_objects = tuple(filtered_objects)
-            logger.info("filtered objects: {}".format(filtered_objects))
+            logger.info(f"filtered objects: {filtered_objects}")
         yield from filtered_objects
 
 
 class GetObjectsFromInventory(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Actor
+            tunable_type=ParticipantType, default=ParticipantType.Actor,
         ),
         "hidden": Tunable(tunable_type=bool, default=False),
     }
 
     __slots__ = (
-        "subject",
         "hidden",
+        "subject",
     )
 
     def get_inventory(self, resolver):
@@ -389,7 +388,7 @@ class GetObjectsFromInventory(_GetObjectsBase):
             if isinstance(subject, SimInfo):
                 subject = subject.get_sim_instance()
                 if subject is None:
-                    return
+                    return None
             return subject.get_component(INVENTORY_COMPONENT)
 
     def _get_objects_gen(self, resolver=None):
@@ -406,20 +405,20 @@ class GetObjectsFromInventory(_GetObjectsBase):
 class GetSituationTargetObject(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "subject": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Actor
+            tunable_type=ParticipantType, default=ParticipantType.Actor,
         ),
         "situation": TunableReference(
-            manager=services.get_instance_manager(Types.SITUATION)
+            manager=services.get_instance_manager(Types.SITUATION),
         ),
         "situation_tags": TunableEnumSet(
-            enum_type=Tag, enum_default=Tag.INVALID, invalid_enums=(Tag.INVALID,)
+            enum_type=Tag, enum_default=Tag.INVALID, invalid_enums=(Tag.INVALID,),
         ),
     }
 
     __slots__ = (
-        "subject",
         "situation",
         "situation_tags",
+        "subject",
     )
 
     def _get_objects_gen(self, resolver=None):
@@ -440,7 +439,7 @@ class GetSituationTargetObject(_GetObjectsBase):
             if subject is not None:
                 if isinstance(subject, SimInfo):
                     subject = subject.get_sim_instance(
-                        allow_hidden_flags=ALL_HIDDEN_REASONS
+                        allow_hidden_flags=ALL_HIDDEN_REASONS,
                     )
                 for situation in situation_manager.get_situations_sim_is_in(subject):
                     if test_situation(situation):
@@ -479,7 +478,7 @@ class GetAllObjects(_GetObjectsBase):
 class GetObjectsByTags(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "tags": TunableEnumSet(
-            Tag, enum_default=Tag.INVALID, invalid_enums=(Tag.INVALID,)
+            Tag, enum_default=Tag.INVALID, invalid_enums=(Tag.INVALID,),
         ),
     }
 
@@ -519,7 +518,7 @@ class GetObjectsByDefinition(_GetObjectsBase):
 class GetObjectsByAffordance(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "affordance": TunableReference(
-            manager=services.get_instance_manager(Types.INTERACTION)
+            manager=services.get_instance_manager(Types.INTERACTION),
         ),
     }
 
@@ -537,7 +536,7 @@ class GetObjectsByAffordance(_GetObjectsBase):
 class GetObjectsByParticipant(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "participant": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Object
+            tunable_type=ParticipantType, default=ParticipantType.Object,
         ),
     }
 
@@ -582,18 +581,18 @@ class GetObjectsBySimInfo(_GetObjectsBase):
 class GetSimsInSituation(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "situation": TunableReference(
-            manager=services.get_instance_manager(Types.SITUATION)
+            manager=services.get_instance_manager(Types.SITUATION),
         ),
         "required_jobs": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.SITUATION_JOB)
-            )
+                manager=services.get_instance_manager(Types.SITUATION_JOB),
+            ),
         ),
     }
 
     __slots__ = (
-        "situation",
         "required_jobs",
+        "situation",
     )
 
     def _get_objects_gen(self, resolver=None):
@@ -610,12 +609,12 @@ class GetSimsInSituation(_GetObjectsBase):
 class GetSimsInteractingWithParticipant(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "participant": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Object
+            tunable_type=ParticipantType, default=ParticipantType.Object,
         ),
         "ignore_actor": Tunable(tunable_type=bool, default=True),
     }
 
-    __slots__ = ("participant", "ignore_actor")
+    __slots__ = ("ignore_actor", "participant")
 
     def _get_objects_gen(self, resolver=None):
         if resolver is not None:
@@ -637,7 +636,7 @@ class GetSimsInteractingWithParticipant(_GetObjectsBase):
 class GetObjectsByParent(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "participant": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Object
+            tunable_type=ParticipantType, default=ParticipantType.Object,
         ),
         "use_part_owner": Tunable(tunable_type=bool, default=False),
     }
@@ -662,7 +661,7 @@ class GetObjectsByParent(_GetObjectsBase):
 class GetCarriedObjectsByParticipant(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "participant": TunableEnumEntry(
-            tunable_type=ParticipantType, default=ParticipantType.Actor
+            tunable_type=ParticipantType, default=ParticipantType.Actor,
         ),
     }
 
@@ -711,8 +710,8 @@ class GetActualLotLevelObjects(_GetObjectsBase):
 class GetObjectsByObjectQueryReference(_GetObjectsBase):
     FACTORY_TUNABLES = {
         "reference": TunableReference(
-            manager=services.get_instance_manager(Types.SNIPPET)
-        )
+            manager=services.get_instance_manager(Types.SNIPPET),
+        ),
     }
 
     __slots__ = ("reference",)

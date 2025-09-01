@@ -34,7 +34,7 @@ def open_url_in_browser(url, **query):
 
         if query is not None:
             params = urlencode(query)
-            full_url = "{}?{}".format(url, params)
+            full_url = f"{url}?{params}"
         else:
             full_url = url
         webbrowser.open(full_url)

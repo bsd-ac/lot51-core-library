@@ -1,7 +1,8 @@
 import enum
+
 import sims4.common
 from sims4.common import Pack
-from sims4.tuning.tunable import HasTunableSingletonFactory, AutoFactoryInit
+from sims4.tuning.tunable import AutoFactoryInit, HasTunableSingletonFactory
 
 
 class InjectionTiming(enum.Int):

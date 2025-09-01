@@ -7,13 +7,13 @@ from lot51_core.tunables.coordinates import TunableCoordinates
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
 from sims4.tuning.tunable import (
-    TunableList,
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableReference,
+    HasTunableSingletonFactory,
     OptionalTunable,
-    TunableVariant,
     TunableEnumEntry,
+    TunableList,
+    TunableReference,
+    TunableVariant,
 )
 
 
@@ -22,7 +22,7 @@ class SituationAction(HasTunableSingletonFactory, AutoFactoryInit):
         "jobs": TunableList(
             description="Situation Jobs in this Situation that should be valid for this action.",
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.SITUATION_JOB)
+                manager=services.get_instance_manager(Types.SITUATION_JOB),
             ),
             needs_tuning=True,
         ),
@@ -78,14 +78,14 @@ class MoveSimSpawnAction(SituationAction):
 
 class PushRoleInteractionAction(SituationAction):
     FACTORY_TUNABLES = {
-        "priority": TunableEnumEntry(tunable_type=Priority, default=Priority.Low)
+        "priority": TunableEnumEntry(tunable_type=Priority, default=Priority.Low),
     }
 
     __slots__ = ("priority",)
 
     def apply_to_sim(self, situation, sim, job):
         interaction = situation._choose_role_interaction(
-            sim, run_priority=self.priority
+            sim, run_priority=self.priority,
         )
         if interaction is not None:
             execute_result = AffordanceObjectPair.execute_interaction(interaction)
@@ -95,9 +95,9 @@ class ApplyLootAction(SituationAction):
     FACTORY_TUNABLES = {
         "loot_list": TunableList(
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.ACTION)
-            )
-        )
+                manager=services.get_instance_manager(Types.ACTION),
+            ),
+        ),
     }
 
     __slots__ = ("loot_list",)
@@ -111,8 +111,8 @@ class ApplyLootAction(SituationAction):
 class ApplyReferenceActions(SituationAction):
     FACTORY_TUNABLES = {
         "reference": TunableReference(
-            manager=services.get_instance_manager(Types.SNIPPET)
-        )
+            manager=services.get_instance_manager(Types.SNIPPET),
+        ),
     }
 
     __slots__ = ("reference",)

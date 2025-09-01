@@ -1,17 +1,17 @@
 import services
 import sims4.commands
-from interactions import ParticipantTypeSingle, ParticipantType
+from interactions import ParticipantType, ParticipantTypeSingle
+from lot51_core import logger as core_logger
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    TunableVariant,
+    AutoFactoryInit,
+    HasTunableSingletonFactory,
     Tunable,
     TunableEnumEntry,
-    TunableTuple,
-    HasTunableSingletonFactory,
     TunableList,
-    AutoFactoryInit,
+    TunableTuple,
+    TunableVariant,
 )
-from lot51_core import logger as core_logger
 
 
 class TunableCommandArgumentVariant(TunableVariant):
@@ -24,14 +24,14 @@ class TunableCommandArgumentVariant(TunableVariant):
             instance=TunableTuple(
                 tuning_id=Tunable(tunable_type=int, default=0),
                 tunable_type=TunableEnumEntry(
-                    tunable_type=Types, default=Types.INVALID
+                    tunable_type=Types, default=Types.INVALID,
                 ),
             ),
             participant=TunableEnumEntry(
-                tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor
+                tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Actor,
             ),
             participants=TunableEnumEntry(
-                tunable_type=ParticipantType, default=ParticipantType.Actor
+                tunable_type=ParticipantType, default=ParticipantType.Actor,
             ),
             **kwargs,
         )
@@ -56,9 +56,9 @@ class TunableCommand(HasTunableSingletonFactory, AutoFactoryInit):
     }
 
     __slots__ = (
-        "command",
         "arguments",
         "client_command",
+        "command",
     )
 
     @classmethod
@@ -67,9 +67,9 @@ class TunableCommand(HasTunableSingletonFactory, AutoFactoryInit):
             if logger is None:
                 logger = core_logger
             args = cls.get_args(resolver)
-            full_command = "{}".format(cls.command)
+            full_command = f"{cls.command}"
             full_command += "".join([" {}"] * len(args)).format(*args)
-            logger.info("running command: {}".format(full_command))
+            logger.info("running command: %s", full_command)
             client_id = services.client_manager().get_first_client_id()
             if cls.client_command:
                 sims4.commands.client_cheat(full_command, client_id)
@@ -87,7 +87,7 @@ class TunableCommand(HasTunableSingletonFactory, AutoFactoryInit):
             if isinstance(argument, ParticipantTypeSingle):
                 participant_list = resolver.get_participants(argument)
                 arguments_with_participants.append(
-                    participant_list[0] if participant_list else None
+                    participant_list[0] if participant_list else None,
                 )
             elif isinstance(argument, ParticipantType):
                 participant_list = tuple(
@@ -97,7 +97,7 @@ class TunableCommand(HasTunableSingletonFactory, AutoFactoryInit):
                         else participant
                         for participant in resolver.get_participants(argument)
                         if participant is not None
-                    ]
+                    ],
                 )
                 arguments_with_participants.append(participant_list)
             elif hasattr(argument, "tunable_type"):

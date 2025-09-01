@@ -1,3 +1,5 @@
+from statistics.commodity import Commodity
+
 from caches import cached_test
 from event_testing.results import TestResult
 from event_testing.test_base import BaseTest
@@ -7,17 +9,15 @@ from objects.components.types import STATISTIC_COMPONENT
 from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
+    HasTunableSingletonFactory,
     TunableEnumEntry,
     TunableReference,
 )
-from statistics.commodity import Commodity
 
 
 class StatisticLockedTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject has the provided commodity and is in the locked state preventing decay.
+    """Tests if the subject has the provided commodity and is in the locked state preventing decay.
     """
 
     test_events = (TestEvent.ObjectStateChange,)
@@ -35,8 +35,8 @@ class StatisticLockedTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest)
     }
 
     __slots__ = (
-        "subject",
         "stat",
+        "subject",
     )
 
     def get_expected_args(self):

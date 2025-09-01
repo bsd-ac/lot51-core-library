@@ -2,7 +2,7 @@ import services
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableList
+from sims4.tuning.tunable import TunableList, TunableReference
 from snippets import TunableAffordanceListReference
 
 
@@ -16,7 +16,7 @@ class TunableAffordanceListInjection(BaseTunableInjection):
         "affordances": TunableList(
             description="The affordances to inject to the lists",
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=services.get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
     }

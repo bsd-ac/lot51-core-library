@@ -1,15 +1,16 @@
-import services
 import enum
+
+import services
 from sims4.resources import Types
 from sims4.tuning.instances import HashedTunedInstanceMetaclass
 from sims4.tuning.tunable import (
-    TunableTuple,
+    Tunable,
+    TunableEnumEntry,
+    TunableInterval,
     TunableList,
     TunableReference,
     TunableSimMinute,
-    TunableInterval,
-    TunableEnumEntry,
-    Tunable,
+    TunableTuple,
 )
 
 
@@ -37,8 +38,8 @@ class AffordanceLockOutSnippet(
                 _disabled=Tunable(tunable_type=bool, default=False),
                 affordances=TunableList(
                     tunable=TunableReference(
-                        manager=services.get_instance_manager(Types.INTERACTION)
-                    )
+                        manager=services.get_instance_manager(Types.INTERACTION),
+                    ),
                 ),
                 compatibility_type=TunableEnumEntry(
                     tunable_type=LockCompatibilityType,
@@ -52,12 +53,12 @@ class AffordanceLockOutSnippet(
                     minimum=0,
                 ),
                 lock_by_target=Tunable(tunable_type=bool, default=False),
-            )
+            ),
         ),
     }
 
     @classmethod
     def all_snippets_gen(cls):
         yield from services.get_instance_manager(Types.SNIPPET).get_ordered_types(
-            only_subclasses_of=cls
+            only_subclasses_of=cls,
         )

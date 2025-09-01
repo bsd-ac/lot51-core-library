@@ -4,31 +4,30 @@ from services import get_instance_manager
 from sims4.resources import Types
 from sims4.tuning.tunable import (
     AutoFactoryInit,
+    TunableEnumEntry,
     TunableList,
     TunableReference,
     TunableSet,
-    TunableEnumEntry,
     TunableSingletonFactory,
 )
 from tag import Tag
 
 
 class InteractionOfInterest(AutoFactoryInit):
-    """
-    This InteractionOfInterest class is identical to EA's except
+    """This InteractionOfInterest class is identical to EA's except
     it allows a list of affordance_lists
     """
 
     FACTORY_TUNABLES = {
         "affordances": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.INTERACTION), pack_safe=True
+                manager=get_instance_manager(Types.INTERACTION), pack_safe=True,
             ),
         ),
         "affordance_lists": TunableList(
             tunable=TunableReference(
-                manager=get_instance_manager(Types.SNIPPET), pack_safe=True
-            )
+                manager=get_instance_manager(Types.SNIPPET), pack_safe=True,
+            ),
         ),
         "tags": TunableSet(tunable=TunableEnumEntry(Tag, Tag.INVALID)),
     }
@@ -41,7 +40,7 @@ class InteractionOfInterest(AutoFactoryInit):
     def __call__(self, interaction=None):
         if interaction is None:
             return TestResult(
-                False, "No affordance to check against {}", self.affordances
+                False, "No affordance to check against {}", self.affordances,
             )
         if self.tags & interaction.get_category_tags():
             return TestResult.TRUE
@@ -67,5 +66,5 @@ class InteractionOfInterest(AutoFactoryInit):
 
 
 TunableInteractionOfInterest = TunableSingletonFactory.create_auto_factory(
-    InteractionOfInterest
+    InteractionOfInterest,
 )

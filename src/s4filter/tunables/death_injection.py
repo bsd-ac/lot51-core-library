@@ -1,12 +1,12 @@
 import services
+from _sims4_collections import frozendict
+from interactions.utils.death import DeathTracker
 from lot51_core import logger
 from lot51_core.tunables.base_injection import BaseTunableInjection
+from lot51_core.utils.injection import add_affordance, inject_to_enum
+from sims4.collections import make_immutable_slots_class
 from sims4.resources import Types
 from sims4.tuning.tunable import Tunable, TunableReference
-from interactions.utils.death import DeathTracker
-from sims4.collections import make_immutable_slots_class
-from _sims4_collections import frozendict
-from lot51_core.utils.injection import inject_to_enum, add_affordance
 
 # Backwards compatibility for <1.110
 try:
@@ -22,26 +22,26 @@ class TunableCustomDeath(BaseTunableInjection):
         "death_type_key": Tunable(tunable_type=str, default=""),
         "death_type_id": Tunable(tunable_type=int, default=0),
         "affordance": TunableReference(
-            manager=services.get_instance_manager(Types.INTERACTION)
+            manager=services.get_instance_manager(Types.INTERACTION),
         ),
         "trait": TunableReference(manager=services.get_instance_manager(Types.TRAIT)),
     }
 
     __slots__ = (
-        "death_type_key",
-        "death_type_id",
         "affordance",
+        "death_type_id",
+        "death_type_key",
         "trait",
     )
 
     _create_death_info = make_immutable_slots_class(
-        {"death_type", "set_to_minimum_lod"}
+        {"death_type", "set_to_minimum_lod"},
     )
 
     @classmethod
     def get_death_type_affordance_list(cls):
         return services.get_instance_manager(Types.SNIPPET).get(
-            cls.DEATH_TYPE_AFFORDANCE_LIST_ID
+            cls.DEATH_TYPE_AFFORDANCE_LIST_ID,
         )
 
     def inject(self):

@@ -1,10 +1,10 @@
 import services
 from lot51_core import logger
 from lot51_core.tunables.base_injection import BaseTunableInjection
-from lot51_core.utils.injection import inject_list, merge_affordance_filter, inject_dict
+from lot51_core.utils.injection import inject_dict, inject_list, merge_affordance_filter
 from postures.posture import TunablePostureTypeListSnippet
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableReference, TunableList, OptionalTunable
+from sims4.tuning.tunable import OptionalTunable, TunableList, TunableReference
 from snippets import TunableAffordanceFilterSnippet
 
 
@@ -13,24 +13,24 @@ class TunableObjectPartInjection(BaseTunableInjection):
         "object_parts": TunableList(
             description="A list of object parts this filter should be injected to",
             tunable=TunableReference(
-                manager=services.get_instance_manager(Types.OBJECT_PART), pack_safe=True
+                manager=services.get_instance_manager(Types.OBJECT_PART), pack_safe=True,
             ),
         ),
         "compatibility": OptionalTunable(
             tunable=TunableAffordanceFilterSnippet(
-                description="Affordance filter to merge with object part supported_affordance_data"
+                description="Affordance filter to merge with object part supported_affordance_data",
             ),
         ),
         "supported_posture_types": OptionalTunable(
             tunable=TunablePostureTypeListSnippet(
-                description="The postures supported by this part. If empty, assumes all postures are supported."
+                description="The postures supported by this part. If empty, assumes all postures are supported.",
             ),
         ),
     }
 
     __slots__ = (
-        "object_parts",
         "compatibility",
+        "object_parts",
         "supported_posture_types",
     )
 
@@ -38,7 +38,7 @@ class TunableObjectPartInjection(BaseTunableInjection):
         for part in self.object_parts:
             try:
                 if self.compatibility is not None and hasattr(
-                    part, "supported_affordance_data"
+                    part, "supported_affordance_data",
                 ):
                     # merge the current row's compatibility filter into each object part
                     compatibility = merge_affordance_filter(
@@ -46,23 +46,21 @@ class TunableObjectPartInjection(BaseTunableInjection):
                         other_filter=self.compatibility,
                     )
                     inject_dict(
-                        part, "supported_affordance_data", compatibility=compatibility
+                        part, "supported_affordance_data", compatibility=compatibility,
                     )
             except:
                 logger.exception(
-                    "failed compatibility injection to object part: {}".format(part)
+                    f"failed compatibility injection to object part: {part}",
                 )
 
             try:
                 if self.supported_posture_types is not None and hasattr(
-                    part, "supported_posture_types"
+                    part, "supported_posture_types",
                 ):
                     inject_list(
-                        part, "supported_posture_types", self.supported_posture_types
+                        part, "supported_posture_types", self.supported_posture_types,
                     )
             except:
                 logger.exception(
-                    "failed supported posture types injection to object part: {}".format(
-                        part
-                    )
+                    f"failed supported posture types injection to object part: {part}",
                 )

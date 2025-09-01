@@ -11,9 +11,9 @@ from sims4.resources import Types
 from sims4.tuning.tunable import (
     OptionalTunable,
     TunableMapping,
-    TunableTuple,
     TunableRange,
     TunableReference,
+    TunableTuple,
 )
 from sims4.utils import flexmethod
 from ui.ui_dialog_picker import ObjectPickerRow
@@ -24,11 +24,11 @@ class FlagStatPickerSuperInteraction(PickerSuperInteraction):
         "_active_icon": OptionalTunable(tunable=TunableIconVariant()),
         "_inactive_icon": OptionalTunable(tunable=TunableIconVariant()),
         "stat_type": TunableReference(
-            manager=services.get_instance_manager(Types.STATISTIC)
+            manager=services.get_instance_manager(Types.STATISTIC),
         ),
         "flag_values": TunableMapping(
             key_type=TunableRange(
-                tunable_type=int, default=1, minimum=0, maximum=MAX_INT32
+                tunable_type=int, default=1, minimum=0, maximum=MAX_INT32,
             ),
             value_type=TunableTuple(
                 flag_name=TunableLocalizedStringFactory(),
@@ -41,16 +41,16 @@ class FlagStatPickerSuperInteraction(PickerSuperInteraction):
 
     def on_choice_selected(self, raw_flag_value, **kwargs):
         stat = self.target.get_tracker(self.stat_type).get_statistic(
-            self.stat_type, add=True
+            self.stat_type, add=True,
         )
         flag = Flag(stat.get_value() if stat is not None else 0)
         flag_value = 1 << raw_flag_value
         if flag.has(flag_value):
             flag.remove(flag_value)
-            logger.debug("Removing flag! {} {}".format(flag_value, flag.get()))
+            logger.debug(f"Removing flag! {flag_value} {flag.get()}")
         else:
             flag.add(flag_value)
-            logger.debug("Adding to flag! {} {}".format(flag_value, flag.get()))
+            logger.debug(f"Adding to flag! {flag_value} {flag.get()}")
         stat.set_value(flag.get())
 
     @flexmethod
@@ -88,9 +88,8 @@ class FlagStatPickerSuperInteraction(PickerSuperInteraction):
                 if flag.has(flag_value):
                     if cls._active_icon is not None:
                         aop.affordance.pie_menu_icon = cls._active_icon
-                else:
-                    if cls._inactive_icon is not None:
-                        aop.affordance.pie_menu_icon = cls._inactive_icon
+                elif cls._inactive_icon is not None:
+                    aop.affordance.pie_menu_icon = cls._inactive_icon
 
                 yield aop
         else:

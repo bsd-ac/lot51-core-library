@@ -2,7 +2,7 @@ from interactions.utils.loot_basic_op import BaseLootOperation
 from lot51_core import logger
 from lot51_core.tunables.object_query import ObjectSearchMethodVariant
 from objects.components.types import STOLEN_COMPONENT
-from sims4.tuning.tunable import OptionalTunable, TunableTuple, Tunable
+from sims4.tuning.tunable import OptionalTunable, Tunable, TunableTuple
 
 
 class ReturnStolenObjectLoot(BaseLootOperation):
@@ -11,7 +11,7 @@ class ReturnStolenObjectLoot(BaseLootOperation):
         "fade_in": OptionalTunable(
             tunable=TunableTuple(
                 duration=Tunable(tunable_type=float, default=1.5),
-            )
+            ),
         ),
     }
 
@@ -28,4 +28,4 @@ class ReturnStolenObjectLoot(BaseLootOperation):
                     if self._fade_in is not None:
                         obj.fade_in(fade_duration=self._fade_in.duration)
             except:
-                logger.exception("Failed to return stolen object: {}".format(obj))
+                logger.exception(f"Failed to return stolen object: {obj}")

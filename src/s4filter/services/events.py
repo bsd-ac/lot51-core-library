@@ -1,6 +1,6 @@
-from lot51_core.utils.emitter import EventEmitter
-from lot51_core import logger as lot51_core_logger
 import sims4
+from lot51_core import logger as lot51_core_logger
+from lot51_core.utils.emitter import EventEmitter
 
 
 class CoreEvent:
@@ -49,7 +49,7 @@ class EventService(EventEmitter):
                 callback(self, *args, **kwargs)
             except:
                 self.logger.exception(
-                    "[EventService] failed processing event: {}".format(event_name)
+                    "[EventService] failed processing event: %s", event_name,
                 )
 
 
@@ -65,14 +65,10 @@ def event_handler(event_name: str, weight=1):
 
 
 @sims4.commands.Command(
-    "lot51_lib.list_event_listeners", command_type=sims4.commands.CommandType.Live
+    "lot51_lib.list_event_listeners", command_type=sims4.commands.CommandType.Live,
 )
 def list_event_listeners(_connection=None):
     for listener_name, callback, weight in event_service.get_ordered_listeners():
         lot51_core_logger.info(
-            "listener: {} {} {}".format(
-                listener_name,
-                callback,
-                weight,
-            )
+            f"listener: {listener_name} {callback} {weight}",
         )

@@ -2,7 +2,7 @@ import services
 from lot51_core.tunables.base_injection import BaseTunableInjection
 from lot51_core.utils.injection import inject_list
 from sims4.resources import Types
-from sims4.tuning.tunable import TunableList, TunableReference, TunableTuple, Tunable
+from sims4.tuning.tunable import Tunable, TunableList, TunableReference, TunableTuple
 from traits.trait_tracker import TraitTracker
 
 
@@ -45,7 +45,7 @@ class TunableTraitTrackerInjection(BaseTunableInjection):
                             pack_safe=True,
                             allow_none=True,
                         ),
-                    )
+                    ),
                 ),
             ),
         ),

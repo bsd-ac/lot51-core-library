@@ -3,17 +3,16 @@ from event_testing.test_base import BaseTest
 from interactions import ParticipantTypeSingle
 from objects.components.types import STORED_SIM_INFO_COMPONENT
 from sims4.tuning.tunable import (
-    HasTunableSingletonFactory,
     AutoFactoryInit,
-    TunableEnumEntry,
-    Tunable,
+    HasTunableSingletonFactory,
     OptionalTunable,
+    Tunable,
+    TunableEnumEntry,
 )
 
 
 class StoredSimComponentTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTest):
-    """
-    Tests if the subject has a stored sim component
+    """Tests if the subject has a stored sim component
     """
 
     FACTORY_TUNABLES = {
@@ -21,13 +20,13 @@ class StoredSimComponentTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTe
             tunable=Tunable(tunable_type=bool, default=True),
         ),
         "target": TunableEnumEntry(
-            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object
+            tunable_type=ParticipantTypeSingle, default=ParticipantTypeSingle.Object,
         ),
     }
 
     __slots__ = (
-        "target",
         "require_stored_sim",
+        "target",
     )
 
     def get_expected_args(self):
@@ -46,9 +45,7 @@ class StoredSimComponentTest(HasTunableSingletonFactory, AutoFactoryInit, BaseTe
         ):
             return TestResult(
                 False,
-                "Target does not match required stored sim value: {}".format(
-                    self.require_stored_sim
-                ),
+                f"Target does not match required stored sim value: {self.require_stored_sim}",
                 tooltip=self.tooltip,
             )
 

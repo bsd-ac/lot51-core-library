@@ -6,10 +6,10 @@ from seasons.seasons_enums import SeasonLength
 from sims4.common import Pack
 from sims4.resources import Types
 from sims4.tuning.tunable import (
+    TunableEnumEntry,
+    TunableList,
     TunableReference,
     TunableTuple,
-    TunableList,
-    TunableEnumEntry,
 )
 
 
@@ -19,23 +19,23 @@ class TunableSeasonInjection(BaseTunableInjection):
         "holidays": TunableList(
             tunable=TunableTuple(
                 holiday=TunableReference(
-                    manager=services.get_instance_manager(Types.HOLIDAY_DEFINITION)
+                    manager=services.get_instance_manager(Types.HOLIDAY_DEFINITION),
                 ),
                 length_content=TunableList(
                     tunable=TunableTuple(
                         length=TunableEnumEntry(
-                            tunable_type=SeasonLength, default=SeasonLength.NORMAL
+                            tunable_type=SeasonLength, default=SeasonLength.NORMAL,
                         ),
                         day_of_season=DayOfSeason.TunableFactory(),
-                    )
+                    ),
                 ),
-            )
+            ),
         ),
     }
 
     __slots__ = (
-        "season",
         "holidays",
+        "season",
     )
 
     @property
